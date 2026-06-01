@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: #0f1117;
+  color: #e2e8f0;
+  font-family: 'DM Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+button, [role="button"], select, label[for], a {
+  cursor: pointer;
+}
+
+input[type="file"] {
+  cursor: pointer;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0f1117; }
+::-webkit-scrollbar-thumb { background: #232a3a; border-radius: 3px; }

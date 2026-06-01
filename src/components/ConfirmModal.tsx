@@ -1,0 +1,57 @@
+import { motion, AnimatePresence } from "motion/react";
+import { AlertTriangle } from "lucide-react";
+
+interface ConfirmModalProps {
+  isOpen:    boolean;
+  title:     string;
+  message:   string;
+  onConfirm: () => void;
+  onCancel:  () => void;
+}
+
+export function ConfirmModal({ isOpen, title, message, onConfirm, onCancel }: ConfirmModalProps) {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          onClick={onCancel}
+        >
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1,    opacity: 1 }}
+            exit={{   scale: 0.95, opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="bg-surface-card border border-surface-border rounded-2xl p-6 w-full max-w-sm shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 mb-3">
+              <span className="p-2 rounded-lg bg-red-400/10 text-red-400">
+                <AlertTriangle size={18} />
+              </span>
+              <h3 className="text-white font-semibold">{title}</h3>
+            </div>
+            <p className="text-sm text-slate-400 mb-6">{message}</p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={onCancel}
+                className="px-4 py-2 text-sm border border-surface-border text-slate-400 rounded-lg hover:text-white transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={onConfirm}
+                className="px-4 py-2 text-sm bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
