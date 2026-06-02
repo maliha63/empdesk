@@ -24,7 +24,7 @@ export default function EmployeePage() {
   const { id }   = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { employees, addDocument } = useEmployees();
+const { employees, addDocument, cache, cacheEmployee } = useEmployees();
 
   const [employee,   setEmployee]   = useState<Employee | null>(null);
   const [isLoading,  setIsLoading]  = useState(true);
@@ -33,24 +33,47 @@ export default function EmployeePage() {
   const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
   const [previewDoc, setPreviewDoc] = useState<UploadedDocument | null>(null);
 
-  useEffect(() => {
-    if (!id) return;
-    setIsLoading(true);
-    fetchEmployeeById(Number(id))
-      .then((data) => {
-        const ctx = employees.find((e) => e.id === data.id);
-        setEmployee({ ...data, documents: ctx?.documents ?? [] });
-        setAttendance(getMockAttendance(data.id));
-      })
-      .catch((e) => setError(e.message))
-      .finally(() => setIsLoading(false));
-  }, [id, employees]);
+ useEffect(() => {
+  if (!id) return;
+  const numericId = Number(id);
 
-  useEffect(() => {
-    if (!employee) return;
-    const ctx = employees.find((e) => e.id === employee.id);
-    if (ctx) setEmployee((prev) => prev ? { ...prev, documents: ctx.documents ?? [] } : prev);
-  }, [employees]);
+  // 1. Check local context (newly added employees)
+  const local = employees.find((e) => e.id === numericId);
+  if (local) {
+    setEmployee({ ...local, documents: local.documents ?? [] });
+    setAttendance(getMockAttendance(local.id));
+    setIsLoading(false);
+    return;
+  }
+
+  // 2. Check cache (previously fetched from API)
+  if (cache[numericId]) {
+    const cached = cache[numericId];
+    setEmployee({ ...cached, documents: cached.documents ?? [] });
+    setAttendance(getMockAttendance(cached.id));
+    setIsLoading(false);
+    return;
+  }
+
+  // 3. Fetch from API and cache result
+  setIsLoading(true);
+  fetchEmployeeById(numericId)
+    .then((data) => {
+      cacheEmployee(data);
+      setEmployee({ ...data, documents: data.documents ?? [] });
+      setAttendance(getMockAttendance(data.id));
+    })
+    .catch((e) => setError(e.message))
+    .finally(() => setIsLoading(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [id]);
+
+useEffect(() => {
+  if (!employee) return;
+  const ctx = employees.find((e) => e.id === employee.id);
+  if (ctx) setEmployee((prev) => prev ? { ...prev, documents: ctx.documents ?? [] } : prev);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [employees]);
 
   const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

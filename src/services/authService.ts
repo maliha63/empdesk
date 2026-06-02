@@ -17,8 +17,8 @@ interface DummyJsonAuthResponse {
   refreshToken: string;
 }
 
-export async function loginUser(credentials: LoginCredentials): Promise<AuthUser> {
-  const response = await fetch(`${API_BASE}/auth/login`, {
+async function attemptLogin(credentials: LoginCredentials): Promise<Response> {
+  return fetch(`${API_BASE}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -27,6 +27,16 @@ export async function loginUser(credentials: LoginCredentials): Promise<AuthUser
       expiresInMins: 60,
     }),
   });
+}
+
+export async function loginUser(credentials: LoginCredentials): Promise<AuthUser> {
+  let response = await attemptLogin(credentials);
+
+  // Retry once after 1s if rate limited or server error
+  if (!response.ok && response.status !== 400) {
+    await new Promise((r) => setTimeout(r, 1000));
+    response = await attemptLogin(credentials);
+  }
 
   if (!response.ok) {
     if (response.status === 400) {

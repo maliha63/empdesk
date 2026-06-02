@@ -3,21 +3,22 @@ import {
   useReducer,
   useCallback,
   useEffect,
+  useState,
   type ReactNode,
 } from "react";
 
 export type LeaveStatus = "pending" | "approved" | "rejected";
 
 export interface LeaveRequest {
-  id:         string;
+  id: string;
   employeeId: number;
-  name:       string;
-  image:      string;
-  reason:     string;
-  from:       string;
-  to:         string;
-  status:     LeaveStatus;
-  appliedAt:  string;
+  name: string;
+  image: string;
+  reason: string;
+  from: string;
+  to: string;
+  status: LeaveStatus;
+  appliedAt: string;
 }
 
 interface LeaveState {
@@ -25,9 +26,9 @@ interface LeaveState {
 }
 
 type LeaveAction =
-  | { type: "APPLY";   payload: LeaveRequest }
+  | { type: "APPLY"; payload: LeaveRequest }
   | { type: "APPROVE"; payload: string }
-  | { type: "REJECT";  payload: string }
+  | { type: "REJECT"; payload: string }
   | { type: "HYDRATE"; payload: LeaveRequest[] };
 
 const STORAGE_KEY = "emp_leave_requests";
@@ -41,13 +42,13 @@ function leaveReducer(state: LeaveState, action: LeaveAction): LeaveState {
     case "APPROVE":
       return {
         requests: state.requests.map((r) =>
-          r.id === action.payload ? { ...r, status: "approved" } : r
+          r.id === action.payload ? { ...r, status: "approved" } : r,
         ),
       };
     case "REJECT":
       return {
         requests: state.requests.map((r) =>
-          r.id === action.payload ? { ...r, status: "rejected" } : r
+          r.id === action.payload ? { ...r, status: "rejected" } : r,
         ),
       };
     default:
@@ -56,28 +57,31 @@ function leaveReducer(state: LeaveState, action: LeaveAction): LeaveState {
 }
 
 interface LeaveContextValue extends LeaveState {
-  applyLeave:   (req: Omit<LeaveRequest, "id" | "status" | "appliedAt">) => void;
+  applyLeave: (req: Omit<LeaveRequest, "id" | "status" | "appliedAt">) => void;
   approveLeave: (id: string) => void;
-  rejectLeave:  (id: string) => void;
+  rejectLeave: (id: string) => void;
 }
 
 export const LeaveContext = createContext<LeaveContextValue | null>(null);
 
 export function LeaveProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(leaveReducer, { requests: [] });
+  const [state, dispatch]   = useReducer(leaveReducer, { requests: [] });
+  const [hydrated, setHydrated] = useState(false);
 
-  // Rehydrate from localStorage
+  // Rehydrate ONCE on mount
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) dispatch({ type: "HYDRATE", payload: JSON.parse(raw) });
     } catch { /* ignore */ }
+    setHydrated(true);
   }, []);
 
-  // Persist on every change
+  // Persist ONLY after hydration is done
   useEffect(() => {
+    if (!hydrated) return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state.requests));
-  }, [state.requests]);
+  }, [state.requests, hydrated]);
 
   const applyLeave = useCallback(
     (req: Omit<LeaveRequest, "id" | "status" | "appliedAt">) => {

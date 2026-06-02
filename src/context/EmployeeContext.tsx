@@ -10,21 +10,24 @@ import { fetchAllEmployees } from "../services/employeeService";
 
 interface EmployeeState {
   employees: Employee[];
+  cache:     Record<number, Employee>;
   isLoading: boolean;
   error:     string | null;
 }
 
 type EmployeeAction =
   | { type: "FETCH_START" }
-  | { type: "FETCH_SUCCESS"; payload: Employee[] }
-  | { type: "FETCH_ERROR";   payload: string }
-  | { type: "ADD_EMPLOYEE";  payload: Employee }
+  | { type: "FETCH_SUCCESS";   payload: Employee[] }
+  | { type: "FETCH_ERROR";     payload: string }
+  | { type: "ADD_EMPLOYEE";    payload: Employee }
   | { type: "UPDATE_EMPLOYEE"; payload: Employee }
   | { type: "DELETE_EMPLOYEE"; payload: number }
-  | { type: "ADD_DOCUMENT"; payload: { employeeId: number; doc: UploadedDocument } };
+  | { type: "ADD_DOCUMENT";    payload: { employeeId: number; doc: UploadedDocument } }
+  | { type: "CACHE_EMPLOYEE";  payload: Employee };
 
 const initialState: EmployeeState = {
   employees: [],
+  cache:     {},
   isLoading: false,
   error:     null,
 };
@@ -34,7 +37,7 @@ function employeeReducer(state: EmployeeState, action: EmployeeAction): Employee
     case "FETCH_START":
       return { ...state, isLoading: true, error: null };
     case "FETCH_SUCCESS":
-      return { employees: action.payload, isLoading: false, error: null };
+      return { ...state, employees: action.payload, isLoading: false, error: null };
     case "FETCH_ERROR":
       return { ...state, isLoading: false, error: action.payload };
     case "ADD_EMPLOYEE":
@@ -60,6 +63,11 @@ function employeeReducer(state: EmployeeState, action: EmployeeAction): Employee
             : e
         ),
       };
+    case "CACHE_EMPLOYEE":
+      return {
+        ...state,
+        cache: { ...state.cache, [action.payload.id]: action.payload },
+      };
     default:
       return state;
   }
@@ -70,6 +78,7 @@ interface EmployeeContextValue extends EmployeeState {
   updateEmployee: (e: Employee) => void;
   deleteEmployee: (id: number) => void;
   addDocument:    (employeeId: number, doc: UploadedDocument) => void;
+  cacheEmployee:  (e: Employee) => void;
   refetch:        () => void;
 }
 
@@ -91,11 +100,16 @@ export function EmployeeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => { loadEmployees(); }, [loadEmployees]);
 
-  const addEmployee    = useCallback((e: Employee) => dispatch({ type: "ADD_EMPLOYEE",    payload: e }),    []);
-  const updateEmployee = useCallback((e: Employee) => dispatch({ type: "UPDATE_EMPLOYEE", payload: e }),    []);
-  const deleteEmployee = useCallback((id: number)  => dispatch({ type: "DELETE_EMPLOYEE", payload: id }),   []);
+  const addEmployee    = useCallback((e: Employee) =>
+    dispatch({ type: "ADD_EMPLOYEE",    payload: e }), []);
+  const updateEmployee = useCallback((e: Employee) =>
+    dispatch({ type: "UPDATE_EMPLOYEE", payload: e }), []);
+  const deleteEmployee = useCallback((id: number) =>
+    dispatch({ type: "DELETE_EMPLOYEE", payload: id }), []);
   const addDocument    = useCallback((employeeId: number, doc: UploadedDocument) =>
     dispatch({ type: "ADD_DOCUMENT", payload: { employeeId, doc } }), []);
+  const cacheEmployee  = useCallback((e: Employee) =>
+    dispatch({ type: "CACHE_EMPLOYEE",  payload: e }), []);
 
   return (
     <EmployeeContext.Provider value={{
@@ -104,6 +118,7 @@ export function EmployeeProvider({ children }: { children: ReactNode }) {
       updateEmployee,
       deleteEmployee,
       addDocument,
+      cacheEmployee,
       refetch: loadEmployees,
     }}>
       {children}

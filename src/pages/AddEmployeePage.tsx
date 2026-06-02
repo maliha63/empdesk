@@ -1,40 +1,47 @@
 import { useNavigate } from "react-router-dom";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { useEmployees } from "../hooks/useEmployees";
-import { DEPARTMENTS }  from "../constants";
+import { DEPARTMENTS } from "../constants";
 import type { Employee } from "../types";
 import { useState, useCallback } from "react";
-import { PageHeader }   from "../components/PageHeader";
-import { Dropdown }     from "../components/Dropdown";
+import { PageHeader } from "../components/PageHeader";
+import { Dropdown } from "../components/Dropdown";
 import { Plus, X, UserCircle } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 
 interface FormValues {
-  firstName:  string;
-  lastName:   string;
-  email:      string;
-  phone:      string;
-  age:        number;
-  gender:     string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  age: number;
+  gender: string;
   department: string;
-  title:      string;
-  company:    string;
-  city:       string;
-  country:    string;
-  skills:     { value: string }[];
+  title: string;
+  company: string;
+  city: string;
+  country: string;
+  skills: { value: string }[];
 }
 
 const GENDER_OPTIONS = [
-  { label: "Male",   value: "male"   },
+  { label: "Male", value: "male" },
   { label: "Female", value: "female" },
-  { label: "Other",  value: "other"  },
+  { label: "Other", value: "other" },
 ];
 
 export default function AddEmployeePage() {
   const { addEmployee } = useEmployees();
-  const navigate        = useNavigate();
+  const navigate = useNavigate();
   const [preview, setPreview] = useState<string | null>(null);
 
-  const { register, handleSubmit, control, formState: { errors } } = useForm<FormValues>({
+  const {
+    register,
+    handleSubmit,
+    control,
+    getValues,
+    formState: { errors },
+  } = useForm<FormValues>({
     defaultValues: { skills: [{ value: "" }] },
   });
 
@@ -48,35 +55,47 @@ export default function AddEmployeePage() {
     reader.readAsDataURL(file);
   }, []);
 
-  function onSubmit(data: FormValues) {
-    const newEmployee: Employee = {
-      id:        Date.now(),
-      firstName: data.firstName,
-      lastName:  data.lastName,
-      email:     data.email,
-      phone:     data.phone,
-      age:       Number(data.age),
-      gender:    data.gender,
-      username:  `${data.firstName.toLowerCase()}${data.lastName.toLowerCase()}`,
-      image:     preview ?? `https://dummyjson.com/icon/user/128`,
-      address:   { address: "", city: data.city, state: "", country: data.country },
-      company:   { name: data.company, department: data.department, title: data.title },
-    };
-    addEmployee(newEmployee);
-    navigate("/employees");
-  }
+ function onSubmit(data: FormValues) {
+  const newEmployee: Employee = {
+    id:        Date.now(),
+    firstName: data.firstName,
+    lastName:  data.lastName,
+    email:     data.email,
+    phone:     data.phone,
+    age:       Number(data.age),
+    gender:    data.gender,
+    username:  `${data.firstName.toLowerCase()}${data.lastName.toLowerCase()}`,
+    image:     preview ?? `https://dummyjson.com/icon/user/128`,
+    address:   { address: "", city: data.city, state: "", country: data.country },
+    company:   { name: data.company, department: data.department, title: data.title },
+  };
+  addEmployee(newEmployee);
+  toast.success(`${data.firstName} ${data.lastName} added.`);
+  setTimeout(() => navigate("/employees"), 1000);
+}
 
-  const deptOptions = DEPARTMENTS.filter((d) => d !== "All").map((d) => ({ label: d, value: d }));
+  const deptOptions = DEPARTMENTS.filter((d) => d !== "All").map((d) => ({
+    label: d,
+    value: d,
+  }));
 
   return (
+<>
+    <Toaster
+      position="top-right"
+      toastOptions={{
+        style: { background: "#171c27", color: "#e2e8f0", border: "1px solid #232a3a", fontSize: "13px" },
+      }}
+    />
+    
     <div className="max-w-2xl space-y-6">
       <PageHeader
         title="Add Employee"
         description="Fill in the details below"
         crumbs={[
-          { label: "Dashboard",  to: "/dashboard" },
-          { label: "Employees",  to: "/employees"  },
-          { label: "Add"                            },
+          { label: "Dashboard", to: "/dashboard" },
+          { label: "Employees", to: "/employees" },
+          { label: "Add" },
         ]}
       />
 
@@ -84,35 +103,43 @@ export default function AddEmployeePage() {
         {/* Image */}
         <div className="bg-surface-card border border-surface-border rounded-xl p-5 flex items-center gap-5">
           <div className="w-16 h-16 rounded-xl bg-surface border border-surface-border overflow-hidden flex items-center justify-center text-slate-600">
-            {preview
-              ? <img src={preview} className="w-full h-full object-cover" />
-              : <UserCircle size={28} />
-            }
+            {preview ? (
+              <img src={preview} className="w-full h-full object-cover" />
+            ) : (
+              <UserCircle size={28} />
+            )}
           </div>
           <div>
             <p className="text-sm text-white font-medium">Profile Photo</p>
             <label className="mt-1 inline-block text-xs text-brand-500 cursor-pointer hover:underline">
               Upload image
-              <input type="file" accept="image/*" className="hidden" onChange={handleImage} />
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImage}
+              />
             </label>
           </div>
         </div>
 
         {/* Fields */}
         <div className="bg-surface-card border border-surface-border rounded-xl p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {([
-            { name: "firstName" as const, label: "First Name", type: "text"   },
-            { name: "lastName"  as const, label: "Last Name",  type: "text"   },
-            { name: "email"     as const, label: "Email",      type: "email"  },
-            { name: "phone"     as const, label: "Phone",      type: "text"   },
-            { name: "age"       as const, label: "Age",        type: "number" },
-            { name: "city"      as const, label: "City",       type: "text"   },
-            { name: "country"   as const, label: "Country",    type: "text"   },
-            { name: "company"   as const, label: "Company",    type: "text"   },
-            { name: "title"     as const, label: "Job Title",  type: "text"   },
-          ]).map((f) => (
+          {[
+            { name: "firstName" as const, label: "First Name", type: "text" },
+            { name: "lastName" as const, label: "Last Name", type: "text" },
+            { name: "email" as const, label: "Email", type: "email" },
+            { name: "phone" as const, label: "Phone", type: "text" },
+            { name: "age" as const, label: "Age", type: "number" },
+            { name: "city" as const, label: "City", type: "text" },
+            { name: "country" as const, label: "Country", type: "text" },
+            { name: "company" as const, label: "Company", type: "text" },
+            { name: "title" as const, label: "Job Title", type: "text" },
+          ].map((f) => (
             <div key={f.name}>
-              <label className="block text-xs font-medium text-slate-400 mb-1.5">{f.label}</label>
+              <label className="block text-xs font-medium text-slate-400 mb-1.5">
+                {f.label}
+              </label>
               <input
                 type={f.type}
                 className={`w-full bg-surface border rounded-lg px-3 py-2 text-sm text-white
@@ -120,13 +147,19 @@ export default function AddEmployeePage() {
                   ${errors[f.name] ? "border-red-500" : "border-surface-border"}`}
                 {...register(f.name, { required: `${f.label} is required` })}
               />
-              {errors[f.name] && <p className="mt-1 text-xs text-red-400">{errors[f.name]?.message}</p>}
+              {errors[f.name] && (
+                <p className="mt-1 text-xs text-red-400">
+                  {errors[f.name]?.message}
+                </p>
+              )}
             </div>
           ))}
 
           {/* Gender — custom dropdown */}
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1.5">Gender</label>
+            <label className="block text-xs font-medium text-slate-400 mb-1.5">
+              Gender
+            </label>
             <Controller
               name="gender"
               control={control}
@@ -144,7 +177,9 @@ export default function AddEmployeePage() {
 
           {/* Department — custom dropdown */}
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1.5">Department</label>
+            <label className="block text-xs font-medium text-slate-400 mb-1.5">
+              Department
+            </label>
             <Controller
               name="department"
               control={control}
@@ -167,7 +202,12 @@ export default function AddEmployeePage() {
             <p className="text-sm font-medium text-white">Skills</p>
             <button
               type="button"
-              onClick={() => append({ value: "" })}
+              onClick={() => {
+                const currentSkills = getValues("skills");
+                const last = currentSkills[currentSkills.length - 1];
+                if (last && !last.value?.trim()) return;
+                append({ value: "" });
+              }}
               className="flex items-center gap-1 text-xs text-brand-500 hover:text-brand-600 transition-colors"
             >
               <Plus size={12} /> Add skill
@@ -196,16 +236,22 @@ export default function AddEmployeePage() {
         </div>
 
         <div className="flex gap-3">
-          <button type="button" onClick={() => navigate(-1)}
-            className="px-5 py-2.5 text-sm border border-surface-border text-slate-400 rounded-lg hover:text-white transition-colors">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="px-5 py-2.5 text-sm border border-surface-border text-slate-400 rounded-lg hover:text-white transition-colors"
+          >
             Cancel
           </button>
-          <button type="submit"
-            className="px-5 py-2.5 text-sm bg-brand-500 hover:bg-brand-600 text-white rounded-lg transition-colors">
+          <button
+            type="submit"
+            className="px-5 py-2.5 text-sm bg-brand-500 hover:bg-brand-600 text-white rounded-lg transition-colors"
+          >
             Add Employee
           </button>
         </div>
       </form>
     </div>
+     </>
   );
 }
