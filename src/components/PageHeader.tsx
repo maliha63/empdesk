@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -13,36 +14,48 @@ interface PageHeaderProps {
   action?:      ReactNode;
 }
 
-import type { ReactNode } from "react";
-
 export function PageHeader({ title, description, crumbs, action }: PageHeaderProps) {
   const navigate = useNavigate();
+
   return (
-    <div className="flex items-start justify-between gap-4 flex-wrap">
+    <div className="flex items-start justify-between gap-4 flex-wrap mb-6">
       <div>
         {crumbs && crumbs.length > 0 && (
-          <div className="flex items-center gap-1 mb-1">
+          <nav className="flex items-center gap-1 mb-1.5" aria-label="Breadcrumb">
             {crumbs.map((c, i) => (
               <span key={i} className="flex items-center gap-1">
-                {i > 0 && <ChevronRight size={12} className="text-slate-600" />}
+                {i > 0 && (
+                  <ChevronRight size={12} className="text-gray-300 dark:text-[#2a3a54]" />
+                )}
                 {c.to ? (
                   <button
                     onClick={() => navigate(c.to!)}
-                    className="text-xs text-slate-500 hover:text-white transition-colors"
+                    className="text-[11px] font-medium text-gray-400 dark:text-[#4b5e7a] hover:text-brand-500 dark:hover:text-brand-400 transition-colors"
                   >
                     {c.label}
                   </button>
                 ) : (
-                  <span className="text-xs text-slate-400">{c.label}</span>
+                  <span className="text-[11px] font-medium text-gray-500 dark:text-gray-400">
+                    {c.label}
+                  </span>
                 )}
               </span>
             ))}
-          </div>
+          </nav>
         )}
-        <h1 className="text-xl font-semibold text-white">{title}</h1>
-        {description && <p className="text-sm text-slate-400 mt-0.5">{description}</p>}
+
+        <h1 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight leading-tight">
+          {title}
+        </h1>
+
+        {description && (
+          <p className="text-sm text-gray-400 dark:text-[#4b5e7a] mt-0.5 font-normal">
+            {description}
+          </p>
+        )}
       </div>
-      {action && <div>{action}</div>}
+
+      {action && <div className="mt-0.5 shrink-0">{action}</div>}
     </div>
   );
 }

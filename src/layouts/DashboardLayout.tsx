@@ -7,133 +7,198 @@ import {
   Users,
   UserCircle,
   LogOut,
-  Menu,
   X,
+  Menu,
 } from "lucide-react";
 import type { ReactNode } from "react";
+import ThemeToggle from "../components/ThemeToggle";
 
 interface NavItem {
   label: string;
-  to:    string;
-  icon:  ReactNode;
+  to: string;
+  icon: ReactNode;
 }
 
 const managerNav: NavItem[] = [
-  { label: "Dashboard",  to: "/dashboard", icon: <LayoutDashboard size={16} /> },
-  { label: "Employees",  to: "/employees", icon: <Users size={16} />           },
-  { label: "My Profile", to: "/profile",   icon: <UserCircle size={16} />      },
+  { label: "Dashboard", to: "/dashboard", icon: <LayoutDashboard size={16} /> },
+  { label: "Employees", to: "/employees", icon: <Users size={16} /> },
+  { label: "My Profile", to: "/profile", icon: <UserCircle size={16} /> },
 ];
-
 const employeeNav: NavItem[] = [
-  { label: "My Profile", to: "/profile",   icon: <UserCircle size={16} />      },
-  { label: "Employees",  to: "/employees", icon: <Users size={16} />           },
+  { label: "My Profile", to: "/profile", icon: <UserCircle size={16} /> },
+  { label: "Employees", to: "/employees", icon: <Users size={16} /> },
 ];
 
 export function DashboardLayout({ children }: { children: ReactNode }) {
-  const { user, logout }  = useAuth();
-  const navigate          = useNavigate();
-  const location          = useLocation();
-  const navItems          = user?.role === "manager" ? managerNav : employeeNav;
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const navItems = user?.role === "manager" ? managerNav : employeeNav;
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     setSidebarOpen(false);
   }, [location.pathname]);
-
   function handleLogout() {
     logout();
     navigate("/login");
   }
 
-  const SidebarContent = () => (
-    <div className="flex flex-col h-full bg-surface-card">
-      {/* Logo */}
-      <div className="px-6 py-5 border-b border-surface-border flex items-center justify-between">
-        <span className="text-brand-500 font-bold text-lg tracking-tight font-mono">
-          emp<span className="text-white">desk</span>
-        </span>
-        <button
-          onClick={() => setSidebarOpen(false)}
-          className="md:hidden text-slate-400 hover:text-white transition-colors"
-        >
-          <X size={18} />
-        </button>
-      </div>
-
-      {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-1">
-        {navItems.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                isActive
-                  ? "bg-brand-500/15 text-brand-500"
-                  : "text-slate-400 hover:text-white hover:bg-white/5"
-              }`
-            }
-          >
-            {item.icon}
-            {item.label}
-          </NavLink>
-        ))}
-      </nav>
-
-      {/* User */}
-      <div className="px-4 py-4 border-t border-surface-border">
-        <div className="flex items-center gap-3 mb-3">
-          <img
-            src={user?.image}
-            alt={user?.firstName}
-            className="w-8 h-8 rounded-full object-cover ring-2 ring-surface-border"
-          />
-          <div className="min-w-0">
-            <p className="text-sm font-medium text-white truncate">
-              {user?.firstName} {user?.lastName}
-            </p>
-            <p className="text-xs text-slate-500 capitalize">{user?.role}</p>
+  function SidebarContent() {
+    return (
+      <div className="flex flex-col h-full">
+        {/* Logo */}
+        <div className="h-[60px] px-4 flex items-center justify-between border-b border-gray-100 dark:border-[#1f2a3d] shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-brand-500 flex items-center justify-center shadow-[0_0_12px_rgb(59_130_246/0.4)] shrink-0">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <rect
+                  x="1"
+                  y="1"
+                  width="5"
+                  height="5"
+                  rx="1.5"
+                  fill="white"
+                  fillOpacity="0.9"
+                />
+                <rect
+                  x="8"
+                  y="1"
+                  width="5"
+                  height="5"
+                  rx="1.5"
+                  fill="white"
+                  fillOpacity="0.6"
+                />
+                <rect
+                  x="1"
+                  y="8"
+                  width="5"
+                  height="5"
+                  rx="1.5"
+                  fill="white"
+                  fillOpacity="0.6"
+                />
+                <rect
+                  x="8"
+                  y="8"
+                  width="5"
+                  height="5"
+                  rx="1.5"
+                  fill="white"
+                  fillOpacity="0.9"
+                />
+              </svg>
+            </div>
+            <span className="text-[15px] font-bold tracking-tight text-gray-900 dark:text-white font-mono">
+              emp<span className="text-brand-500">desk</span>
+            </span>
           </div>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="md:hidden text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors p-1 rounded-lg"
+          >
+            <X size={16} />
+          </button>
         </div>
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-2 w-full text-left text-xs text-slate-500 hover:text-red-400 transition-colors px-1"
-        >
-          <LogOut size={12} />
-          Sign out
-        </button>
+
+        {/* Nav */}
+        <nav className="flex-1 px-3 pt-5 pb-3 overflow-y-auto">
+          <p className="text-[10px] font-semibold text-gray-300 dark:text-[#2a3a54] uppercase tracking-widest px-2 mb-3">
+            Navigation
+          </p>
+          <div className="space-y-0.5">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) =>
+                  `group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-150 ${
+                    isActive
+                      ? "bg-brand-500 text-white shadow-[0_2px_8px_rgb(59_130_246/0.3)]"
+                      : "text-gray-500 dark:text-[#4b5e7a] hover:bg-gray-100 dark:hover:bg-white/[0.05] hover:text-gray-900 dark:hover:text-white"
+                  }`
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    <span
+                      className={
+                        isActive
+                          ? "text-white"
+                          : "text-gray-400 dark:text-[#4b5e7a] group-hover:text-gray-600 dark:group-hover:text-white transition-colors"
+                      }
+                    >
+                      {item.icon}
+                    </span>
+                    {item.label}
+                  </>
+                )}
+              </NavLink>
+            ))}
+          </div>
+        </nav>
+
+        {/* User footer — only in sidebar, NOT in topbar */}
+        <div className="px-3 py-4 border-t border-gray-100 dark:border-[#1f2a3d] shrink-0">
+          <div className="flex items-center gap-3 px-2 mb-3">
+            <div className="relative shrink-0">
+              <img
+                src={user?.image}
+                alt={user?.firstName}
+                className="w-8 h-8 rounded-full object-cover ring-2 ring-gray-100 dark:ring-[#1f2a3d]"
+              />
+              <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-white dark:border-[#111827]" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-[13px] font-semibold text-gray-900 dark:text-white truncate leading-tight">
+                {user?.firstName} {user?.lastName}
+              </p>
+              <p className="text-[11px] text-gray-400 dark:text-[#4b5e7a] capitalize">
+                {user?.role}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 w-full px-3 py-2 text-[12px] font-medium
+              text-gray-400 dark:text-[#4b5e7a]
+              hover:text-red-500 dark:hover:text-red-400
+              transition-colors rounded-xl
+              hover:bg-red-50 dark:hover:bg-red-500/10"
+          >
+            <LogOut size={13} />
+            Sign out
+          </button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-surface flex">
-
-      {/* Desktop sidebar - Original styling */}
-      <aside className="hidden md:flex w-60 bg-surface-card border-r border-surface-border flex-col shrink-0">
+    <div className="min-h-screen bg-[#f1f5f9] dark:bg-[#0b0f1a] flex">
+      {/* Desktop sidebar */}
+      <aside className="hidden md:flex w-56 flex-col shrink-0 bg-white dark:bg-[#111827] border-r border-gray-100 dark:border-[#1f2a3d]">
         <SidebarContent />
       </aside>
 
-      {/* Mobile Sidebar */}
+      {/* Mobile overlay + drawer */}
       <AnimatePresence>
         {sidebarOpen && (
           <>
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40 bg-black/80 md:hidden"
+              className="fixed inset-0 z-40 bg-black/40 backdrop-blur-[2px] md:hidden"
               onClick={() => setSidebarOpen(false)}
             />
-
-            {/* Mobile Drawer - Force solid background only on mobile */}
             <motion.aside
-              initial={{ x: -240 }}
+              initial={{ x: -224 }}
               animate={{ x: 0 }}
-              exit={{ x: -240 }}
-              transition={{ type: "tween", duration: 0.25 }}
-              className="fixed inset-y-0 left-0 z-50 w-60 bg-[#0f1620] border-r border-[#232a3a] flex flex-col md:hidden shadow-2xl"
+              exit={{ x: -224 }}
+              transition={{ type: "tween", duration: 0.2 }}
+              className="fixed inset-y-0 left-0 z-50 w-56 bg-white dark:bg-[#111827] border-r border-gray-100 dark:border-[#1f2a3d] flex flex-col md:hidden shadow-2xl"
             >
               <SidebarContent />
             </motion.aside>
@@ -141,26 +206,25 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
         )}
       </AnimatePresence>
 
-      {/* Main content */}
+      {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
-
-        {/* Mobile topbar */}
-        <header className="md:hidden flex items-center gap-3 px-4 py-3 bg-surface-card border-b border-surface-border shrink-0">
+        {/* Topbar — ThemeToggle only, NO duplicate user */}
+        <header className="h-[60px] shrink-0 bg-white dark:bg-[#111827] border-b border-gray-100 dark:border-[#1f2a3d] px-4 md:px-6 flex items-center justify-between sticky top-0 z-30">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="text-slate-400 hover:text-white transition-colors"
+            className="md:hidden text-gray-500 dark:text-gray-400 p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
           >
-            <Menu size={20} />
+            <Menu size={18} />
           </button>
-          <span className="text-brand-500 font-bold text-base tracking-tight font-mono">
-            emp<span className="text-white">desk</span>
-          </span>
+          {/* Empty left side on desktop */}
+          <div className="hidden md:block" />
+          {/* Right side: only ThemeToggle */}
+          <ThemeToggle />
         </header>
 
-        <main className="flex-1 overflow-auto">
-          <div className="p-4 md:p-8">
-            {children}
-          </div>
+        {/* Page content */}
+        <main className="flex-1 overflow-auto p-4 md:p-7 page-enter">
+          {children}
         </main>
       </div>
     </div>

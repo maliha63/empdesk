@@ -24,7 +24,7 @@ export default function EmployeePage() {
   const { id }   = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-const { employees, addDocument, cache, cacheEmployee } = useEmployees();
+  const { employees, addDocument } = useEmployees();
 
   const [employee,   setEmployee]   = useState<Employee | null>(null);
   const [isLoading,  setIsLoading]  = useState(true);
@@ -33,47 +33,24 @@ const { employees, addDocument, cache, cacheEmployee } = useEmployees();
   const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
   const [previewDoc, setPreviewDoc] = useState<UploadedDocument | null>(null);
 
- useEffect(() => {
-  if (!id) return;
-  const numericId = Number(id);
+  useEffect(() => {
+    if (!id) return;
+    setIsLoading(true);
+    fetchEmployeeById(Number(id))
+      .then((data) => {
+        const ctx = employees.find((e) => e.id === data.id);
+        setEmployee({ ...data, documents: ctx?.documents ?? [] });
+        setAttendance(getMockAttendance(data.id));
+      })
+      .catch((e) => setError(e.message))
+      .finally(() => setIsLoading(false));
+  }, [id, employees]);
 
-  // 1. Check local context (newly added employees)
-  const local = employees.find((e) => e.id === numericId);
-  if (local) {
-    setEmployee({ ...local, documents: local.documents ?? [] });
-    setAttendance(getMockAttendance(local.id));
-    setIsLoading(false);
-    return;
-  }
-
-  // 2. Check cache (previously fetched from API)
-  if (cache[numericId]) {
-    const cached = cache[numericId];
-    setEmployee({ ...cached, documents: cached.documents ?? [] });
-    setAttendance(getMockAttendance(cached.id));
-    setIsLoading(false);
-    return;
-  }
-
-  // 3. Fetch from API and cache result
-  setIsLoading(true);
-  fetchEmployeeById(numericId)
-    .then((data) => {
-      cacheEmployee(data);
-      setEmployee({ ...data, documents: data.documents ?? [] });
-      setAttendance(getMockAttendance(data.id));
-    })
-    .catch((e) => setError(e.message))
-    .finally(() => setIsLoading(false));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [id]);
-
-useEffect(() => {
-  if (!employee) return;
-  const ctx = employees.find((e) => e.id === employee.id);
-  if (ctx) setEmployee((prev) => prev ? { ...prev, documents: ctx.documents ?? [] } : prev);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [employees]);
+  useEffect(() => {
+    if (!employee) return;
+    const ctx = employees.find((e) => e.id === employee.id);
+    if (ctx) setEmployee((prev) => prev ? { ...prev, documents: ctx.documents ?? [] } : prev);
+  }, [employees]);
 
   const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -201,15 +178,15 @@ useEffect(() => {
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-surface-card border border-surface-border rounded-xl p-6"
+          className="bg-white dark:bg-[#111827] border border-gray-100 dark:border-[#1f2a3d] rounded-2xl p-6 shadow-[0_1px_3px_rgb(0,0,0,0.06)] dark:shadow-[0_1px_3px_rgb(0,0,0,0.4)]"
         >
           <div className="flex items-start gap-5">
-            <img src={employee.image} alt={employee.firstName} className="w-16 h-16 rounded-xl object-cover ring-2 ring-surface-border" />
+            <img src={employee.image} alt={employee.firstName} className="w-16 h-16 rounded-xl object-cover ring-2 ring-gray-100 dark:ring-[#1f2a3d]" />
             <div className="flex-1">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h1 className="text-lg font-semibold text-white">{employee.firstName} {employee.lastName}</h1>
-                  <p className="text-slate-400 text-sm mt-0.5">{employee.company?.title}</p>
+                  <h1 className="text-lg font-semibold text-gray-900 dark:text-white">{employee.firstName} {employee.lastName}</h1>
+                  <p className="text-gray-500 dark:text-[#4b5e7a] text-sm mt-0.5">{employee.company?.title}</p>
                   <div className="flex gap-2 mt-2 flex-wrap">
                     <Badge variant="blue">{employee.company?.department}</Badge>
                     <Badge variant={employee.gender === "female" ? "purple" : "amber"}>{employee.gender}</Badge>
@@ -218,9 +195,13 @@ useEffect(() => {
                 {user?.role === "manager" && (
                   <button
                     onClick={() => navigate(`/employees/${employee.id}/edit`)}
-                    className="flex items-center gap-2 text-sm bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 rounded-lg transition-colors"
+                    className="flex items-center gap-2 text-[13px] font-semibold
+                      bg-brand-500 hover:bg-brand-600 active:bg-brand-700
+                      text-white px-4 py-2 rounded-xl transition-all duration-150
+                      shadow-[0_2px_8px_rgb(59_130_246/0.35)] hover:shadow-[0_4px_12px_rgb(59_130_246/0.4)]
+                      hover:-translate-y-[1px] shrink-0"
                   >
-                    <Pencil size={13} /> Edit
+                    <Pencil size={13} /> Edit Employee
                   </button>
                 )}
               </div>
@@ -234,8 +215,8 @@ useEffect(() => {
                   { label: "Gender",   value: employee.gender },
                 ].map((f) => (
                   <div key={f.label}>
-                    <p className="text-xs text-slate-500">{f.label}</p>
-                    <p className="text-slate-200 mt-0.5 truncate">{f.value}</p>
+                    <p className="text-[11px] font-medium text-gray-400 dark:text-[#4b5e7a] uppercase tracking-wide">{f.label}</p>
+                    <p className="text-gray-800 dark:text-gray-200 mt-0.5 truncate text-[13px]">{f.value}</p>
                   </div>
                 ))}
               </div>
