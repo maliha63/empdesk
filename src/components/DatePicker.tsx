@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from "react";
-import { ChevronDown, ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
+import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
 
 interface DatePickerProps {
-  value:      string;          // "YYYY-MM-DD"
-  onChange:   (val: string) => void;
+  value:        string;
+  onChange:     (val: string) => void;
   placeholder?: string;
   className?:   string;
   hasError?:    boolean;
@@ -13,7 +13,7 @@ const MONTHS = [
   "January","February","March","April","May","June",
   "July","August","September","October","November","December",
 ];
-const DAYS   = ["Su","Mo","Tu","We","Th","Fr","Sa"];
+const DAYS = ["Su","Mo","Tu","We","Th","Fr","Sa"];
 
 function parseDate(s: string): Date | null {
   if (!s) return null;
@@ -40,7 +40,6 @@ export function DatePicker({
   const [viewMonth, setMonth] = useState(today.getMonth());
   const ref                   = useRef<HTMLDivElement>(null);
 
-  // Sync calendar view to current value when opening
   useEffect(() => {
     if (open) {
       const d = parseDate(value);
@@ -48,7 +47,6 @@ export function DatePicker({
     }
   }, [open]);
 
-  // Close on outside click
   useEffect(() => {
     function handle(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
@@ -57,7 +55,6 @@ export function DatePicker({
     return () => document.removeEventListener("mousedown", handle);
   }, []);
 
-  // Close on Escape
   useEffect(() => {
     function handle(e: KeyboardEvent) { if (e.key === "Escape") setOpen(false); }
     document.addEventListener("keydown", handle);
@@ -73,20 +70,18 @@ export function DatePicker({
     else setMonth((m) => m + 1);
   }
 
-  // Build calendar grid
   function buildGrid() {
-    const first  = new Date(viewYear, viewMonth, 1).getDay(); // 0=Sun
+    const first  = new Date(viewYear, viewMonth, 1).getDay();
     const daysIn = new Date(viewYear, viewMonth + 1, 0).getDate();
     const cells: (number | null)[] = Array(first).fill(null);
     for (let d = 1; d <= daysIn; d++) cells.push(d);
-    // pad to full rows
     while (cells.length % 7 !== 0) cells.push(null);
     return cells;
   }
 
   function selectDay(day: number) {
-    const mm  = String(viewMonth + 1).padStart(2, "0");
-    const dd  = String(day).padStart(2, "0");
+    const mm = String(viewMonth + 1).padStart(2, "0");
+    const dd = String(day).padStart(2, "0");
     onChange(`${viewYear}-${mm}-${dd}`);
     setOpen(false);
   }
@@ -111,26 +106,32 @@ export function DatePicker({
         type="button"
         onClick={() => setOpen((v) => !v)}
         className={`w-full flex items-center justify-between
-          bg-[#0f1117] border rounded-lg px-3 py-2 text-sm outline-none transition-colors
+          bg-[#f8fafc] dark:bg-[#0f1117]
+          border rounded-lg px-3 py-2 text-sm outline-none transition-colors
           ${open
             ? "border-brand-500"
             : hasError
-              ? "border-red-500"
-              : "border-[#232a3a] hover:border-[#2e3749]"
+              ? "border-red-400 dark:border-red-500"
+              : "border-[#e2e8f0] dark:border-[#232a3a] hover:border-[#cbd5e1] dark:hover:border-[#2e3749]"
           }
-          ${!value ? "text-slate-500" : "text-slate-200"}`}
+          ${!value
+            ? "text-gray-400 dark:text-slate-500"
+            : "text-gray-900 dark:text-slate-200"
+          }`}
       >
         <span>{value ? formatDisplay(value) : placeholder}</span>
         <CalendarDays
           size={14}
-          className={`shrink-0 ml-2 transition-colors ${open ? "text-brand-500" : "text-slate-400"}`}
+          className={`shrink-0 ml-2 transition-colors ${open ? "text-brand-500" : "text-gray-400 dark:text-slate-400"}`}
         />
       </button>
 
       {/* Calendar popover */}
       {open && (
         <div className="absolute left-0 top-full mt-1.5 z-50 w-64
-          bg-[#171c27] border border-[#232a3a] rounded-xl shadow-2xl shadow-black/60 p-3">
+          bg-white dark:bg-[#171c27]
+          border border-[#e2e8f0] dark:border-[#232a3a]
+          rounded-xl shadow-xl p-3">
 
           {/* Month / year header */}
           <div className="flex items-center justify-between mb-3">
@@ -138,20 +139,24 @@ export function DatePicker({
               type="button"
               onClick={prevMonth}
               className="w-7 h-7 flex items-center justify-center rounded-lg
-                text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
+                text-gray-400 dark:text-slate-400
+                hover:text-gray-700 dark:hover:text-white
+                hover:bg-gray-100 dark:hover:bg-white/6
+                transition-colors"
             >
               <ChevronLeft size={14} />
             </button>
-
-            <span className="text-sm font-medium text-white select-none">
+            <span className="text-sm font-medium text-gray-900 dark:text-white select-none">
               {MONTHS[viewMonth]} {viewYear}
             </span>
-
             <button
               type="button"
               onClick={nextMonth}
               className="w-7 h-7 flex items-center justify-center rounded-lg
-                text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
+                text-gray-400 dark:text-slate-400
+                hover:text-gray-700 dark:hover:text-white
+                hover:bg-gray-100 dark:hover:bg-white/6
+                transition-colors"
             >
               <ChevronRight size={14} />
             </button>
@@ -160,7 +165,7 @@ export function DatePicker({
           {/* Day-of-week headers */}
           <div className="grid grid-cols-7 mb-1">
             {DAYS.map((d) => (
-              <div key={d} className="text-center text-[10px] font-medium text-slate-500 py-1">
+              <div key={d} className="text-center text-[10px] font-medium text-gray-400 dark:text-slate-500 py-1">
                 {d}
               </div>
             ))}
@@ -169,8 +174,8 @@ export function DatePicker({
           {/* Date cells */}
           <div className="grid grid-cols-7 gap-y-0.5">
             {grid.map((day, i) => {
-              const sel  = isSelected(day);
-              const tod  = isToday(day);
+              const sel = isSelected(day);
+              const tod = isToday(day);
               return (
                 <button
                   key={i}
@@ -182,9 +187,9 @@ export function DatePicker({
                     ${sel
                       ? "bg-brand-500 text-white font-semibold"
                       : tod
-                        ? "text-brand-400 font-semibold ring-1 ring-brand-500/40"
+                        ? "text-brand-500 font-semibold ring-1 ring-brand-500/40"
                         : day
-                          ? "text-slate-300 hover:bg-white/[0.06] hover:text-white"
+                          ? "text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-white/6 hover:text-gray-900 dark:hover:text-white"
                           : "text-transparent"
                     }`}
                 >
@@ -194,8 +199,8 @@ export function DatePicker({
             })}
           </div>
 
-          {/* Quick "Today" link */}
-          <div className="mt-2 pt-2 border-t border-[#232a3a] flex justify-end">
+          {/* Today link */}
+          <div className="mt-2 pt-2 border-t border-[#e2e8f0] dark:border-[#232a3a] flex justify-end">
             <button
               type="button"
               onClick={() => {
@@ -205,7 +210,7 @@ export function DatePicker({
                 onChange(`${y}-${m}-${d}`);
                 setOpen(false);
               }}
-              className="text-xs text-brand-400 hover:text-brand-300 transition-colors"
+              className="text-xs text-brand-500 hover:text-brand-600 transition-colors"
             >
               Today
             </button>

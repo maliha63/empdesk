@@ -7,14 +7,13 @@ interface Option {
 }
 
 interface DropdownProps {
-  options:      Option[];
-  value:        string;
-  onChange:     (value: string) => void;
-  placeholder?: string;
-  className?:   string;
-  /** Compact pill variant used inside table rows */
-  variant?:     "default" | "pill";
-  pillColorClass?: string; // e.g. "text-emerald-400 bg-emerald-400/10"
+  options:         Option[];
+  value:           string;
+  onChange:        (value: string) => void;
+  placeholder?:    string;
+  className?:      string;
+  variant?:        "default" | "pill";
+  pillColorClass?: string;
 }
 
 export function Dropdown({
@@ -29,7 +28,6 @@ export function Dropdown({
   const [open, setOpen] = useState(false);
   const ref             = useRef<HTMLDivElement>(null);
 
-  // Close on outside click
   useEffect(() => {
     function handle(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
@@ -38,7 +36,6 @@ export function Dropdown({
     return () => document.removeEventListener("mousedown", handle);
   }, []);
 
-  // Close on Escape
   useEffect(() => {
     function handle(e: KeyboardEvent) {
       if (e.key === "Escape") setOpen(false);
@@ -64,10 +61,11 @@ export function Dropdown({
             className={`transition-transform duration-150 ${open ? "rotate-180" : ""}`}
           />
         </button>
-
         {open && (
-          <div className="absolute left-0 top-full mt-1 z-50 min-w-[110px]
-            bg-[#171c27] border border-[#232a3a] rounded-lg shadow-xl shadow-black/40 py-1 overflow-hidden">
+          <div className="absolute left-0 top-full mt-1 z-50 min-w-27.5
+            bg-white dark:bg-[#171c27]
+            border border-[#e2e8f0] dark:border-[#232a3a]
+            rounded-lg shadow-lg py-1 overflow-hidden">
             {options.map((opt) => (
               <button
                 key={opt.value}
@@ -75,8 +73,8 @@ export function Dropdown({
                 onClick={() => { onChange(opt.value); setOpen(false); }}
                 className={`w-full text-left px-3 py-1.5 text-xs transition-colors
                   ${opt.value === value
-                    ? "text-white bg-white/5"
-                    : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
+                    ? "text-gray-900 dark:text-white bg-gray-50 dark:bg-white/5"
+                    : "text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/4"
                   }`}
               >
                 {opt.label}
@@ -88,30 +86,35 @@ export function Dropdown({
     );
   }
 
-  // ── Default (form field) variant ──────────────────────────────────────
   return (
     <div ref={ref} className={`relative ${className}`}>
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         className={`w-full flex items-center justify-between
-          bg-[#0f1117] border border-[#232a3a] rounded-lg
-          px-3 py-2 text-sm outline-none transition-colors
-          ${open ? "border-brand-500" : "hover:border-[#2e3749]"}
-          ${!selected ? "text-slate-500" : "text-slate-200"}`}
+          bg-[#f8fafc] dark:bg-[#0f1117]
+          border rounded-lg px-3 py-2 text-sm outline-none transition-colors
+          ${open
+            ? "border-brand-500"
+            : "border-[#e2e8f0] dark:border-[#232a3a] hover:border-[#cbd5e1] dark:hover:border-[#2e3749]"
+          }
+          ${!selected
+            ? "text-gray-400 dark:text-slate-500"
+            : "text-gray-900 dark:text-slate-200"
+          }`}
       >
         <span className="truncate">{selected?.label ?? placeholder}</span>
         <ChevronDown
           size={14}
-          className={`text-slate-500 shrink-0 ml-2 transition-transform duration-150
+          className={`text-gray-400 dark:text-slate-500 shrink-0 ml-2 transition-transform duration-150
             ${open ? "rotate-180 text-brand-500" : ""}`}
         />
       </button>
-
       {open && (
         <div className="absolute left-0 top-full mt-1 z-50 w-full
-          bg-[#171c27] border border-[#232a3a] rounded-lg shadow-xl shadow-black/50
-          py-1 overflow-hidden">
+          bg-white dark:bg-[#171c27]
+          border border-[#e2e8f0] dark:border-[#232a3a]
+          rounded-lg shadow-lg py-1 overflow-hidden">
           {options.map((opt) => (
             <button
               key={opt.value}
@@ -119,8 +122,8 @@ export function Dropdown({
               onClick={() => { onChange(opt.value); setOpen(false); }}
               className={`w-full text-left px-3 py-2 text-sm transition-colors
                 ${opt.value === value
-                  ? "text-white bg-brand-500/15 font-medium"
-                  : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
+                  ? "text-gray-900 dark:text-white bg-brand-50 dark:bg-brand-500/15 font-medium"
+                  : "text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/4"
                 }`}
             >
               {opt.label}

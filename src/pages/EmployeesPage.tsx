@@ -20,7 +20,7 @@ import {
   ChevronUp,
   ChevronDown,
 } from "lucide-react";
-import type { Employee } from "../types";
+import Button from "../components/Button";
 
 export default function EmployeesPage() {
   const { employees, isLoading, deleteEmployee } = useEmployees();
@@ -50,11 +50,11 @@ export default function EmployeesPage() {
         const valA =
           sortBy === "name"
             ? `${a.firstName} ${a.lastName}`
-            : a.company?.department ?? "";
+            : (a.company?.department ?? "");
         const valB =
           sortBy === "name"
             ? `${b.firstName} ${b.lastName}`
-            : b.company?.department ?? "";
+            : (b.company?.department ?? "");
         return sortDir === "asc"
           ? valA.localeCompare(valB)
           : valB.localeCompare(valA);
@@ -63,7 +63,7 @@ export default function EmployeesPage() {
 
   const { page, setPage, totalPages, paginated, reset } = usePagination(
     filtered,
-    ITEMS_PER_PAGE
+    ITEMS_PER_PAGE,
   );
 
   const handleSearch = useCallback(
@@ -71,26 +71,24 @@ export default function EmployeesPage() {
       setSearch(e.target.value);
       reset();
     },
-    [reset]
+    [reset],
   );
 
   const toggleSort = useCallback(
     (field: "name" | "dept") => {
-      if (sortBy === field) {
-        setSortDir((d) => (d === "asc" ? "desc" : "asc"));
-      } else {
+      if (sortBy === field) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+      else {
         setSortBy(field);
         setSortDir("asc");
       }
     },
-    [sortBy]
+    [sortBy],
   );
 
   function handleDeleteClick(id: number) {
     setPendingDeleteId(id);
     setConfirmOpen(true);
   }
-
   function handleConfirmDelete() {
     if (pendingDeleteId === null) return;
     deleteEmployee(pendingDeleteId);
@@ -105,17 +103,7 @@ export default function EmployeesPage() {
 
   return (
     <>
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          style: {
-            background: "#171c27",
-            color: "#e2e8f0",
-            border: "1px solid #232a3a",
-            fontSize: "13px",
-          },
-        }}
-      />
+      <Toaster position="top-right" />
       <ConfirmModal
         isOpen={confirmOpen}
         title="Delete Employee"
@@ -137,12 +125,12 @@ export default function EmployeesPage() {
           ]}
           action={
             user?.role === "manager" ? (
-              <button
+              <Button
                 onClick={() => navigate("/employees/add")}
-                className="flex items-center gap-2 bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                // className="flex items-center gap-2 bg-blue-900 hover:bg-blue-800 text-white text-sm font-medium px-5 py-2.5 rounded-xl transition-colors"
               >
-                <Plus size={15} /> Add Employee
-              </button>
+                <Plus size={16} /> Add Employee
+              </Button>
             ) : undefined
           }
         />
@@ -152,18 +140,19 @@ export default function EmployeesPage() {
           <div className="relative flex-1">
             <Search
               size={14}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700 dark:text-gray-400"
             />
             <input
               type="text"
               placeholder="Search by name or email..."
               value={search}
               onChange={handleSearch}
-              className="w-full bg-surface-card border border-surface-border rounded-lg pl-9 pr-4 py-2.5
-                text-sm text-white placeholder-slate-600 outline-none focus:border-brand-500 transition-colors"
+              className="w-full bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3 
+                 text-sm text-gray-900 dark:text-white 
+                 placeholder:text-gray-400 dark:placeholder:text-gray-500
+                 focus:outline-none focus:border-blue-500 transition-colors"
             />
           </div>
-
           <Dropdown
             options={deptOptions}
             value={dept}
@@ -171,23 +160,58 @@ export default function EmployeesPage() {
               setDept(val);
               reset();
             }}
-            className="min-w-[160px]"
+            className="min-w-40"
           />
         </div>
 
-        {/* Desktop table */}
-        <div className="hidden md:block bg-surface-card border border-surface-border rounded-xl overflow-hidden">
+        {/* Desktop Table */}
+        <div className="hidden md:block bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden">
           <table className="w-full text-sm">
-            <TableHeader
-              sortBy={sortBy}
-              sortDir={sortDir}
-              onSort={toggleSort}
-            />
-
-            <tbody className="divide-y divide-surface-border">
+            <thead>
+              <tr className="border-b border-gray-200 dark:border-gray-700">
+                <th className="text-left px-6 py-4 text-xs font-medium text-gray-500 dark:text-gray-400 w-12"></th>
+                <th
+                  className="text-left px-6 py-4 text-xs font-medium text-gray-500 dark:text-gray-400 cursor-pointer"
+                  onClick={() => toggleSort("name")}
+                >
+                  Name{" "}
+                  {sortBy === "name" &&
+                    (sortDir === "asc" ? (
+                      <ChevronUp size={12} className="inline" />
+                    ) : (
+                      <ChevronDown size={12} className="inline" />
+                    ))}
+                </th>
+                <th
+                  className="text-left px-6 py-4 text-xs font-medium text-gray-500 dark:text-gray-400 cursor-pointer"
+                  onClick={() => toggleSort("dept")}
+                >
+                  Department{" "}
+                  {sortBy === "dept" &&
+                    (sortDir === "asc" ? (
+                      <ChevronUp size={12} className="inline" />
+                    ) : (
+                      <ChevronDown size={12} className="inline" />
+                    ))}
+                </th>
+                <th className="text-left px-6 py-4 text-xs font-medium text-gray-500 dark:text-gray-400 hidden lg:table-cell">
+                  Email
+                </th>
+                <th className="text-left px-6 py-4 text-xs font-medium text-gray-500 dark:text-gray-400 hidden lg:table-cell">
+                  Title
+                </th>
+                <th className="text-right px-6 py-4 text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {paginated.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="text-center py-12 text-slate-500 text-sm">
+                  <td
+                    colSpan={6}
+                    className="text-center py-12 text-gray-500 dark:text-gray-400"
+                  >
                     No employees found.
                   </td>
                 </tr>
@@ -198,48 +222,50 @@ export default function EmployeesPage() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: i * 0.03 }}
-                    className="hover:bg-white/[0.02] transition-colors"
+                    className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                   >
-                    <td className="px-4 py-3">
+                    <td className="px-6 py-4">
                       <img
                         src={e.image}
                         alt={e.firstName}
-                        className="w-8 h-8 rounded-full object-cover"
+                        className="w-9 h-9 rounded-full object-cover"
                       />
                     </td>
-                    <td className="px-4 py-3 text-white font-medium">
+                    <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
                       {e.firstName} {e.lastName}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-6 py-4">
                       <Badge variant="blue">{e.company?.department}</Badge>
                     </td>
-                    <td className="px-4 py-3 text-slate-400 hidden lg:table-cell">
+                    <td className="px-6 py-4 text-gray-600 dark:text-gray-400 hidden lg:table-cell">
                       {e.email}
                     </td>
-                    <td className="px-4 py-3 text-slate-400 hidden lg:table-cell">
+                    <td className="px-6 py-4 text-gray-600 dark:text-gray-400 hidden lg:table-cell">
                       {e.company?.title}
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center justify-end gap-3">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-end gap-4">
                         <button
                           onClick={() => navigate(`/employees/${e.id}`)}
-                          className="text-slate-400 hover:text-white transition-colors"
+                          className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                         >
-                          <Eye size={14} />
+                          <Eye size={16} />
                         </button>
                         {user?.role === "manager" && (
                           <>
                             <button
-                              onClick={() => navigate(`/employees/${e.id}/edit`)}
-                              className="text-brand-500 hover:text-brand-600 transition-colors"
+                              onClick={() =>
+                                navigate(`/employees/${e.id}/edit`)
+                              }
+                              className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
                             >
-                              <Pencil size={14} />
+                              <Pencil size={16} />
                             </button>
                             <button
                               onClick={() => handleDeleteClick(e.id)}
-                              className="text-red-400 hover:text-red-300 transition-colors"
+                              className="text-red-500 hover:text-red-600 transition-colors"
                             >
-                              <Trash2 size={14} />
+                              <Trash2 size={16} />
                             </button>
                           </>
                         )}
@@ -252,49 +278,40 @@ export default function EmployeesPage() {
           </table>
         </div>
 
-        {/* Mobile cards */}
+        {/* Mobile Cards */}
         <div className="md:hidden space-y-3">
-          {paginated.length === 0 ? (
-            <p className="text-center py-10 text-slate-500 text-sm">
-              No employees found.
-            </p>
-          ) : (
-            paginated.map((e, i) => (
-              <MobileCard
-                key={e.id}
-                employee={e}
-                index={i}
-                isManager={user?.role === "manager"}
-                onView={() => navigate(`/employees/${e.id}`)}
-                onEdit={() => navigate(`/employees/${e.id}/edit`)}
-                onDelete={() => handleDeleteClick(e.id)}
-              />
-            ))
-          )}
+          {paginated.map((e, i) => (
+            <MobileCard
+              key={e.id}
+              employee={e}
+              index={i}
+              isManager={user?.role === "manager"}
+              onView={() => navigate(`/employees/${e.id}`)}
+              onEdit={() => navigate(`/employees/${e.id}/edit`)}
+              onDelete={() => handleDeleteClick(e.id)}
+            />
+          ))}
         </div>
 
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex items-center justify-between">
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-gray-400 dark:text-[#4b5e7a]">
               Page {page} of {totalPages}
             </p>
             <div className="flex gap-2">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-3 py-1.5 text-xs rounded-lg border border-surface-border text-slate-400
-                  hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="px-3 py-1.5 text-xs rounded-lg border border-[#e2e8f0] dark:border-[#1f2a3d]
+                  text-gray-500 dark:text-[#4b5e7a] hover:text-gray-900 dark:hover:text-white
+                  disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 ← Prev
               </button>
-
               {Array.from({ length: totalPages }, (_, i) => i + 1)
                 .filter(
-                  (p) =>
-                    p === 1 ||
-                    p === totalPages ||
-                    Math.abs(p - page) <= 1
+                  (p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1,
                 )
                 .reduce<(number | "...")[]>((acc, p, i, arr) => {
                   if (i > 0 && p - (arr[i - 1] as number) > 1) acc.push("...");
@@ -305,7 +322,7 @@ export default function EmployeesPage() {
                   p === "..." ? (
                     <span
                       key={`e-${i}`}
-                      className="px-2 py-1.5 text-xs text-slate-500"
+                      className="px-2 py-1.5 text-xs text-gray-400 dark:text-[#4b5e7a]"
                     >
                       ...
                     </span>
@@ -316,19 +333,19 @@ export default function EmployeesPage() {
                       className={`px-3 py-1.5 text-xs rounded-lg border transition-colors ${
                         page === p
                           ? "bg-brand-500 border-brand-500 text-white"
-                          : "border-surface-border text-slate-400 hover:text-white"
+                          : "border-[#e2e8f0] dark:border-[#1f2a3d] text-gray-500 dark:text-[#4b5e7a] hover:text-gray-900 dark:hover:text-white"
                       }`}
                     >
                       {p}
                     </button>
-                  )
+                  ),
                 )}
-
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="px-3 py-1.5 text-xs rounded-lg border border-surface-border text-slate-400
-                  hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="px-3 py-1.5 text-xs rounded-lg border border-[#e2e8f0] dark:border-[#1f2a3d]
+                  text-gray-500 dark:text-[#4b5e7a] hover:text-gray-900 dark:hover:text-white
+                  disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 Next →
               </button>
@@ -340,69 +357,7 @@ export default function EmployeesPage() {
   );
 }
 
-/* ==================== Table Header Component ==================== */
-
-interface TableHeaderProps {
-  sortBy: "name" | "dept";
-  sortDir: "asc" | "desc";
-  onSort: (field: "name" | "dept") => void;
-}
-
-function TableHeader({ sortBy, sortDir, onSort }: TableHeaderProps) {
-  const SortIcon = ({ field }: { field: "name" | "dept" }) => {
-    if (sortBy !== field) return <ChevronUp size={12} className="opacity-30" />;
-    return sortDir === "asc" ? (
-      <ChevronUp size={12} />
-    ) : (
-      <ChevronDown size={12} />
-    );
-  };
-
-  return (
-    <thead>
-      <tr className="border-b border-surface-border">
-        <th className="text-left px-4 py-3 text-xs font-medium text-slate-400 w-12"></th>
-        <th
-          className="text-left px-4 py-3 text-xs font-medium text-slate-400 cursor-pointer select-none hover:text-white"
-          onClick={() => onSort("name")}
-        >
-          <span className="flex items-center gap-1">
-            Name <SortIcon field="name" />
-          </span>
-        </th>
-        <th
-          className="text-left px-4 py-3 text-xs font-medium text-slate-400 cursor-pointer select-none hover:text-white"
-          onClick={() => onSort("dept")}
-        >
-          <span className="flex items-center gap-1">
-            Department <SortIcon field="dept" />
-          </span>
-        </th>
-        <th className="text-left px-4 py-3 text-xs font-medium text-slate-400 hidden lg:table-cell">
-          Email
-        </th>
-        <th className="text-left px-4 py-3 text-xs font-medium text-slate-400 hidden lg:table-cell">
-          Title
-        </th>
-        <th className="text-right px-4 py-3 text-xs font-medium text-slate-400">
-          Actions
-        </th>
-      </tr>
-    </thead>
-  );
-}
-
-/* ==================== Mobile Card ==================== */
-
-interface MobileCardProps {
-  employee: Employee;
-  index: number;
-  isManager: boolean;
-  onView: () => void;
-  onEdit: () => void;
-  onDelete: () => void;
-}
-
+// Mobile Card Component
 function MobileCard({
   employee: e,
   index,
@@ -410,48 +365,51 @@ function MobileCard({
   onView,
   onEdit,
   onDelete,
-}: MobileCardProps) {
+}: any) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.04 }}
-      className="bg-surface-card border border-surface-border rounded-xl p-4 flex items-center gap-4"
+      className="bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-700 rounded-2xl p-4 flex items-center gap-4"
     >
       <img
         src={e.image}
         alt={e.firstName}
-        className="w-10 h-10 rounded-full object-cover shrink-0"
+        className="w-12 h-12 rounded-full object-cover"
       />
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-white">
+        <p className="font-medium text-gray-900 dark:text-white">
           {e.firstName} {e.lastName}
         </p>
-        <p className="text-xs text-slate-500 mt-0.5">{e.company?.title}</p>
-        <div className="mt-1.5">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          {e.company?.title}
+        </p>
+        <div className="mt-1">
           <Badge variant="blue">{e.company?.department}</Badge>
         </div>
       </div>
+
       <div className="flex flex-col items-end gap-2">
         <button
           onClick={onView}
-          className="text-slate-400 hover:text-white transition-colors"
+          className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
         >
-          <Eye size={14} />
+          <Eye size={18} />
         </button>
         {isManager && (
           <>
             <button
               onClick={onEdit}
-              className="text-brand-500 hover:text-brand-600 transition-colors"
+              className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
             >
-              <Pencil size={14} />
+              <Pencil size={18} />
             </button>
             <button
               onClick={onDelete}
-              className="text-red-400 hover:text-red-300 transition-colors"
+              className="text-red-500 hover:text-red-600"
             >
-              <Trash2 size={14} />
+              <Trash2 size={18} />
             </button>
           </>
         )}
@@ -460,21 +418,19 @@ function MobileCard({
   );
 }
 
-/* ==================== Skeleton ==================== */
-
 function TableSkeleton() {
   return (
-    <div className="space-y-5 animate-pulse">
-      <div className="h-8 w-40 bg-surface-card rounded" />
-      <div className="h-10 bg-surface-card rounded-lg border border-surface-border" />
-      <div className="bg-surface-card border border-surface-border rounded-xl overflow-hidden">
+    <div className="space-y-5">
+      <div className="skeleton h-8 w-40" />
+      <div className="skeleton h-10 rounded-lg" />
+      <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl overflow-hidden">
         {[...Array(8)].map((_, i) => (
           <div
             key={i}
-            className="h-14 border-b border-surface-border px-4 flex items-center gap-3"
+            className="h-14 border-b border-[#e2e8f0] dark:border-[#1f2a3d] px-4 flex items-center gap-3"
           >
-            <div className="w-8 h-8 rounded-full bg-surface-border" />
-            <div className="h-4 w-32 bg-surface-border rounded" />
+            <div className="skeleton w-8 h-8 rounded-full" />
+            <div className="skeleton h-4 w-32" />
           </div>
         ))}
       </div>

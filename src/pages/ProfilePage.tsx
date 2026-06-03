@@ -53,7 +53,7 @@ export default function ProfilePage() {
   }
 
   if (!employee) return (
-    <div className="text-center py-20 text-slate-400">Loading profile...</div>
+    <div className="text-center py-20 text-gray-400 dark:text-[#4b5e7a]">Loading profile...</div>
   );
 
   return (
@@ -67,12 +67,12 @@ export default function ProfilePage() {
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-surface-card border border-surface-border rounded-xl p-6 flex gap-5 items-start"
+        className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-6 flex gap-5 items-start shadow-[0_1px_3px_rgb(0,0,0,0.04)]"
       >
-        <img src={employee.image} alt={employee.firstName} className="w-16 h-16 rounded-xl object-cover ring-2 ring-surface-border" />
+        <img src={employee.image} alt={employee.firstName} className="w-16 h-16 rounded-xl object-cover ring-2 ring-[#e2e8f0] dark:ring-[#1f2a3d]" />
         <div className="flex-1">
-          <h2 className="text-lg font-semibold text-white">{employee.firstName} {employee.lastName}</h2>
-          <p className="text-slate-400 text-sm mt-0.5">{employee.company?.title}</p>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{employee.firstName} {employee.lastName}</h2>
+          <p className="text-gray-500 dark:text-[#4b5e7a] text-sm mt-0.5">{employee.company?.title}</p>
           <div className="flex gap-2 mt-2 flex-wrap">
             <Badge variant="blue">{employee.company?.department}</Badge>
             <Badge variant="purple">{user?.role}</Badge>
@@ -83,25 +83,25 @@ export default function ProfilePage() {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: "Attendance",  value: `${presentDays}/20`, color: "text-emerald-400" },
-          { label: "Avg Score",   value: avgScore,            color: "text-brand-500"   },
-          { label: "Tasks Done",  value: performance.reduce((s, p) => s + p.tasksCompleted, 0), color: "text-amber-400" },
+          { label: "Attendance", value: `${presentDays}/20`, color: "text-emerald-500 dark:text-emerald-400" },
+          { label: "Avg Score",  value: avgScore,            color: "text-brand-500"   },
+          { label: "Tasks Done", value: performance.reduce((s, p) => s + p.tasksCompleted, 0), color: "text-amber-500 dark:text-amber-400" },
         ].map((s, i) => (
           <motion.div
             key={s.label}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.07 }}
-            className="bg-surface-card border border-surface-border rounded-xl p-4"
+            className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-4 shadow-[0_1px_3px_rgb(0,0,0,0.04)]"
           >
-            <p className="text-xs text-slate-400">{s.label}</p>
+            <p className="text-xs text-gray-400 dark:text-[#4b5e7a]">{s.label}</p>
             <p className={`text-2xl font-bold font-mono mt-1 ${s.color}`}>{s.value}</p>
           </motion.div>
         ))}
       </div>
 
       {/* Info */}
-      <div className="bg-surface-card border border-surface-border rounded-xl p-5 space-y-3">
+      <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-5 space-y-3 shadow-[0_1px_3px_rgb(0,0,0,0.04)]">
         {[
           { icon: <Mail size={14} />,      label: employee.email },
           { icon: <Phone size={14} />,     label: employee.phone },
@@ -109,17 +109,17 @@ export default function ProfilePage() {
           { icon: <MapPin size={14} />,    label: `${employee.address?.city}, ${employee.address?.country}` },
         ].map((f, i) => (
           <div key={i} className="flex items-center gap-3 text-sm">
-            <span className="text-slate-500">{f.icon}</span>
-            <span className="text-slate-300">{f.label}</span>
+            <span className="text-gray-400 dark:text-[#4b5e7a]">{f.icon}</span>
+            <span className="text-gray-700 dark:text-gray-300">{f.label}</span>
           </div>
         ))}
       </div>
 
       {/* Leave section — employee only */}
       {user?.role === "employee" && (
-        <div className="bg-surface-card border border-surface-border rounded-xl p-5 space-y-4">
+        <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-5 space-y-4 shadow-[0_1px_3px_rgb(0,0,0,0.04)]">
           <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-white">Leave Requests</p>
+            <p className="text-sm font-medium text-gray-900 dark:text-white">Leave Requests</p>
             <button
               onClick={() => setShowLeaveForm((v) => !v)}
               className="flex items-center gap-2 text-xs bg-brand-500 hover:bg-brand-600 text-white px-3 py-1.5 rounded-lg transition-colors"
@@ -134,52 +134,38 @@ export default function ProfilePage() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               onSubmit={handleSubmit(onLeaveSubmit)}
-              className="space-y-3 border-t border-surface-border pt-4"
+              className="space-y-3 border-t border-[#e2e8f0] dark:border-[#1f2a3d] pt-4"
             >
               <div>
-                <label className="block text-xs text-slate-400 mb-1.5">Reason</label>
+                <label className="block text-xs text-gray-500 dark:text-[#4b5e7a] mb-1.5">Reason</label>
                 <input
                   type="text"
                   placeholder="e.g. Medical leave"
-                  className={`w-full bg-surface border rounded-lg px-3 py-2 text-sm text-white
-                    placeholder-slate-600 outline-none focus:border-brand-500 transition-colors
-                    ${errors.reason ? "border-red-500" : "border-surface-border"}`}
+                  className={`w-full bg-[#f8fafc] dark:bg-[#0b0f1a] border rounded-lg px-3 py-2 text-sm
+                    text-gray-900 dark:text-white placeholder-gray-300 dark:placeholder-[#2a3a54]
+                    outline-none focus:border-brand-500 transition-colors
+                    ${errors.reason ? "border-red-400 dark:border-red-500" : "border-[#e2e8f0] dark:border-[#1f2a3d]"}`}
                   {...register("reason", { required: "Reason is required" })}
                 />
-                {errors.reason && <p className="mt-1 text-xs text-red-400">{errors.reason.message}</p>}
+                {errors.reason && <p className="mt-1 text-xs text-red-500">{errors.reason.message}</p>}
               </div>
 
-              {/* Date pickers — custom, fully styled */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1.5">From</label>
+                  <label className="block text-xs text-gray-500 dark:text-[#4b5e7a] mb-1.5">From</label>
                   <Controller
-                    name="from"
-                    control={control}
-                    rules={{ required: true }}
+                    name="from" control={control} rules={{ required: true }}
                     render={({ field }) => (
-                      <DatePicker
-                        value={field.value ?? ""}
-                        onChange={field.onChange}
-                        placeholder="Start date"
-                        hasError={!!errors.from}
-                      />
+                      <DatePicker value={field.value ?? ""} onChange={field.onChange} placeholder="Start date" hasError={!!errors.from} />
                     )}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1.5">To</label>
+                  <label className="block text-xs text-gray-500 dark:text-[#4b5e7a] mb-1.5">To</label>
                   <Controller
-                    name="to"
-                    control={control}
-                    rules={{ required: true }}
+                    name="to" control={control} rules={{ required: true }}
                     render={({ field }) => (
-                      <DatePicker
-                        value={field.value ?? ""}
-                        onChange={field.onChange}
-                        placeholder="End date"
-                        hasError={!!errors.to}
-                      />
+                      <DatePicker value={field.value ?? ""} onChange={field.onChange} placeholder="End date" hasError={!!errors.to} />
                     )}
                   />
                 </div>
@@ -187,7 +173,7 @@ export default function ProfilePage() {
 
               <div className="flex gap-2">
                 <button type="button" onClick={() => setShowLeaveForm(false)}
-                  className="px-4 py-2 text-xs border border-surface-border text-slate-400 rounded-lg hover:text-white transition-colors">
+                  className="px-4 py-2 text-xs border border-[#e2e8f0] dark:border-[#1f2a3d] text-gray-500 dark:text-[#4b5e7a] rounded-lg hover:text-gray-900 dark:hover:text-white transition-colors">
                   Cancel
                 </button>
                 <button type="submit"
@@ -199,14 +185,14 @@ export default function ProfilePage() {
           )}
 
           {myLeaves.length === 0 ? (
-            <p className="text-xs text-slate-500">No leave requests submitted.</p>
+            <p className="text-xs text-gray-400 dark:text-[#4b5e7a]">No leave requests submitted.</p>
           ) : (
             <div className="space-y-2">
               {myLeaves.map((r) => (
-                <div key={r.id} className="flex items-center justify-between p-3 rounded-lg bg-surface border border-surface-border">
+                <div key={r.id} className="flex items-center justify-between p-3 rounded-lg bg-[#f8fafc] dark:bg-[#0b0f1a] border border-[#e2e8f0] dark:border-[#1f2a3d]">
                   <div>
-                    <p className="text-sm text-white">{r.reason}</p>
-                    <p className="text-xs text-slate-500 mt-0.5">{r.from} → {r.to}</p>
+                    <p className="text-sm text-gray-900 dark:text-white">{r.reason}</p>
+                    <p className="text-xs text-gray-400 dark:text-[#4b5e7a] mt-0.5">{r.from} → {r.to}</p>
                   </div>
                   <Badge variant={r.status === "approved" ? "green" : r.status === "rejected" ? "red" : "amber"}>
                     {r.status}

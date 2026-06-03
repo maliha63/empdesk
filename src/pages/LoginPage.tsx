@@ -30,13 +30,13 @@ export default function LoginPage() {
       <div className="text-center mb-8">
         <div className="inline-flex items-center justify-center w-11 h-11 rounded-2xl bg-brand-500 shadow-[0_4px_16px_rgb(59_130_246/0.4)] mb-4">
           <svg width="20" height="20" viewBox="0 0 14 14" fill="none">
-            <rect x="1" y="1" width="5" height="5" rx="1.5" fill="white" fillOpacity="0.95"/>
-            <rect x="8" y="1" width="5" height="5" rx="1.5" fill="white" fillOpacity="0.6"/>
-            <rect x="1" y="8" width="5" height="5" rx="1.5" fill="white" fillOpacity="0.6"/>
-            <rect x="8" y="8" width="5" height="5" rx="1.5" fill="white" fillOpacity="0.95"/>
+            <rect x="1" y="1" width="5" height="5" rx="1.5" fill="black" fillOpacity="0.95"/>
+            <rect x="8" y="1" width="5" height="5" rx="1.5" fill="black" fillOpacity="0.6"/>
+            <rect x="1" y="8" width="5" height="5" rx="1.5" fill="black" fillOpacity="0.6"/>
+            <rect x="8" y="8" width="5" height="5" rx="1.5" fill="black" fillOpacity="0.95"/>
           </svg>
         </div>
-        <h1 className="text-[22px] font-bold text-gray-900 dark:text-white tracking-tight font-mono">
+        <h1 className="text-[22px] font-bold text-gray-900 dark:text-black tracking-tight font-mono">
           emp<span className="text-brand-500">desk</span>
         </h1>
         <p className="text-sm text-gray-400 dark:text-[#4b5e7a] mt-1">
@@ -76,7 +76,7 @@ export default function LoginPage() {
               autoComplete="username"
               placeholder="Enter your username"
               className={`w-full bg-[#f8fafc] dark:bg-[#0b0f1a] border rounded-xl px-4 py-2.5 text-[13px]
-                text-gray-900 dark:text-gray-100 placeholder-gray-300 dark:placeholder-[#2a3a54]
+                text-gray-900 dark:text-gray-100 placeholder-gray-300 dark:placeholder-[#545f72]
                 outline-none transition-all duration-150
                 focus:bg-white dark:focus:bg-[#0f1623] focus:border-brand-400 focus:ring-2 focus:ring-brand-500/10
                 ${errors.username
@@ -104,7 +104,7 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 placeholder="Enter your password"
                 className={`w-full bg-[#f8fafc] dark:bg-[#0b0f1a] border rounded-xl px-4 py-2.5 pr-10 text-[13px]
-                  text-gray-900 dark:text-gray-100 placeholder-gray-300 dark:placeholder-[#2a3a54]
+                  text-gray-900 dark:text-gray-100 placeholder-gray-300 dark:placeholder-[#545f72]
                   outline-none transition-all duration-150
                   focus:bg-white dark:focus:bg-[#0f1623] focus:border-brand-400 focus:ring-2 focus:ring-brand-500/10
                   ${errors.password
@@ -139,7 +139,7 @@ export default function LoginPage() {
               text-white font-semibold text-[13px] py-2.5 rounded-xl
               transition-all duration-150
               shadow-[0_2px_8px_rgb(59_130_246/0.35)] hover:shadow-[0_4px_16px_rgb(59_130_246/0.4)]
-              hover:-translate-y-[1px] active:translate-y-0"
+              hover:-translate-y-px active:translate-y-0"
           >
             {isLoading ? (
               <span className="flex items-center gap-2">
