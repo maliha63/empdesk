@@ -83,7 +83,7 @@ export default function LoginPage() {
       {/* Card */}
       <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-2xl p-6 shadow-[0_4px_24px_-4px_rgb(0,0,0,0.08)] dark:shadow-[0_4px_24px_-4px_rgb(0,0,0,0.4)]">
         {/* Test credentials */}
-        <div className="mb-5 p-3.5 rounded-xl bg-brand-50 dark:bg-brand-500/[0.08] border border-brand-100 dark:border-brand-500/20">
+        <div className="mb-5 p-3.5 rounded-xl bg-brand-50 dark:bg-brand-500/8 border border-brand-100 dark:border-brand-500/20">
           <p className="text-[11px] font-semibold text-brand-600 dark:text-brand-400 mb-1.5 uppercase tracking-wide">
             Test accounts
           </p>
