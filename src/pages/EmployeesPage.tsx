@@ -165,13 +165,13 @@ export default function EmployeesPage() {
         </div>
 
         {/* Desktop Table */}
-        <div className="hidden md:block bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden">
+        <div className="hidden md:block bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-200 dark:border-gray-700">
-                <th className="text-left px-6 py-4 text-xs font-medium text-gray-500 dark:text-gray-400 w-12"></th>
+              <tr className="border-b border-(--border)">
+                <th className="text-left px-6 py-4 text-xs font-medium text-(--text-muted) w-12"></th>
                 <th
-                  className="text-left px-6 py-4 text-xs font-medium text-gray-500 dark:text-gray-400 cursor-pointer"
+                  className="text-left px-6 py-4 text-xs font-medium text-(--text-muted) cursor-pointer"
                   onClick={() => toggleSort("name")}
                 >
                   Name{" "}
@@ -183,7 +183,7 @@ export default function EmployeesPage() {
                     ))}
                 </th>
                 <th
-                  className="text-left px-6 py-4 text-xs font-medium text-gray-500 dark:text-gray-400 cursor-pointer"
+                  className="text-left px-6 py-4 text-xs font-medium text-(--text-muted) cursor-pointer"
                   onClick={() => toggleSort("dept")}
                 >
                   Department{" "}
@@ -194,23 +194,23 @@ export default function EmployeesPage() {
                       <ChevronDown size={12} className="inline" />
                     ))}
                 </th>
-                <th className="text-left px-6 py-4 text-xs font-medium text-gray-500 dark:text-gray-400 hidden lg:table-cell">
+                <th className="text-left px-6 py-4 text-xs font-medium text-(--text-muted) hidden lg:table-cell">
                   Email
                 </th>
-                <th className="text-left px-6 py-4 text-xs font-medium text-gray-500 dark:text-gray-400 hidden lg:table-cell">
+                <th className="text-left px-6 py-4 text-xs font-medium text-(--text-muted) hidden lg:table-cell">
                   Title
                 </th>
-                <th className="text-right px-6 py-4 text-xs font-medium text-gray-500 dark:text-gray-400">
+                <th className="text-right px-6 py-4 text-xs font-medium text-(--text-muted)">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="divide-y divide-(--border)">
               {paginated.length === 0 ? (
                 <tr>
                   <td
                     colSpan={6}
-                    className="text-center py-12 text-gray-500 dark:text-gray-400"
+                    className="text-center py-12 text-(--text-muted)"
                   >
                     No employees found.
                   </td>
@@ -222,7 +222,7 @@ export default function EmployeesPage() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: i * 0.03 }}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                    className="hover:bg-(--bg-card2) transition-colors"
                   >
                     <td className="px-6 py-4">
                       <img
@@ -231,23 +231,23 @@ export default function EmployeesPage() {
                         className="w-9 h-9 rounded-full object-cover"
                       />
                     </td>
-                    <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                    <td className="px-6 py-4 font-medium text-(--text-primary)">
                       {e.firstName} {e.lastName}
                     </td>
                     <td className="px-6 py-4">
                       <Badge variant="blue">{e.company?.department}</Badge>
                     </td>
-                    <td className="px-6 py-4 text-gray-600 dark:text-gray-400 hidden lg:table-cell">
+                    <td className="px-6 py-4 text-(--text-secondary) hidden lg:table-cell">
                       {e.email}
                     </td>
-                    <td className="px-6 py-4 text-gray-600 dark:text-gray-400 hidden lg:table-cell">
+                    <td className="px-6 py-4 text-(--text-secondary) hidden lg:table-cell">
                       {e.company?.title}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end gap-4">
                         <button
                           onClick={() => navigate(`/employees/${e.id}`)}
-                          className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                          className="text-(--text-secondary) hover:text-(--text-primary) transition-colors"
                         >
                           <Eye size={16} />
                         </button>
@@ -303,9 +303,7 @@ export default function EmployeesPage() {
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-3 py-1.5 text-xs rounded-lg border border-[#e2e8f0] dark:border-[#1f2a3d]
-                  text-gray-500 dark:text-[#4b5e7a] hover:text-gray-900 dark:hover:text-white
-                  disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="pagination-btn px-3 py-1.5 text-xs rounded-lg border transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 ← Prev
               </button>
@@ -333,7 +331,7 @@ export default function EmployeesPage() {
                       className={`px-3 py-1.5 text-xs rounded-lg border transition-colors ${
                         page === p
                           ? "bg-brand-500 border-brand-500 text-white"
-                          : "border-[#e2e8f0] dark:border-[#1f2a3d] text-gray-500 dark:text-[#4b5e7a] hover:text-gray-900 dark:hover:text-white"
+                          : "pagination-btn"
                       }`}
                     >
                       {p}
@@ -343,9 +341,7 @@ export default function EmployeesPage() {
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="px-3 py-1.5 text-xs rounded-lg border border-[#e2e8f0] dark:border-[#1f2a3d]
-                  text-gray-500 dark:text-[#4b5e7a] hover:text-gray-900 dark:hover:text-white
-                  disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="pagination-btn px-3 py-1.5 text-xs rounded-lg border transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Next →
               </button>
@@ -379,7 +375,7 @@ function MobileCard({
         className="w-12 h-12 rounded-full object-cover"
       />
       <div className="flex-1 min-w-0">
-        <p className="font-medium text-gray-900 dark:text-white">
+        <p className="font-medium text-(--text-primary)">
           {e.firstName} {e.lastName}
         </p>
         <p className="text-sm text-gray-500 dark:text-gray-400">

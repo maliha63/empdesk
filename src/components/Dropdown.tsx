@@ -26,7 +26,7 @@ export function Dropdown({
   pillColorClass = "",
 }: DropdownProps) {
   const [open, setOpen] = useState(false);
-  const ref             = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handle(e: MouseEvent) {
@@ -52,20 +52,13 @@ export function Dropdown({
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className={`flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full
-            transition-colors ${pillColorClass}`}
+          className={`flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full transition-colors ${pillColorClass}`}
         >
           {selected?.label ?? value}
-          <ChevronDown
-            size={10}
-            className={`transition-transform duration-150 ${open ? "rotate-180" : ""}`}
-          />
+          <ChevronDown size={10} className={`transition-transform duration-150 ${open ? "rotate-180" : ""}`} />
         </button>
         {open && (
-          <div className="absolute left-0 top-full mt-1 z-50 min-w-27.5
-            bg-white dark:bg-[#171c27]
-            border border-[#e2e8f0] dark:border-[#232a3a]
-            rounded-lg shadow-lg py-1 overflow-hidden">
+          <div className="absolute left-0 top-full mt-1 z-50 min-w-40 bg-(--bg-card) border border-(--border) rounded-lg shadow-lg py-1 overflow-hidden">
             {options.map((opt) => (
               <button
                 key={opt.value}
@@ -73,8 +66,8 @@ export function Dropdown({
                 onClick={() => { onChange(opt.value); setOpen(false); }}
                 className={`w-full text-left px-3 py-1.5 text-xs transition-colors
                   ${opt.value === value
-                    ? "text-gray-900 dark:text-white bg-gray-50 dark:bg-white/5"
-                    : "text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/4"
+                    ? "text-(--text-primary) bg-(--bg-card2)"
+                    : "text-(--text-secondary) hover:bg-(--bg-card2) hover:text-(--text-primary)"
                   }`}
               >
                 {opt.label}
@@ -86,35 +79,26 @@ export function Dropdown({
     );
   }
 
+  // Default variant
   return (
     <div ref={ref} className={`relative ${className}`}>
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         className={`w-full flex items-center justify-between
-          bg-[#f8fafc] dark:bg-[#0f1117]
-          border rounded-lg px-3 py-2 text-sm outline-none transition-colors
-          ${open
-            ? "border-brand-500"
-            : "border-[#e2e8f0] dark:border-[#232a3a] hover:border-[#cbd5e1] dark:hover:border-[#2e3749]"
-          }
-          ${!selected
-            ? "text-gray-400 dark:text-slate-500"
-            : "text-gray-900 dark:text-slate-200"
-          }`}
+          bg-(--bg-card) border border-(--border) rounded-lg px-3 py-2 text-sm outline-none transition-colors
+          ${open ? "border-brand-500" : "hover:border-(--border-strong)"}
+          ${!selected ? "text-(--text-muted)" : "text-(--text-primary)"}`}
       >
         <span className="truncate">{selected?.label ?? placeholder}</span>
         <ChevronDown
           size={14}
-          className={`text-gray-400 dark:text-slate-500 shrink-0 ml-2 transition-transform duration-150
-            ${open ? "rotate-180 text-brand-500" : ""}`}
+          className={`text-(--text-muted) shrink-0 ml-2 transition-transform duration-150 ${open ? "rotate-180" : ""}`}
         />
       </button>
+
       {open && (
-        <div className="absolute left-0 top-full mt-1 z-50 w-full
-          bg-white dark:bg-[#171c27]
-          border border-[#e2e8f0] dark:border-[#232a3a]
-          rounded-lg shadow-lg py-1 overflow-hidden">
+        <div className="absolute left-0 top-full mt-1 z-50 w-full bg-(--bg-card) border border-(--border) rounded-lg shadow-lg py-1 overflow-hidden">
           {options.map((opt) => (
             <button
               key={opt.value}
@@ -122,8 +106,8 @@ export function Dropdown({
               onClick={() => { onChange(opt.value); setOpen(false); }}
               className={`w-full text-left px-3 py-2 text-sm transition-colors
                 ${opt.value === value
-                  ? "text-gray-900 dark:text-white bg-brand-50 dark:bg-brand-500/15 font-medium"
-                  : "text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/4"
+                  ? "text-(--text-primary) bg-(--bg-card2) font-medium"
+                  : "text-(--text-secondary) hover:bg-(--bg-card2) hover:text-(--text-primary)"
                 }`}
             >
               {opt.label}

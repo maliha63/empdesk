@@ -14,7 +14,11 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormValues>();
 
   useEffect(() => {
     if (isAuthenticated) navigate("/dashboard", { replace: true });
@@ -30,10 +34,42 @@ export default function LoginPage() {
       <div className="text-center mb-8">
         <div className="inline-flex items-center justify-center w-11 h-11 rounded-2xl bg-brand-500 shadow-[0_4px_16px_rgb(59_130_246/0.4)] mb-4">
           <svg width="20" height="20" viewBox="0 0 14 14" fill="none">
-            <rect x="1" y="1" width="5" height="5" rx="1.5" fill="black" fillOpacity="0.95"/>
-            <rect x="8" y="1" width="5" height="5" rx="1.5" fill="black" fillOpacity="0.6"/>
-            <rect x="1" y="8" width="5" height="5" rx="1.5" fill="black" fillOpacity="0.6"/>
-            <rect x="8" y="8" width="5" height="5" rx="1.5" fill="black" fillOpacity="0.95"/>
+            <rect
+              x="1"
+              y="1"
+              width="5"
+              height="5"
+              rx="1.5"
+              fill="black"
+              fillOpacity="0.95"
+            />
+            <rect
+              x="8"
+              y="1"
+              width="5"
+              height="5"
+              rx="1.5"
+              fill="black"
+              fillOpacity="0.6"
+            />
+            <rect
+              x="1"
+              y="8"
+              width="5"
+              height="5"
+              rx="1.5"
+              fill="black"
+              fillOpacity="0.6"
+            />
+            <rect
+              x="8"
+              y="8"
+              width="5"
+              height="5"
+              rx="1.5"
+              fill="black"
+              fillOpacity="0.95"
+            />
           </svg>
         </div>
         <h1 className="text-[22px] font-bold text-gray-900 dark:text-black tracking-tight font-mono">
@@ -46,15 +82,26 @@ export default function LoginPage() {
 
       {/* Card */}
       <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-2xl p-6 shadow-[0_4px_24px_-4px_rgb(0,0,0,0.08)] dark:shadow-[0_4px_24px_-4px_rgb(0,0,0,0.4)]">
-
         {/* Test credentials */}
         <div className="mb-5 p-3.5 rounded-xl bg-brand-50 dark:bg-brand-500/[0.08] border border-brand-100 dark:border-brand-500/20">
           <p className="text-[11px] font-semibold text-brand-600 dark:text-brand-400 mb-1.5 uppercase tracking-wide">
             Test accounts
           </p>
           <div className="space-y-1 font-mono text-[11px] text-gray-500 dark:text-[#4b5e7a]">
-            <p>Manager → <span className="text-gray-800 dark:text-gray-300 font-medium">emilys</span> / emilyspass</p>
-            <p>Employee → <span className="text-gray-800 dark:text-gray-300 font-medium">sophiab</span> / sophiabpass</p>
+            <p>
+              Manager →{" "}
+              <span className="text-gray-800 dark:text-gray-300 font-medium">
+                emilys
+              </span>{" "}
+              / emilyspass
+            </p>
+            <p>
+              Employee →{" "}
+              <span className="text-gray-800 dark:text-gray-300 font-medium">
+                sophiab
+              </span>{" "}
+              / sophiabpass
+            </p>
           </div>
         </div>
 
@@ -65,7 +112,11 @@ export default function LoginPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+          className="space-y-4"
+        >
           {/* Username */}
           <div>
             <label className="block text-[11px] font-semibold text-gray-500 dark:text-[#4b5e7a] mb-1.5 uppercase tracking-wide">
@@ -79,9 +130,10 @@ export default function LoginPage() {
                 text-gray-900 dark:text-gray-100 placeholder-gray-300 dark:placeholder-[#545f72]
                 outline-none transition-all duration-150
                 focus:bg-white dark:focus:bg-[#0f1623] focus:border-brand-400 focus:ring-2 focus:ring-brand-500/10
-                ${errors.username
-                  ? "border-red-300 dark:border-red-500/50 ring-2 ring-red-500/10"
-                  : "border-[#e2e8f0] dark:border-[#1f2a3d]"
+                ${
+                  errors.username
+                    ? "border-red-300 dark:border-red-500/50 ring-2 ring-red-500/10"
+                    : "border-[#e2e8f0] dark:border-[#1f2a3d]"
                 }`}
               {...register("username", {
                 required: "Username is required",
@@ -89,7 +141,9 @@ export default function LoginPage() {
               })}
             />
             {errors.username && (
-              <p className="mt-1 text-[11px] text-red-500">{errors.username.message}</p>
+              <p className="mt-1 text-[11px] text-red-500">
+                {errors.username.message}
+              </p>
             )}
           </div>
 
@@ -107,9 +161,10 @@ export default function LoginPage() {
                   text-gray-900 dark:text-gray-100 placeholder-gray-300 dark:placeholder-[#545f72]
                   outline-none transition-all duration-150
                   focus:bg-white dark:focus:bg-[#0f1623] focus:border-brand-400 focus:ring-2 focus:ring-brand-500/10
-                  ${errors.password
-                    ? "border-red-300 dark:border-red-500/50 ring-2 ring-red-500/10"
-                    : "border-[#e2e8f0] dark:border-[#1f2a3d]"
+                  ${
+                    errors.password
+                      ? "border-red-300 dark:border-red-500/50 ring-2 ring-red-500/10"
+                      : "border-[#e2e8f0] dark:border-[#1f2a3d]"
                   }`}
                 {...register("password", {
                   required: "Password is required",
@@ -125,7 +180,9 @@ export default function LoginPage() {
               </button>
             </div>
             {errors.password && (
-              <p className="mt-1 text-[11px] text-red-500">{errors.password.message}</p>
+              <p className="mt-1 text-[11px] text-red-500">
+                {errors.password.message}
+              </p>
             )}
           </div>
 

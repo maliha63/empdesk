@@ -1,6 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap");
 @import "tailwindcss";
 
+@config "../tailwind.config.js";
+
 /* ── Reset ───────────────────────────────────────────────── */
 *,
 *::before,
@@ -12,19 +14,17 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── Base ─────────────────────────────────────────────────── */
 body {
   margin: 0;
   font-family: "DM Sans", system-ui, sans-serif;
-  background-color: #f1f5f9;
-  color: #0f172a;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
   font-size: 14px;
   line-height: 1.6;
 }
 
-/* ── CSS variables ────────────────────────────────────────── */
 :root {
-  --bg-base: #f1f5f9;
+  --bg-base: white;
   --bg-card: #ffffff;
   --bg-card2: #f8fafc;
   --border: #e2e8f0;
@@ -87,17 +87,13 @@ label,
 
 /* ── Table headers ────────────────────────────────────────── */
 thead th {
-  background-color: #f8fafc;
+  background-color: var(--bg-card2);
   font-weight: 600;
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.07em;
-  color: #94a3b8;
+  color: var(--text-muted);
   white-space: nowrap;
-}
-.dark thead th {
-  background-color: #0f1623;
-  color: #4b5e7a;
 }
 
 /* ── Skeleton shimmer ─────────────────────────────────────── */
@@ -149,6 +145,7 @@ thead th {
 .stat-purple {
   background: linear-gradient(135deg, #faf5ff, #ede9fe);
 }
+
 .dark .stat-blue {
   background: linear-gradient(
     135deg,
@@ -188,7 +185,7 @@ thead th {
   background-size: 22px 22px;
 }
 
-/* ── Input date icon fix ──────────────────────────────────── */
+/* ── Date input calendar icon ─────────────────────────────── */
 input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(0.5);
   cursor: pointer;
@@ -197,9 +194,42 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(0.8);
 }
 
+/* ── Form elements ───────────────────────────────────────── */
+input,
+textarea,
+select {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--brand);
+  outline: none;
+}
+
+/* ── Pagination buttons ───────────────────────────────────── */
+.pagination-btn {
+  color: #94a3b8;
+  border-color: #e2e8f0;
+}
+.pagination-btn:hover {
+  color: #0f172a;
+  border-color: #94a3b8;
+}
+.dark .pagination-btn {
+  color: #4b5e7a;
+  border-color: #1f2a3d;
+}
+.dark .pagination-btn:hover {
+  color: #ffffff;
+  border-color: #4b5e7a;
+}
+
 /* ── Toast theming ────────────────────────────────────────── */
 .dark .go2072408551 {
-  /* react-hot-toast container */
   --toast-bg: #111827;
   --toast-color: #f1f5f9;
   --toast-border: #1f2a3d;

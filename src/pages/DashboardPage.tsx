@@ -62,7 +62,8 @@ export default function DashboardPage() {
       icon: <Users size={18} />,
       color: "text-blue-600 dark:text-blue-400",
       iconBg: "bg-blue-500",
-      cardBg: "bg-gradient-to-br from-blue-50 to-blue-100/60 dark:from-blue-500/10 dark:to-blue-500/5",
+      cardBg:
+        "bg-gradient-to-br from-blue-50 to-blue-100/60 dark:from-blue-500/10 dark:to-blue-500/5",
       border: "border border-blue-100 dark:border-blue-500/15",
       trend: "+4.3% vs last month",
     },
@@ -72,19 +73,22 @@ export default function DashboardPage() {
       icon: <Building2 size={18} />,
       color: "text-emerald-600 dark:text-emerald-400",
       iconBg: "bg-emerald-500",
-      cardBg: "bg-gradient-to-br from-emerald-50 to-emerald-100/60 dark:from-emerald-500/10 dark:to-emerald-500/5",
+      cardBg:
+        "bg-gradient-to-br from-emerald-50 to-emerald-100/60 dark:from-emerald-500/10 dark:to-emerald-500/5",
       border: "border border-emerald-100 dark:border-emerald-500/15",
       trend: "Active divisions",
     },
     {
       label: "Avg Age",
       value: Math.round(
-        employees.reduce((s, e) => s + (e.age || 0), 0) / (employees.length || 1)
+        employees.reduce((s, e) => s + (e.age || 0), 0) /
+          (employees.length || 1),
       ),
       icon: <TrendingUp size={18} />,
       color: "text-amber-600 dark:text-amber-400",
       iconBg: "bg-amber-500",
-      cardBg: "bg-gradient-to-br from-amber-50 to-amber-100/60 dark:from-amber-500/10 dark:to-amber-500/5",
+      cardBg:
+        "bg-gradient-to-br from-amber-50 to-amber-100/60 dark:from-amber-500/10 dark:to-amber-500/5",
       border: "border border-amber-100 dark:border-amber-500/15",
       trend: "Workforce average",
     },
@@ -94,7 +98,8 @@ export default function DashboardPage() {
       icon: <CalendarCheck size={18} />,
       color: "text-purple-600 dark:text-purple-400",
       iconBg: "bg-purple-500",
-      cardBg: "bg-gradient-to-br from-purple-50 to-purple-100/60 dark:from-purple-500/10 dark:to-purple-500/5",
+      cardBg:
+        "bg-gradient-to-br from-purple-50 to-purple-100/60 dark:from-purple-500/10 dark:to-purple-500/5",
       border: "border border-purple-100 dark:border-purple-500/15",
       trend: "87% attendance rate",
     },
@@ -125,15 +130,22 @@ export default function DashboardPage() {
                 <p className="text-[11px] font-semibold text-gray-500 dark:text-[#4b5e7a] uppercase tracking-widest leading-tight">
                   {s.label}
                 </p>
-                <div className={`w-8 h-8 rounded-xl ${s.iconBg} flex items-center justify-center text-white shadow-sm shrink-0`}>
+                <div
+                  className={`w-8 h-8 rounded-xl ${s.iconBg} flex items-center justify-center text-white shadow-sm shrink-0`}
+                >
                   {s.icon}
                 </div>
               </div>
-              <p className={`text-3xl font-bold font-mono tracking-tight ${s.color}`}>
+              <p
+                className={`text-3xl font-bold font-mono tracking-tight ${s.color}`}
+              >
                 {s.value}
               </p>
               <p className="text-[11px] text-gray-500 dark:text-[#4b5e7a] mt-1.5 flex items-center gap-1">
-                <ArrowUpRight size={11} className="text-emerald-500 dark:text-emerald-400 shrink-0" />
+                <ArrowUpRight
+                  size={11}
+                  className="text-emerald-500 dark:text-emerald-400 shrink-0"
+                />
                 {s.trend}
               </p>
             </div>
@@ -143,16 +155,48 @@ export default function DashboardPage() {
 
       {/* Charts + Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-        <motion.div className="lg:col-span-3" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28 }}>
-          <Card title="Employees by Department" subtitle="Headcount distribution across all divisions" className="h-full">
+        <motion.div
+          className="lg:col-span-3"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.28 }}
+        >
+          <Card
+            title="Employees by Department"
+            subtitle="Headcount distribution across all divisions"
+            className="h-full"
+          >
             <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={deptStats} barSize={26} margin={{ top: 8, right: 4 }}>
-                <XAxis dataKey="dept" tick={{ fill: "#94a3b8", fontSize: 11 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: "#94a3b8", fontSize: 11 }} axisLine={false} tickLine={false} width={28} />
-                <Tooltip contentStyle={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 12 }} />
+              <BarChart
+                data={deptStats}
+                barSize={26}
+                margin={{ top: 8, right: 4 }}
+              >
+                <XAxis
+                  dataKey="dept"
+                  tick={{ fill: "#94a3b8", fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis
+                  tick={{ fill: "#94a3b8", fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
+                  width={28}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: "#fff",
+                    border: "1px solid #e2e8f0",
+                    borderRadius: 12,
+                  }}
+                />
                 <Bar dataKey="count" radius={[6, 6, 0, 0]}>
                   {deptStats.map((_, i) => (
-                    <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                    <Cell
+                      key={i}
+                      fill={CHART_COLORS[i % CHART_COLORS.length]}
+                    />
                   ))}
                 </Bar>
               </BarChart>
@@ -160,17 +204,36 @@ export default function DashboardPage() {
           </Card>
         </motion.div>
 
-        <motion.div className="lg:col-span-2" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.34 }}>
-          <Card title="Recent Activity" subtitle="Latest actions in the system" className="h-full">
+        <motion.div
+          className="lg:col-span-2"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.34 }}
+        >
+          <Card
+            title="Recent Activity"
+            subtitle="Latest actions in the system"
+            className="h-full"
+          >
             <ul className="space-y-3">
               {activity.map((a, i) => (
-                <motion.li key={a.id} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 + i * 0.05 }} className="flex items-start gap-3">
+                <motion.li
+                  key={a.id}
+                  initial={{ opacity: 0, x: -6 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 + i * 0.05 }}
+                  className="flex items-start gap-3"
+                >
                   <div className="mt-1.25 flex flex-col items-center shrink-0">
                     <span className="w-2 h-2 rounded-full bg-brand-400 dark:bg-brand-500 ring-2 ring-blue-100 dark:ring-blue-500/20" />
                   </div>
                   <div className="pb-3 flex-1 min-w-0">
-                    <p className="text-[13px] text-gray-700 dark:text-gray-300 leading-snug">{a.action}</p>
-                    <p className="text-[11px] text-gray-400 dark:text-[#4b5e7a] mt-0.5">{a.time}</p>
+                    <p className="text-[13px] text-(--text-primary) leading-snug">
+                      {a.action}
+                    </p>
+                    <p className="text-[11px] text-(--text-muted) mt-0.5">
+                      {a.time}
+                    </p>
                   </div>
                 </motion.li>
               ))}
@@ -179,14 +242,23 @@ export default function DashboardPage() {
         </motion.div>
       </div>
 
-      {/* Leave Requests - Full Width */}
+      {/* Leave Requests */}
       {user?.role === "manager" && (
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-          <Card title="Leave Requests" subtitle="Review and action pending requests">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <Card
+            title="Leave Requests"
+            subtitle="Review and action pending requests"
+          >
             {requests.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 gap-2 px-5">
                 <Clock size={28} className="text-gray-400 dark:text-gray-500" />
-                <p className="text-sm font-medium text-gray-400 dark:text-gray-400">No leave requests yet</p>
+                <p className="text-sm font-medium text-gray-400 dark:text-gray-400">
+                  No leave requests yet
+                </p>
               </div>
             ) : (
               <div className="divide-y divide-gray-100 dark:divide-gray-800">
@@ -200,9 +272,15 @@ export default function DashboardPage() {
                       exit={{ opacity: 0, height: 0 }}
                       className="flex items-center gap-4 px-6 py-5 hover:bg-gray-50 dark:hover:bg-white/3 transition-colors"
                     >
-                      <img src={r.image} alt={r.name} className="w-10 h-10 rounded-full object-cover shrink-0" />
+                      <img
+                        src={r.image}
+                        alt={r.name}
+                        className="w-10 h-10 rounded-full object-cover shrink-0"
+                      />
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-gray-900 dark:text-white">{r.name}</p>
+                        <p className="font-medium text-gray-900 dark:text-white">
+                          {r.name}
+                        </p>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
                           {r.reason} • {r.from} → {r.to}
                         </p>
@@ -225,7 +303,9 @@ export default function DashboardPage() {
                             </button>
                           </>
                         ) : (
-                          <Badge variant={r.status === "approved" ? "green" : "red"}>
+                          <Badge
+                            variant={r.status === "approved" ? "green" : "red"}
+                          >
                             {r.status}
                           </Badge>
                         )}
@@ -250,7 +330,9 @@ function DashboardSkeleton() {
         <div className="skeleton h-4 w-52 rounded-lg" />
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[...Array(4)].map((_, i) => <div key={i} className="skeleton h-25 rounded-2xl" />)}
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="skeleton h-25 rounded-2xl" />
+        ))}
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
         <div className="skeleton lg:col-span-3 h-80 rounded-2xl" />

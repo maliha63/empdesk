@@ -35,12 +35,11 @@ export default function Card({
     <div
       className={`
         relative
-        bg-white dark:bg-[#111827]
-        border border-[#e2e8f0] dark:border-[#1f2a3d]
+        bg-(--bg-card) 
+        border border-(--border)
         rounded-2xl
-        shadow-[0_1px_3px_0_rgb(0,0,0,0.06),0_1px_2px_-1px_rgb(0,0,0,0.04)]
-        dark:shadow-[0_1px_3px_0_rgb(0,0,0,0.4)]
-        ${!flat ? "transition-all duration-200 hover:shadow-[0_12px_32px_-4px_rgb(0,0,0,0.10),0_4px_12px_-4px_rgb(0,0,0,0.06)] dark:hover:shadow-[0_12px_32px_-4px_rgb(0,0,0,0.5)] hover:-translate-y-[1px]" : ""}
+        shadow-(--shadow-card)
+        ${!flat ? "transition-all duration-200 hover:shadow-(--shadow-hover) hover:-translate-y-px" : ""}
         ${accentMap[accent]}
         ${noPadding ? "" : "p-5"}
         ${className}
@@ -50,12 +49,12 @@ export default function Card({
         <div className="flex items-center justify-between mb-4">
           <div>
             {title && (
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+              <h3 className="text-sm font-semibold text-(--text-primary)">
                 {title}
               </h3>
             )}
             {subtitle && (
-              <p className="text-xs text-gray-400 dark:text-[#4b5e7a] mt-0.5">{subtitle}</p>
+              <p className="text-xs text-(--text-muted) mt-0.5">{subtitle}</p>
             )}
           </div>
           {action && <div className="shrink-0">{action}</div>}
