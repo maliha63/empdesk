@@ -187,11 +187,4 @@ Open: **http://localhost:5173**
 
 MIT License
 
----
 
-## 👩‍💻 Author
-
-**Maliha Bathool**
-GitHub: https://github.com/maliha63
-
----
