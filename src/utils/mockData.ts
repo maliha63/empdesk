@@ -6,7 +6,7 @@ function seed(id: number, i: number) {
 }
 
 const statuses = ["Present", "Absent", "Late", "Leave"] as const;
-const ratings  = ["Excellent", "Good", "Average", "Poor"] as const;
+// const ratings  = ["Excellent", "Good", "Average", "Poor"] as const;
 const months   = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 export function getMockAttendance(userId: number): AttendanceRecord[] {
