@@ -82,28 +82,7 @@ export default function LoginPage() {
 
       {/* Card */}
       <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-2xl p-6 shadow-[0_4px_24px_-4px_rgb(0,0,0,0.08)] dark:shadow-[0_4px_24px_-4px_rgb(0,0,0,0.4)]">
-        {/* Test credentials */}
-        <div className="mb-5 p-3.5 rounded-xl bg-brand-50 dark:bg-brand-500/8 border border-brand-100 dark:border-brand-500/20">
-          <p className="text-[11px] font-semibold text-brand-600 dark:text-brand-400 mb-1.5 uppercase tracking-wide">
-            Test accounts
-          </p>
-          <div className="space-y-1 font-mono text-[11px] text-gray-500 dark:text-[#4b5e7a]">
-            <p>
-              Manager →{" "}
-              <span className="text-gray-800 dark:text-gray-300 font-medium">
-                emilys
-              </span>{" "}
-              / emilyspass
-            </p>
-            <p>
-              Employee →{" "}
-              <span className="text-gray-800 dark:text-gray-300 font-medium">
-                sophiab
-              </span>{" "}
-              / sophiabpass
-            </p>
-          </div>
-        </div>
+        
 
         {/* Error */}
         {error && (
@@ -213,8 +192,8 @@ export default function LoginPage() {
         </form>
       </div>
 
-      <p className="text-center text-[11px] text-gray-300 dark:text-[#2a3a54] mt-6">
-        Employee Management System · empdesk
+      <p className="text-center text-[11px] text-gray-400 dark:text-[#2a3a54] mt-6">
+       empdesk - Manage your team, effortlessly
       </p>
     </div>
   );
