@@ -20,7 +20,6 @@ const managerNav: NavItem[] = [
 
 const employeeNav: NavItem[] = [
   { label: "My Profile", to: "/profile", icon: <UserCircle size={18} /> },
-  { label: "Employees", to: "/employees", icon: <Users size={18} /> },
 ];
 
 export function DashboardLayout({ children }: { children: ReactNode }) {
