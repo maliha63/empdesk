@@ -4,6 +4,7 @@ import {
   useCallback,
   useEffect,
   useState,
+  useMemo,
   type ReactNode,
 } from "react";
 
@@ -14,6 +15,7 @@ export interface LeaveRequest {
   employeeId: number;
   name: string;
   image: string;
+  designation: string; // Added field based on Image 4
   reason: string;
   from: string;
   to: string;
@@ -65,7 +67,7 @@ interface LeaveContextValue extends LeaveState {
 export const LeaveContext = createContext<LeaveContextValue | null>(null);
 
 export function LeaveProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch]   = useReducer(leaveReducer, { requests: [] });
+  const [state, dispatch] = useReducer(leaveReducer, { requests: [] });
   const [hydrated, setHydrated] = useState(false);
 
   // Rehydrate ONCE on mount
@@ -105,8 +107,15 @@ export function LeaveProvider({ children }: { children: ReactNode }) {
     dispatch({ type: "REJECT", payload: id });
   }, []);
 
+  const memoizedValue = useMemo(() => ({
+    ...state,
+    applyLeave,
+    approveLeave,
+    rejectLeave
+  }), [state, applyLeave, approveLeave, rejectLeave]);
+
   return (
-    <LeaveContext.Provider value={{ ...state, applyLeave, approveLeave, rejectLeave }}>
+    <LeaveContext.Provider value={memoizedValue}>
       {children}
     </LeaveContext.Provider>
   );
