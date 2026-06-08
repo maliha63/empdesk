@@ -23,30 +23,30 @@ export function PageHeader({
   const navigate = useNavigate();
 
   return (
-    <div className="flex items-start justify-between gap-4 flex-wrap mb-6">
+    <div className="flex items-start justify-between gap-4 flex-wrap mb-8">
       <div>
         {crumbs && crumbs.length > 0 && (
           <nav
-            className="flex items-center gap-1 mb-1.5"
+            className="flex items-center gap-1.5 mb-3 text-[15px]"
             aria-label="Breadcrumb"
           >
             {crumbs.map((c, i) => (
-              <span key={i} className="flex items-center gap-1">
+              <span key={i} className="flex items-center gap-1.5">
                 {i > 0 && (
                   <ChevronRight
-                    size={12}
-                    className="text-gray-300 dark:text-[#2a3a54]"
+                    size={18}
+                    className="text-gray-400 dark:text-[#2a3a54]"
                   />
                 )}
                 {c.to ? (
                   <button
                     onClick={() => navigate(c.to!)}
-                    className="text-[11px] font-medium text-gray-400 dark:text-[#4b5e7a] hover:text-brand-500 dark:hover:text-brand-400 transition-colors"
+                    className="font-medium text-gray-500 dark:text-[#4b5e7a] hover:text-brand-500 dark:hover:text-brand-400 transition-colors"
                   >
                     {c.label}
                   </button>
                 ) : (
-                  <span className="text-[11px] font-medium text-(--text-muted)">
+                  <span className="font-semibold text-(--text-primary)">
                     {c.label}
                   </span>
                 )}
@@ -55,18 +55,18 @@ export function PageHeader({
           </nav>
         )}
 
-        <h1 className="text-xl font-bold text-(--text-primary) tracking-tight leading-tight">
+        <h1 className="text-2xl font-bold text-(--text-primary) tracking-tight leading-none">
           {title}
         </h1>
 
         {description && (
-          <p className="text-sm text-(--text-muted) mt-0.5 font-normal">
+          <p className="text-sm text-(--text-muted) mt-1.5 font-normal">
             {description}
           </p>
         )}
       </div>
 
-      {action && <div className="mt-0.5 shrink-0">{action}</div>}
+      {action && <div className="mt-1 shrink-0">{action}</div>}
     </div>
   );
 }

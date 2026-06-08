@@ -15,6 +15,19 @@ const EditEmployeePage = lazy(() => import("../pages/EditEmployeePage"));
 const ProfilePage = lazy(() => import("../pages/ProfilePage"));
 const NotFoundPage = lazy(() => import("../pages/NotFoundPage"));
 
+// Employee Management Pages
+const AttendancePage = lazy(() => import("../pages/AttendancePage"));
+const LeavePage = lazy(() => import("../pages/LeavePage"));
+const PerformancePage = lazy(() => import("../pages/PerformancePage"));
+const PositionsPage = lazy(() => import("../pages/PositionsPage"));
+const PayrollPage = lazy(() => import("../pages/PayrollPage"));
+
+// New HRM Pages (as requested)
+const NoticeBoardPage = lazy(() => import("../pages/NoticeBoardPage"));
+const EventPage = lazy(() => import("../pages/EventPage"));
+const DesignationPage = lazy(() => import("../pages/DesignationPage"));
+const DepartmentPage = lazy(() => import("../pages/DepartmentPage"));
+
 function PageLoader() {
   return (
     <div className="min-h-screen bg-[#f8fafc] dark:bg-[#0b0f1a] flex items-center justify-center">
@@ -29,16 +42,9 @@ export function AppRouter() {
       <Suspense fallback={<PageLoader />}>
         <Routes>
           {/* Public */}
-          <Route
-            path="/login"
-            element={
-              <AuthLayout>
-                <LoginPage />
-              </AuthLayout>
-            }
-          />
+          <Route path="/login" element={<AuthLayout><LoginPage /></AuthLayout>} />
 
-          {/* Protected */}
+          {/* Protected Routes */}
           <Route
             path="/*"
             element={
@@ -46,32 +52,38 @@ export function AppRouter() {
                 <DashboardLayout>
                   <ErrorBoundary>
                     <Routes>
-                      <Route
-                        index
-                        element={<Navigate to="/dashboard" replace />}
-                      />
+                      <Route index element={<Navigate to="/dashboard" replace />} />
                       <Route path="dashboard" element={<DashboardPage />} />
+
+                      {/* Main Employee Routes */}
                       <Route path="employees" element={<EmployeesPage />} />
                       <Route path="employees/:id" element={<EmployeePage />} />
+                      <Route path="employees/add" element={<RoleGuard allowedRoles={["manager"]}><AddEmployeePage /></RoleGuard>} />
+                      <Route path="employees/:id/edit" element={<RoleGuard allowedRoles={["manager"]}><EditEmployeePage /></RoleGuard>} />
+
+                      {/* Attendance & Leave */}
+                      <Route path="attendance" element={<AttendancePage />} />
+                      <Route path="attendance/me" element={<AttendancePage />} />
+                      <Route path="leave" element={<LeavePage />} />
+                      <Route path="leave/me" element={<LeavePage />} />
+
+                      {/* Employee Sub-pages */}
+                      <Route path="employees/positions" element={<PositionsPage />} />
+                      <Route path="employees/performance" element={<PerformancePage />} />
+
+                      {/* Payroll */}
+                      <Route path="payroll/salary" element={<RoleGuard allowedRoles={["manager"]}><PayrollPage /></RoleGuard>} />
+                      <Route path="payroll/reports" element={<RoleGuard allowedRoles={["manager"]}><PayrollPage /></RoleGuard>} />
+
+                      {/* New HRM Pages */}
+                      <Route path="notice-board" element={<NoticeBoardPage />} />
+                      <Route path="event" element={<EventPage />} />
+                      <Route path="designation" element={<DesignationPage />} />
+                      <Route path="department" element={<DepartmentPage />} />
+
                       <Route path="profile" element={<ProfilePage />} />
 
-                      {/* Manager only */}
-                      <Route
-                        path="employees/add"
-                        element={
-                          <RoleGuard allowedRoles={["manager"]}>
-                            <AddEmployeePage />
-                          </RoleGuard>
-                        }
-                      />
-                      <Route
-                        path="employees/:id/edit"
-                        element={
-                          <RoleGuard allowedRoles={["manager"]}>
-                            <EditEmployeePage />
-                          </RoleGuard>
-                        }
-                      />
+                      {/* 404 */}
                       <Route path="*" element={<NotFoundPage />} />
                     </Routes>
                   </ErrorBoundary>
@@ -80,7 +92,6 @@ export function AppRouter() {
             }
           />
 
-          {/* Root redirect */}
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </Suspense>
