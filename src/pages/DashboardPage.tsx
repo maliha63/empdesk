@@ -10,7 +10,7 @@ import { useLeave } from "../hooks/useLeave";
 
 import { useAuth } from "../hooks/useAuth";
 
-import { getNotices, getUpcomingEvents } from "../utils/mockData";
+import { getNotices } from "../utils/mockData";
 
 import { PageHeader } from "../components/PageHeader";
 

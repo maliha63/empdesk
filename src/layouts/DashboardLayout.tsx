@@ -51,6 +51,17 @@ const managerNav: NavItem[] = [
       { label: "Reports", to: "/payroll/reports", icon: <TrendingUp size={15} /> },
     ],
   },
+  // ✨ New HRM Section
+  {
+    label: "HRM",
+    icon: <Users size={18} />,
+    children: [
+      { label: "Notice Board", to: "/notice-board", icon: <LayoutDashboard size={15} /> },
+      { label: "Events", to: "/event", icon: <Calendar size={15} /> },
+      { label: "Designation", to: "/designation", icon: <Users size={15} /> },
+      { label: "Department", to: "/department", icon: <MapPin size={15} /> },
+    ],
+  },
   { label: "My Profile", to: "/profile", icon: <UserCircle size={18} /> },
 ];
 
@@ -207,7 +218,6 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
               initial={{ x: -280 }}
               animate={{ x: 0 }}
               exit={{ x: -280 }}
-              transition={{ type: "tween", duration: 0.25 }}
               className="fixed inset-y-0 left-0 z-50 w-64 bg-(--bg-card) border-r border-(--border) flex flex-col md:hidden"
             >
               <div className="md:hidden flex justify-end p-4">
@@ -271,7 +281,6 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
         )}
       </AnimatePresence>
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
         <header className="h-14 border-b border-(--border) bg-(--bg-card) px-5 flex items-center justify-between shrink-0">
           <button onClick={() => setSidebarOpen(true)} className="md:hidden text-(--text-secondary)">
