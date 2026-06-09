@@ -20,11 +20,8 @@ const managerNav: NavItem[] = [
   { label: "Dashboard", to: "/dashboard", icon: <LayoutDashboard size={18} /> },
   {
     label: "Attendance",
+    to: "/attendance",
     icon: <Clock size={18} />,
-    children: [
-      { label: "Overview", to: "/attendance", icon: <Clock size={15} /> },
-      { label: "My Attendance", to: "/attendance/me", icon: <UserCircle size={15} /> },
-    ],
   },
   {
     label: "Employee",
@@ -37,11 +34,8 @@ const managerNav: NavItem[] = [
   },
   {
     label: "Leave",
+    to: "/leave",
     icon: <Calendar size={18} />,
-    children: [
-      { label: "Leave Requests", to: "/leave", icon: <Calendar size={15} /> },
-      { label: "My Leave", to: "/leave/me", icon: <UserCircle size={15} /> },
-    ],
   },
   {
     label: "Payroll",

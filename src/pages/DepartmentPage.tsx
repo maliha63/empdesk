@@ -1,22 +1,82 @@
 import { useState } from "react";
 import { PageHeader } from "../components/PageHeader";
 import Button from "../components/Button";
+import Modal from "../components/Modal";
+import ConfirmDialog from "../components/ConfirmDialog";
 import toast, { Toaster } from "react-hot-toast";
+import { Trash2, Edit2, Building2 } from "lucide-react";
 
-const initialDepartments = [
-  { id: 1, name: "English Department", description: "Head of the entire school/institution" },
-  { id: 2, name: "Mathematics Department", description: "Assists the principal in academic/admin" },
+interface Department {
+  id: number;
+  name: string;
+  description: string;
+}
+
+const initialDepartments: Department[] = [
+  { id: 1, name: "Engineering", description: "Builds and maintains our core platform, backend systems, and infrastructure. Led by VP Engineering" },
+  { id: 2, name: "Product", description: "Defines product strategy, roadmap, and features. Collaborates with Design and Engineering teams" },
+  { id: 3, name: "Design", description: "Creates user experiences, interfaces, and brand identity. Specializes in UX/UI and product design" },
+  { id: 4, name: "Marketing", description: "Drives growth, brand awareness, and customer acquisition. Handles campaigns and market research" },
+  { id: 5, name: "Sales", description: "Manages client relationships and business development. Owns pipeline and revenue targets" },
+  { id: 6, name: "Finance", description: "Handles accounting, budgeting, financial planning, and payroll management" },
+  { id: 7, name: "Human Resources", description: "Manages recruitment, employee development, benefits, and workplace culture" },
 ];
 
 export default function DepartmentPage() {
   const [departments, setDepartments] = useState(initialDepartments);
   const [showModal, setShowModal] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [editingDept, setEditingDept] = useState<Department | null>(null);
+  const [deptToDelete, setDeptToDelete] = useState<Department | null>(null);
   const [form, setForm] = useState({ name: "", description: "" });
 
+  const handleOpenModal = (dept?: Department) => {
+    if (dept) {
+      setEditingDept(dept);
+      setForm({ name: dept.name, description: dept.description });
+    } else {
+      setEditingDept(null);
+      setForm({ name: "", description: "" });
+    }
+    setShowModal(true);
+  };
+
   const handleSave = () => {
-    setDepartments([...departments, { id: Date.now(), ...form }]);
-    toast.success("Department added");
+    if (!form.name.trim() || !form.description.trim()) {
+      toast.error("Name and description are required");
+      return;
+    }
+
+    if (editingDept) {
+      setDepartments(
+        departments.map((d) =>
+          d.id === editingDept.id ? { ...d, ...form } : d
+        )
+      );
+      toast.success("Department updated");
+    } else {
+      setDepartments([
+        ...departments,
+        { id: Date.now(), ...form },
+      ]);
+      toast.success("Department added");
+    }
+
     setShowModal(false);
+    setForm({ name: "", description: "" });
+    setEditingDept(null);
+  };
+
+  const handleDeleteClick = (dept: Department) => {
+    setDeptToDelete(dept);
+    setShowDeleteDialog(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (deptToDelete) {
+      setDepartments(departments.filter((d) => d.id !== deptToDelete.id));
+      toast.success("Department deleted");
+    }
   };
 
   return (
@@ -24,53 +84,124 @@ export default function DepartmentPage() {
       <Toaster position="top-right" />
       <div className="space-y-6">
         <PageHeader
-          title="Department"
-          description="School departments and sections"
-          crumbs={[{ label: "Dashboard", to: "/dashboard" }, { label: "Department" }]}
-          action={<Button onClick={() => setShowModal(true)}>+ Add Department</Button>}
+          title="Departments"
+          description="Manage company departments and teams"
+          crumbs={[{ label: "Dashboard", to: "/dashboard" }, { label: "Departments" }]}
+          action={<Button onClick={() => handleOpenModal()}>+ Add Department</Button>}
         />
 
-        <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-2xl overflow-hidden">
+        <div className="bg-white dark:bg-[#111827] border divide-(--border) rounded-xl overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="bg-gray-50 dark:bg-[#0f172a] border-b">
-                <th className="text-left pl-8 py-4">S.L</th>
-                <th className="text-left py-4">Name</th>
-                <th className="text-left py-4">Description</th>
-                <th className="text-right pr-8 py-4">Action</th>
+              <tr className="border-b divide-(--border) bg-[#f8fafc] dark:bg-[#0f172a]">
+                <th className="w-12 px-4 py-3 text-left">
+                  <input type="checkbox" className="rounded" />
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary) whitespace-nowrap">S.L</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary)">Name</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary)">Description</th>
+                <th className="px-4 py-3 text-right text-xs font-semibold text-(--text-primary)">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y">
-              {departments.map((dept, i) => (
-                <tr key={dept.id} className="hover:bg-gray-50 dark:hover:bg-[#0f172a]">
-                  <td className="pl-8 py-5">{String(i+1).padStart(2,'0')}</td>
-                  <td className="py-5 font-medium">{dept.name}</td>
-                  <td className="py-5 text-(--text-secondary)">{dept.description}</td>
-                  <td className="pr-8 py-5 text-right">
-                    <button className="text-blue-600 hover:underline mr-4">Edit</button>
-                    <button className="text-red-600 hover:underline">Delete</button>
+            <tbody className="divide-y divide-(--border)">
+              {departments.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-4 py-12 text-center">
+                    <Building2 size={48} className="text-(--text-muted) mx-auto mb-4 opacity-30" />
+                    <p className="text-(--text-primary) font-medium mb-1">No departments yet</p>
+                    <p className="text-(--text-muted) text-sm">Create your first department to get started</p>
                   </td>
                 </tr>
-              ))}
+              ) : (
+                departments.map((dept, idx) => (
+                  <tr key={dept.id} className="hover:bg-[#f8fafc] dark:hover:bg-[#0f172a] transition-colors">
+                    <td className="px-4 py-3">
+                      <input type="checkbox" className="rounded" />
+                    </td>
+                    <td className="px-4 py-3 text-sm text-(--text-primary) font-medium">{String(idx + 1).padStart(2, '0')}</td>
+                    <td className="px-4 py-3 text-sm text-(--text-primary) font-medium">{dept.name}</td>
+                    <td className="px-4 py-3 text-sm text-(--text-primary)">{dept.description}</td>
+                    <td className="px-4 py-3 text-right">
+                      <button
+                        onClick={() => handleOpenModal(dept)}
+                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/20 text-blue-600 dark:text-blue-400 transition-colors"
+                        title="Edit"
+                      >
+                        <Edit2 size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClick(dept)}
+                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 text-red-600 dark:text-red-400 transition-colors ml-1"
+                        title="Delete"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* Modal same as Designation */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-[#111827] rounded-2xl w-full max-w-md p-8">
-            <h3 className="text-xl font-semibold mb-6">Add Department</h3>
-            <input type="text" placeholder="Department Name" className="w-full border rounded-xl px-4 py-3 mb-4" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
-            <textarea placeholder="Description" className="w-full border rounded-xl px-4 py-3" value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
-            <div className="flex gap-3 mt-6">
-              <Button variant="danger" onClick={() => setShowModal(false)} className="flex-1">Cancel</Button>
-              <Button onClick={handleSave} className="flex-1">Save</Button>
-            </div>
+      {/* Add/Edit Modal */}
+      <Modal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        title={editingDept ? "Edit Department" : "Add Department"}
+        size="md"
+        footer={
+          <>
+            <Button variant="primary" onClick={() => setShowModal(false)} className="flex-1">
+              Cancel
+            </Button>
+            <Button onClick={handleSave} className="flex-1">
+              {editingDept ? "Update" : "Create"}
+            </Button>
+          </>
+        }
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="text-sm font-medium text-(--text-primary) block mb-2">
+              Department Name
+            </label>
+            <input
+              type="text"
+              placeholder="e.g., Engineering, Marketing, Sales"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              className="w-full border divide-(--border) rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-(--text-primary) placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-(--text-primary) block mb-2">
+              Description
+            </label>
+            <textarea
+              placeholder="Department description and responsibilities"
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+              rows={4}
+              className="w-full border divide-(--border) rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-(--text-primary) placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            />
           </div>
         </div>
-      )}
+      </Modal>
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={showDeleteDialog}
+        onClose={() => setShowDeleteDialog(false)}
+        onConfirm={handleConfirmDelete}
+        title="Delete Department"
+        message={`Are you sure you want to delete "${deptToDelete?.name}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        isDangerous
+      />
     </>
   );
 }
