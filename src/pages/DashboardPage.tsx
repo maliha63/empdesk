@@ -173,12 +173,14 @@ export default function DashboardPage() {
   const isManager = user?.role === "manager";
 
   const displayLeaves = useMemo(() => {
-    return requests.filter(r => 
-      r.employeeId === user?.id || 
-      r.name?.toLowerCase() === `${user?.firstName} ${user?.lastName}`.toLowerCase() ||
-      r.name?.toLowerCase() === "sophia brown"
-    );
-  }, [requests, user]);
+    if (isManager) {
+      // For managers: show all team members' leaves (exclude own)
+      return requests.filter(r => r.employeeId !== user?.id);
+    } else {
+      // For employees: show own leaves only
+      return requests.filter(r => r.employeeId === user?.id);
+    }
+  }, [requests, user, isManager]);
 
   if (isLoading) return <DashboardSkeleton />;
 
