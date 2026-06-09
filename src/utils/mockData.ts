@@ -65,9 +65,11 @@ export interface Notice {
 }
 
 export const getNotices = (): Notice[] => [
-  { id: 1, title: "Office closed on 10th June for maintenance", date: "2 hours ago", priority: "high" },
-  { id: 2, title: "Team building event this Friday", date: "Yesterday", priority: "medium" },
-  { id: 3, title: "New HR policy update regarding remote work", date: "3 days ago" },
+  { id: 1, title: "Q2 Performance Reviews - Schedule Your Session", date: "2 hours ago", priority: "high" },
+  { id: 2, title: "Updated Remote Work Policy - Flexible Hours Now Available", date: "Yesterday", priority: "high" },
+  { id: 3, title: "Professional Development Fund Open - Apply for Training", date: "2 days ago", priority: "medium" },
+  { id: 4, title: "Annual Team Offsite - June 15-17, Tahoe Resort", date: "3 days ago", priority: "medium" },
+  { id: 5, title: "New Health Insurance Plan Details", date: "4 days ago", priority: "low" },
 ];
 
 export interface UpcomingEvent {
@@ -79,9 +81,10 @@ export interface UpcomingEvent {
 }
 
 export const getUpcomingEvents = (): UpcomingEvent[] => [
-  { id: 1, title: "Department Meeting", date: "Today", time: "3:00 PM", location: "Conference Room A" },
-  { id: 2, title: "Project Deadline - Q2 Reports", date: "Tomorrow", time: "11:59 PM" },
-  { id: 3, title: "Client Presentation", date: "Jun 9", time: "10:00 AM", location: "Zoom" },
+  { id: 1, title: "All-Hands Meeting", date: "June 10", time: "2:00 PM", location: "Main Hall / Zoom" },
+  { id: 2, title: "Product Launch Celebration", date: "June 15", time: "4:00 PM", location: "Office Terrace" },
+  { id: 3, title: "Engineering Team Lunch", date: "June 18", time: "12:00 PM", location: "Downtown Restaurant" },
+  { id: 4, title: "Quarterly Business Review", date: "June 25", time: "10:00 AM", location: "Boardroom" },
 ];
 
 export const getTopPerformers = () => [

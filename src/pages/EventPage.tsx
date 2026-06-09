@@ -26,29 +26,56 @@ const categoryColors = {
 const initialEvents: Event[] = [
   {
     id: 1,
-    title: "Design Conference",
-    date: "2026-06-15",
-    time: "10:30",
-    description: "Annual design summit with industry experts",
-    location: "Conference Room A",
+    title: "All-Hands Meeting",
+    date: "2026-06-10",
+    time: "14:00",
+    description: "Quarterly company update, product roadmap review, and Q&A with leadership",
+    location: "Main Hall / Zoom",
     category: "meeting",
   },
   {
     id: 2,
-    title: "Project Deadline",
-    date: "2026-06-20",
+    title: "Q2 Performance Review Deadline",
+    date: "2026-06-15",
     time: "23:59",
-    description: "Q2 project submissions due",
+    description: "All managers must complete Q2 performance reviews by end of day",
     category: "deadline",
   },
   {
     id: 3,
-    title: "Team Building Event",
-    date: "2026-06-22",
-    time: "14:00",
-    description: "Outdoor team building activities",
-    location: "Sports Ground",
+    title: "Product Launch Celebration",
+    date: "2026-06-15",
+    time: "16:00",
+    description: "Celebrate the launch of our new AI features. Light refreshments provided",
+    location: "Office Terrace",
     category: "social",
+  },
+  {
+    id: 4,
+    title: "Engineering Team Lunch",
+    date: "2026-06-18",
+    time: "12:00",
+    description: "Team bonding lunch to discuss current projects and technical challenges",
+    location: "Downtown Restaurant",
+    category: "social",
+  },
+  {
+    id: 5,
+    title: "Professional Development Workshop",
+    date: "2026-06-20",
+    time: "10:00",
+    description: "Training session on advanced React patterns and best practices",
+    location: "Conference Room B",
+    category: "training",
+  },
+  {
+    id: 6,
+    title: "Quarterly Business Review",
+    date: "2026-06-25",
+    time: "10:00",
+    description: "Executive presentation on company performance, metrics, and upcoming initiatives",
+    location: "Boardroom",
+    category: "meeting",
   },
 ];
 
@@ -164,7 +191,7 @@ export default function EventPage() {
       <div className="space-y-6">
         <PageHeader
           title="Events"
-          description="Manage school events and activities"
+          description="Manage company events and meetings"
           crumbs={[{ label: "Dashboard", to: "/dashboard" }, { label: "Events" }]}
           action={<Button onClick={() => handleOpenModal()}>+ Add Event</Button>}
         />
@@ -287,7 +314,7 @@ export default function EventPage() {
             </label>
             <input
               type="text"
-              placeholder="e.g., Team Meeting"
+              placeholder="e.g., Q3 Planning Meeting, Team Lunch"
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
               className="w-full border border-[var(--border)] rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -341,7 +368,7 @@ export default function EventPage() {
             </label>
             <input
               type="text"
-              placeholder="e.g., Conference Room A"
+              placeholder="e.g., Main Hall, Boardroom, Zoom"
               value={form.location}
               onChange={(e) => setForm({ ...form, location: e.target.value })}
               className="w-full border border-[var(--border)] rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -353,7 +380,7 @@ export default function EventPage() {
               Description
             </label>
             <textarea
-              placeholder="Event details..."
+              placeholder="Event details, agenda, and attendee information..."
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               rows={4}

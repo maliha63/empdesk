@@ -13,10 +13,14 @@ interface Designation {
 }
 
 const initialDesignations: Designation[] = [
-  { id: 1, name: "Principal", description: "Head of the entire school/institution" },
-  { id: 2, name: "Vice Principal", description: "Assists the principal and oversees daily operations" },
-  { id: 3, name: "Head Teacher", description: "Leads a department or specific academic section" },
-  { id: 4, name: "Senior Teacher", description: "Experienced teacher responsible for mentoring junior staff" },
+  { id: 1, name: "Senior Software Engineer", description: "Designs and develops core platform features. Mentors junior engineers and leads technical initiatives" },
+  { id: 2, name: "DevOps Engineer", description: "Manages cloud infrastructure, CI/CD pipelines, and system reliability. Ensures 99.9% uptime" },
+  { id: 3, name: "QA Engineer", description: "Develops test strategies, automation frameworks, and ensures product quality across releases" },
+  { id: 4, name: "Product Manager", description: "Defines product strategy, manages roadmap, and drives feature prioritization across teams" },
+  { id: 5, name: "Product Designer", description: "Leads UX/UI design, user research, and designs customer-facing experiences" },
+  { id: 6, name: "Marketing Manager", description: "Develops marketing strategy, manages campaigns, and drives customer acquisition" },
+  { id: 7, name: "Sales Manager", description: "Manages sales team, owns revenue targets, and manages key client relationships" },
+  { id: 8, name: "Finance Manager", description: "Handles budgeting, financial planning, and manages company accounting operations" },
 ];
 
 export default function DesignationPage() {
@@ -82,7 +86,7 @@ export default function DesignationPage() {
       <div className="space-y-6">
         <PageHeader
           title="Designations"
-          description="Manage job roles and designations"
+          description="Manage job titles and roles"
           crumbs={[{ label: "Dashboard", to: "/dashboard" }, { label: "Designations" }]}
           action={<Button onClick={() => handleOpenModal()}>+ Add Designation</Button>}
         />
@@ -158,7 +162,7 @@ export default function DesignationPage() {
             </label>
             <input
               type="text"
-              placeholder="e.g., Senior Manager"
+              placeholder="e.g., Senior Software Engineer"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
               className="w-full border border-[var(--border)] rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-purple-500"

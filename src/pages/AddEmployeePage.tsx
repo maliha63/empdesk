@@ -30,6 +30,25 @@ const GENDER_OPTIONS = [
   { label: "Other",  value: "other"  },
 ];
 
+const JOB_TITLES = [
+  { label: "Senior Software Engineer", value: "Senior Software Engineer" },
+  { label: "Software Engineer", value: "Software Engineer" },
+  { label: "Junior Software Engineer", value: "Junior Software Engineer" },
+  { label: "DevOps Engineer", value: "DevOps Engineer" },
+  { label: "QA Engineer", value: "QA Engineer" },
+  { label: "Product Manager", value: "Product Manager" },
+  { label: "Product Designer", value: "Product Designer" },
+  { label: "UI/UX Designer", value: "UI/UX Designer" },
+  { label: "Marketing Manager", value: "Marketing Manager" },
+  { label: "Marketing Specialist", value: "Marketing Specialist" },
+  { label: "Sales Manager", value: "Sales Manager" },
+  { label: "Sales Executive", value: "Sales Executive" },
+  { label: "Finance Manager", value: "Finance Manager" },
+  { label: "Finance Analyst", value: "Finance Analyst" },
+  { label: "HR Manager", value: "HR Manager" },
+  { label: "HR Specialist", value: "HR Specialist" },
+];
+
 export default function AddEmployeePage() {
   const { addEmployee } = useEmployees();
   const navigate        = useNavigate();
@@ -69,6 +88,7 @@ export default function AddEmployeePage() {
   }
 
   const deptOptions = DEPARTMENTS.filter((d) => d !== "All").map((d) => ({ label: d, value: d }));
+  const titleOptions = JOB_TITLES;
 
   const inputClass = (hasError: boolean) =>
     `w-full bg-[#f8fafc] dark:bg-[#0b0f1a] border rounded-lg px-3 py-2 text-sm
@@ -131,7 +151,6 @@ export default function AddEmployeePage() {
               { name: "city"      as const, label: "City",       type: "text"   },
               { name: "country"   as const, label: "Country",    type: "text"   },
               { name: "company"   as const, label: "Company",    type: "text"   },
-              { name: "title"     as const, label: "Job Title",  type: "text"   },
             ]).map((f) => (
               <div key={f.name}>
                 <label className="block text-xs font-medium text-gray-500 dark:text-[#4b5e7a] mb-1.5">{f.label}</label>
@@ -162,6 +181,17 @@ export default function AddEmployeePage() {
                   <Dropdown options={deptOptions} value={field.value ?? ""} onChange={field.onChange} placeholder="Select department" />
                 )}
               />
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-gray-500 dark:text-[#4b5e7a] mb-1.5">Job Title</label>
+              <Controller
+                name="title" control={control} rules={{ required: "Job title is required" }}
+                render={({ field }) => (
+                  <Dropdown options={titleOptions} value={field.value ?? ""} onChange={field.onChange} placeholder="Select job title" />
+                )}
+              />
+              {errors.title && <p className="mt-1 text-xs text-red-500">{errors.title?.message}</p>}
             </div>
           </div>
 

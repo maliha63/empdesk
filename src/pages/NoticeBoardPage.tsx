@@ -15,9 +15,11 @@ interface Notice {
 }
 
 const initialNotices: Notice[] = [
-  { id: 1, date: "01 Feb 2025", title: "General Notice", description: "School-wide updates, reminders, and holiday schedules.", priority: "medium" },
-  { id: 2, date: "12 Mar 2025", title: "Annual Sports Day", description: "Details regarding sports competitions and event schedule.", priority: "high" },
-  { id: 3, date: "15 Mar 2025", title: "Maintenance Update", description: "System maintenance scheduled for next weekend.", priority: "medium" },
+  { id: 1, date: "June 5, 2025", title: "Q2 Performance Reviews - Schedule Your Session", description: "All employees are required to complete their Q2 performance review by June 15. Sign up for 1-on-1 slots with your manager.", priority: "high" },
+  { id: 2, date: "June 3, 2025", title: "Updated Remote Work Policy", description: "Effective immediately: Flexible remote work policy now allows up to 3 days WFH per week. Details in HR portal.", priority: "high" },
+  { id: 3, date: "June 1, 2025", title: "Professional Development Fund Open", description: "Apply now for training courses, certifications, and conferences. Up to $2,000 per employee this fiscal year.", priority: "medium" },
+  { id: 4, date: "May 28, 2025", title: "Annual Team Offsite - June 15-17", description: "Save the dates! Join us at Tahoe Resort for our annual team building event. Agenda and registration details coming soon.", priority: "medium" },
+  { id: 5, date: "May 20, 2025", title: "New Health Insurance Plan", description: "Comprehensive medical, dental, and vision coverage now available. Review plan options in the benefits portal.", priority: "low" },
 ];
 
 export default function NoticeBoardPage() {
@@ -110,7 +112,7 @@ export default function NoticeBoardPage() {
       <div className="space-y-6">
         <PageHeader
           title="Notice Board"
-          description="School announcements and important updates"
+          description="Company announcements and HR updates"
           crumbs={[
             { label: "Dashboard", to: "/dashboard" },
             { label: "Notice Board" },
@@ -198,7 +200,7 @@ export default function NoticeBoardPage() {
             </label>
             <input
               type="text"
-              placeholder="Enter notice title"
+              placeholder="e.g., Q2 Performance Reviews Open"
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
               className="w-full border border-[var(--border)] rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -225,7 +227,7 @@ export default function NoticeBoardPage() {
               Description
             </label>
             <textarea
-              placeholder="Enter notice description"
+              placeholder="Announcement details, deadlines, and important information..."
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               rows={5}

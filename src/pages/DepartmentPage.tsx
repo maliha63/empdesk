@@ -13,10 +13,13 @@ interface Department {
 }
 
 const initialDepartments: Department[] = [
-  { id: 1, name: "English Department", description: "Head of the entire school/institution" },
-  { id: 2, name: "Mathematics Department", description: "Assists the principal in academic/admin" },
-  { id: 3, name: "Science Department", description: "Leads a department or specific academic section" },
-  { id: 4, name: "Social Studies Department", description: "Experienced teacher with leadership duties" },
+  { id: 1, name: "Engineering", description: "Builds and maintains our core platform, backend systems, and infrastructure. Led by VP Engineering" },
+  { id: 2, name: "Product", description: "Defines product strategy, roadmap, and features. Collaborates with Design and Engineering teams" },
+  { id: 3, name: "Design", description: "Creates user experiences, interfaces, and brand identity. Specializes in UX/UI and product design" },
+  { id: 4, name: "Marketing", description: "Drives growth, brand awareness, and customer acquisition. Handles campaigns and market research" },
+  { id: 5, name: "Sales", description: "Manages client relationships and business development. Owns pipeline and revenue targets" },
+  { id: 6, name: "Finance", description: "Handles accounting, budgeting, financial planning, and payroll management" },
+  { id: 7, name: "Human Resources", description: "Manages recruitment, employee development, benefits, and workplace culture" },
 ];
 
 export default function DepartmentPage() {
@@ -82,7 +85,7 @@ export default function DepartmentPage() {
       <div className="space-y-6">
         <PageHeader
           title="Departments"
-          description="Manage school departments and sections"
+          description="Manage company departments and teams"
           crumbs={[{ label: "Dashboard", to: "/dashboard" }, { label: "Departments" }]}
           action={<Button onClick={() => handleOpenModal()}>+ Add Department</Button>}
         />
@@ -158,7 +161,7 @@ export default function DepartmentPage() {
             </label>
             <input
               type="text"
-              placeholder="e.g., Engineering Department"
+              placeholder="e.g., Engineering, Marketing, Sales"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
               className="w-full border border-[var(--border)] rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-500"
