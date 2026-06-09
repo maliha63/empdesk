@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useEmployees } from "../hooks/useEmployees";
 import { getMockAttendance } from "../utils/mockData";
@@ -18,7 +18,6 @@ const ATTENDANCE_OPTIONS = [
 
 export default function AttendancePage() {
   const { id } = useParams<{ id?: string }>(); // For individual or overview
-  const navigate = useNavigate();
   const { user } = useAuth();
   const { employees } = useEmployees();
 

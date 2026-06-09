@@ -145,7 +145,7 @@ export default function DashboardPage() {
   const [clockInTime, setClockInTime] = useState<string | null>(null);
 
   const notices = getNotices();
-  const events = getUpcomingEvents();
+  // const events = getUpcomingEvents();
 
   const handleClockInToggle = () => {
     if (!isClockedIn) {
@@ -344,7 +344,7 @@ export default function DashboardPage() {
                           </div>
                         )}
                       </div>
-                      <Badge variant={req.status === "approved" ? "green" : req.status === "pending" ? "yellow" : "red"}>{req.status}</Badge>
+                      <Badge variant={req.status === "approved" ? "green" : req.status === "pending" ? "amber" : "red"}>{req.status}</Badge>
                     </div>
                   ))
                 )}

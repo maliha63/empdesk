@@ -61,7 +61,7 @@ export default function EmployeesPage() {
       });
   }, [employees, debouncedSearch, dept, sortBy, sortDir]);
 
-  const { page, setPage, totalPages, paginated, reset } = usePagination(
+  const { page, totalPages, paginated, reset } = usePagination(
     filtered,
     ITEMS_PER_PAGE,
   );

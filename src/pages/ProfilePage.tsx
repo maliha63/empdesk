@@ -47,6 +47,7 @@ export default function ProfilePage() {
       reason:     data.reason,
       from:       data.from,
       to:         data.to,
+      designation: employee.company?.title || "Employee",
     });
     reset();
     setShowLeaveForm(false);

@@ -11,6 +11,7 @@ interface CardProps {
   accent?:    "blue" | "green" | "amber" | "purple" | "none";
   /** Disable hover shadow lift */
   flat?:      boolean;
+  icon?: React.ReactNode;
 }
 
 const accentMap: Record<string, string> = {

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { PageHeader } from "../components/PageHeader";
-import { Badge } from "../components/Badge";
 import Button from "../components/Button";
 import toast, { Toaster } from "react-hot-toast";
 
