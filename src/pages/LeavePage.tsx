@@ -132,75 +132,99 @@ export default function LeavePage() {
           </div>
         )}
 
-        {/* Leave Requests List */}
-        {displayedRequests.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 bg-white dark:bg-[#111827] border border-[var(--border)] rounded-2xl">
-            <Calendar size={48} className="text-[var(--text-muted)] mb-4 opacity-30" />
-            <p className="text-[var(--text-primary)] font-medium mb-1">No leave requests</p>
-            <p className="text-[var(--text-muted)] text-sm">
-              {isManager ? "No leave requests yet" : "You haven&apos;t applied for leave"}
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {displayedRequests.map((req) => (
-              <div
-                key={req.id}
-                className={`border-l-4 rounded-lg p-5 bg-white dark:bg-[#111827] border border-[var(--border)] hover:shadow-md transition-all ${getStatusColor(req.status)}`}
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex-1">
-                    <h3 className="text-sm font-semibold text-[var(--text-primary)]">
-                      {isManager ? req.name : "My Leave Request"}
-                    </h3>
-                    <p className="text-xs text-[var(--text-muted)] mt-1">{req.reason}</p>
-                  </div>
-                  <span className={`px-3 py-1.5 rounded-md text-xs font-semibold whitespace-nowrap ${getStatusBadgeColor(req.status)}`}>
-                    {req.status.charAt(0).toUpperCase() + req.status.slice(1)}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3 mb-4 pb-3 border-b border-current border-opacity-20">
-                  <div>
-                    <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-wide font-medium mb-1">
-                      From
-                    </p>
-                    <p className="text-sm font-semibold text-[var(--text-primary)]">{req.from}</p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-wide font-medium mb-1">
-                      To
-                    </p>
-                    <p className="text-sm font-semibold text-[var(--text-primary)]">{req.to}</p>
-                  </div>
-                </div>
-
-                {isManager && req.status === "pending" && (
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        approveLeave(req.id);
-                        toast.success("Leave approved");
-                      }}
-                      className="flex-1 py-2 px-3 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-950/30 transition-colors text-sm font-medium"
-                    >
-                      Approve
-                    </button>
-                    <button
-                      onClick={() => {
-                        rejectLeave(req.id);
-                        toast.success("Leave rejected");
-                      }}
-                      className="flex-1 py-2 px-3 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-950/30 transition-colors text-sm font-medium"
-                    >
-                      Reject
-                    </button>
-                  </div>
+        {/* Leave Requests Table */}
+        <div className="bg-white dark:bg-[#111827] border border-[var(--border)] rounded-xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-[var(--border)] bg-[#f8fafc] dark:bg-[#0f172a]">
+                  <th className="w-12 px-4 py-3 text-left">
+                    <input type="checkbox" className="rounded" />
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-primary)] whitespace-nowrap">S.L</th>
+                  {isManager && <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-primary)]">Name</th>}
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-primary)]">Leave Type</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-primary)]">Date Range</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-[var(--text-primary)]">Duration</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-[var(--text-primary)]">Status</th>
+                  {isManager && <th className="px-4 py-3 text-right text-xs font-semibold text-[var(--text-primary)]">Action</th>}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[var(--border)]">
+                {displayedRequests.length === 0 ? (
+                  <tr>
+                    <td colSpan={isManager ? 8 : 6} className="px-4 py-12 text-center">
+                      <Calendar size={48} className="text-[var(--text-muted)] mx-auto mb-4 opacity-30" />
+                      <p className="text-[var(--text-primary)] font-medium mb-1">No leave requests</p>
+                      <p className="text-[var(--text-muted)] text-sm">
+                        {isManager ? "No leave requests yet" : "You haven&apos;t applied for leave"}
+                      </p>
+                    </td>
+                  </tr>
+                ) : (
+                  displayedRequests.map((req, idx) => (
+                    <tr key={req.id} className="hover:bg-[#f8fafc] dark:hover:bg-[#0f172a] transition-colors">
+                      <td className="px-4 py-3">
+                        <input type="checkbox" className="rounded" />
+                      </td>
+                      <td className="px-4 py-3 text-sm font-medium text-[var(--text-primary)]">
+                        {String(idx + 1).padStart(2, '0')}
+                      </td>
+                      {isManager && (
+                        <td className="px-4 py-3 text-sm font-medium text-[var(--text-primary)]">
+                          {req.name}
+                        </td>
+                      )}
+                      <td className="px-4 py-3 text-sm text-[var(--text-primary)]">
+                        {req.reason}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-[var(--text-secondary)]">
+                        <div className="flex flex-col gap-1">
+                          <span>{req.from}</span>
+                          <span className="text-xs text-[var(--text-muted)]">to {req.to}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-center text-sm text-[var(--text-primary)] font-medium">
+                        {Math.ceil((new Date(req.to).getTime() - new Date(req.from).getTime()) / (1000 * 60 * 60 * 24)) + 1} days
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <span className={`inline-flex px-3 py-1.5 rounded-full text-xs font-semibold ${getStatusBadgeColor(req.status)}`}>
+                          {req.status.charAt(0).toUpperCase() + req.status.slice(1)}
+                        </span>
+                      </td>
+                      {isManager && (
+                        <td className="px-4 py-3 text-right">
+                          {req.status === "pending" && (
+                            <div className="flex justify-end gap-2">
+                              <button
+                                onClick={() => {
+                                  approveLeave(req.id);
+                                  toast.success("Leave approved");
+                                }}
+                                className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 rounded text-xs font-medium hover:bg-emerald-100 dark:hover:bg-emerald-950/30 transition-colors"
+                              >
+                                Approve
+                              </button>
+                              <button
+                                onClick={() => {
+                                  rejectLeave(req.id);
+                                  toast.success("Leave rejected");
+                                }}
+                                className="px-3 py-1.5 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 rounded text-xs font-medium hover:bg-red-100 dark:hover:bg-red-950/30 transition-colors"
+                              >
+                                Reject
+                              </button>
+                            </div>
+                          )}
+                        </td>
+                      )}
+                    </tr>
+                  ))
                 )}
-              </div>
-            ))}
+              </tbody>
+            </table>
           </div>
-        )}
+        </div>
       </div>
 
       {/* Apply Leave Modal */}

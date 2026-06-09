@@ -91,51 +91,59 @@ export default function DesignationPage() {
           action={<Button onClick={() => handleOpenModal()}>+ Add Designation</Button>}
         />
 
-        {designations.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 bg-white dark:bg-[#111827] border border-[var(--border)] rounded-2xl">
-            <Briefcase size={48} className="text-[var(--text-muted)] mb-4 opacity-30" />
-            <p className="text-[var(--text-primary)] font-medium mb-1">No designations yet</p>
-            <p className="text-[var(--text-muted)] text-sm">Create your first designation to get started</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {designations.map((desig) => (
-              <div
-                key={desig.id}
-                className="bg-white dark:bg-[#111827] border border-[var(--border)] border-l-4 border-l-purple-500 rounded-xl p-5 hover:shadow-md transition-all"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex-1">
-                    <h3 className="text-sm font-semibold text-[var(--text-primary)]">
-                      {desig.name}
-                    </h3>
-                  </div>
-                </div>
-
-                <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-4">
-                  {desig.description}
-                </p>
-
-                <div className="flex gap-2 pt-3 border-t border-[var(--border)]">
-                  <button
-                    onClick={() => handleOpenModal(desig)}
-                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-purple-50 dark:bg-purple-950/20 text-purple-600 dark:text-purple-400 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-950/30 transition-colors text-sm font-medium"
-                  >
-                    <Edit2 size={14} />
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDeleteClick(desig)}
-                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-950/30 transition-colors text-sm font-medium"
-                  >
-                    <Trash2 size={14} />
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="bg-white dark:bg-[#111827] border border-[var(--border)] rounded-xl overflow-hidden">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-[var(--border)] bg-[#f8fafc] dark:bg-[#0f172a]">
+                <th className="w-12 px-4 py-3 text-left">
+                  <input type="checkbox" className="rounded" />
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-primary)] whitespace-nowrap">S.L</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-primary)]">Name</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-primary)]">Description</th>
+                <th className="px-4 py-3 text-right text-xs font-semibold text-[var(--text-primary)]">Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[var(--border)]">
+              {designations.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-4 py-12 text-center">
+                    <Briefcase size={48} className="text-[var(--text-muted)] mx-auto mb-4 opacity-30" />
+                    <p className="text-[var(--text-primary)] font-medium mb-1">No designations yet</p>
+                    <p className="text-[var(--text-muted)] text-sm">Create your first designation to get started</p>
+                  </td>
+                </tr>
+              ) : (
+                designations.map((desig, idx) => (
+                  <tr key={desig.id} className="hover:bg-[#f8fafc] dark:hover:bg-[#0f172a] transition-colors">
+                    <td className="px-4 py-3">
+                      <input type="checkbox" className="rounded" />
+                    </td>
+                    <td className="px-4 py-3 text-sm text-[var(--text-primary)] font-medium">{String(idx + 1).padStart(2, '0')}</td>
+                    <td className="px-4 py-3 text-sm text-[var(--text-primary)] font-medium">{desig.name}</td>
+                    <td className="px-4 py-3 text-sm text-[var(--text-secondary)]">{desig.description}</td>
+                    <td className="px-4 py-3 text-right">
+                      <button
+                        onClick={() => handleOpenModal(desig)}
+                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-950/20 text-purple-600 dark:text-purple-400 transition-colors"
+                        title="Edit"
+                      >
+                        <Edit2 size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClick(desig)}
+                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 text-red-600 dark:text-red-400 transition-colors ml-1"
+                        title="Delete"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Add/Edit Modal */}

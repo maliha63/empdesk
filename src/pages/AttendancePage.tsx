@@ -1,108 +1,229 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useEmployees } from "../hooks/useEmployees";
-import { getMockAttendance } from "../utils/mockData";
 import { PageHeader } from "../components/PageHeader";
-import { Badge } from "../components/Badge";
-import { Dropdown } from "../components/Dropdown";
 import toast, { Toaster } from "react-hot-toast";
-import type { AttendanceRecord, AttendanceStatus } from "../types";
 
-const ATTENDANCE_OPTIONS = [
-  { label: "Present", value: "Present" },
-  { label: "Absent", value: "Absent" },
-  { label: "Late", value: "Late" },
-  { label: "Leave", value: "Leave" },
+interface EmployeeAttendance {
+  id: number;
+  admissionNo: string;
+  name: string;
+  avatar?: string;
+  department: string;
+  designation: string;
+  status: "Present" | "Late" | "Absent" | "Halfday" | "Holiday";
+  note?: string;
+}
+
+const mockEmployeeAttendance: EmployeeAttendance[] = [
+  {
+    id: 1,
+    admissionNo: "EMP001",
+    name: "John Smith",
+    avatar: "https://dummyjson.com/icon/user/48",
+    department: "Engineering",
+    designation: "Senior Software Engineer",
+    status: "Present",
+    note: "",
+  },
+  {
+    id: 2,
+    admissionNo: "EMP002",
+    name: "Sarah Johnson",
+    avatar: "https://dummyjson.com/icon/user/48",
+    department: "Design",
+    designation: "Product Designer",
+    status: "Present",
+    note: "",
+  },
+  {
+    id: 3,
+    admissionNo: "EMP003",
+    name: "Mike Chen",
+    avatar: "https://dummyjson.com/icon/user/48",
+    department: "Engineering",
+    designation: "DevOps Engineer",
+    status: "Late",
+    note: "",
+  },
+  {
+    id: 4,
+    admissionNo: "EMP004",
+    name: "Emma Davis",
+    avatar: "https://dummyjson.com/icon/user/48",
+    department: "Product",
+    designation: "Product Manager",
+    status: "Present",
+    note: "",
+  },
+  {
+    id: 5,
+    admissionNo: "EMP005",
+    name: "Alex Brown",
+    avatar: "https://dummyjson.com/icon/user/48",
+    department: "Marketing",
+    designation: "Marketing Manager",
+    status: "Absent",
+    note: "",
+  },
 ];
 
 export default function AttendancePage() {
-  const { id } = useParams<{ id?: string }>(); // For individual or overview
   const { user } = useAuth();
-  const { employees } = useEmployees();
+  const [attendances, setAttendances] = useState<EmployeeAttendance[]>(mockEmployeeAttendance);
+  const isManager = user?.role === "manager";
 
-  const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
-  const [selectedEmployee, setSelectedEmployee] = useState<any>(null);
-
-  // If viewing specific employee attendance
-  useEffect(() => {
-    if (id) {
-      const emp = employees.find(e => e.id === Number(id));
-      if (emp) {
-        setSelectedEmployee(emp);
-        setAttendance(getMockAttendance(emp.id));
-      }
-    } else {
-      // Overview - show all (mock for now)
-      setAttendance(getMockAttendance(1)); // placeholder
-    }
-  }, [id, employees]);
-
-  const statusColor: Record<string, string> = {
-    Present: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400",
-    Absent: "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400",
-    Late: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400",
-    Leave: "bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-400",
-  };
-
-  function handleStatusChange(date: string, newStatus: AttendanceStatus) {
-    if (user?.role !== "manager") return;
-    setAttendance(prev =>
-      prev.map(a => a.date === date ? { ...a, status: newStatus } : a)
+  const handleStatusChange = (empId: number, newStatus: EmployeeAttendance["status"]) => {
+    if (!isManager) return;
+    setAttendances(prev =>
+      prev.map(emp => emp.id === empId ? { ...emp, status: newStatus } : emp)
     );
     toast.success("Attendance updated");
-  }
+  };
+
+  const handleNoteChange = (empId: number, note: string) => {
+    if (!isManager) return;
+    setAttendances(prev =>
+      prev.map(emp => emp.id === empId ? { ...emp, note } : emp)
+    );
+  };
+
+  const statusColor: Record<EmployeeAttendance["status"], string> = {
+    "Present": "text-green-600",
+    "Late": "text-yellow-600",
+    "Absent": "text-red-600",
+    "Halfday": "text-orange-600",
+    "Holiday": "text-purple-600",
+  };
 
   return (
     <>
       <Toaster position="top-right" />
       <div className="space-y-6">
         <PageHeader
-          title={id ? `Attendance - ${selectedEmployee?.firstName} ${selectedEmployee?.lastName}` : "Attendance Overview"}
+          title="Employee Attendance"
+          description={isManager ? "Manage team member attendance" : "View your attendance"}
           crumbs={[
             { label: "Dashboard", to: "/dashboard" },
             { label: "Attendance" },
           ]}
         />
 
-        <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-2xl overflow-hidden">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-[#e2e8f0] dark:border-[#1f2a3d] bg-gray-50 dark:bg-[#0f172a]">
-                <th className="text-left pl-8 py-4 font-medium text-(--text-muted)">Date</th>
-                <th className="text-left py-4 font-medium text-(--text-muted)">Status</th>
-                <th className="text-left py-4 font-medium text-(--text-muted)">Check In</th>
-                <th className="text-left py-4 font-medium text-(--text-muted)">Check Out</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#e2e8f0] dark:divide-[#1f2a3d]">
-              {attendance.map((record) => (
-                <tr key={record.date} className="hover:bg-gray-50 dark:hover:bg-[#0f172a]">
-                  <td className="pl-8 py-4 font-mono text-(--text-muted)">{record.date}</td>
-                  <td className="py-4">
-                    {user?.role === "manager" ? (
-                      <Dropdown
-                        variant="pill"
-                        options={ATTENDANCE_OPTIONS}
-                        value={record.status}
-                        onChange={(val) => handleStatusChange(record.date, val as AttendanceStatus)}
-                        pillColorClass={statusColor[record.status]}
-                      />
-                    ) : (
-                      <Badge variant={
-                        record.status === "Present" ? "green" :
-                        record.status === "Absent" ? "red" : "amber"
-                      } dot>
-                        {record.status}
-                      </Badge>
-                    )}
-                  </td>
-                  <td className="py-4 font-mono text-(--text-secondary)">{record.checkIn}</td>
-                  <td className="py-4 font-mono text-(--text-secondary)">{record.checkOut}</td>
+        <div className="bg-white dark:bg-[#111827] border border-[var(--border)] rounded-xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-[var(--border)] bg-[#f8fafc] dark:bg-[#0f172a]">
+                  <th className="px-4 py-3 text-left">
+                    <input type="checkbox" className="rounded" />
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-primary)] whitespace-nowrap">Admission No</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-primary)]">Name</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-primary)]">Department</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-primary)]">Designation</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-[var(--text-primary)] whitespace-nowrap">Attendance</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-primary)]">Note</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-[var(--border)]">
+                {attendances.map((emp, idx) => (
+                  <tr key={emp.id} className="hover:bg-[#f8fafc] dark:hover:bg-[#0f172a] transition-colors">
+                    <td className="px-4 py-3">
+                      <input type="checkbox" className="rounded" />
+                    </td>
+                    <td className="px-4 py-3 text-sm font-medium text-blue-600">
+                      {emp.admissionNo}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-[var(--text-primary)] font-medium">
+                      <div className="flex items-center gap-2">
+                        <img src={emp.avatar} alt={emp.name} className="w-6 h-6 rounded-full" />
+                        {emp.name}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-sm text-[var(--text-secondary)]">
+                      {emp.department}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-[var(--text-secondary)]">
+                      {emp.designation}
+                    </td>
+                    <td className="px-4 py-3">
+                      {isManager ? (
+                        <div className="flex items-center justify-center gap-6">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name={`status-${emp.id}`}
+                              checked={emp.status === "Present"}
+                              onChange={() => handleStatusChange(emp.id, "Present")}
+                              className="w-4 h-4"
+                            />
+                            <span className="text-xs text-[var(--text-secondary)]">Present</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name={`status-${emp.id}`}
+                              checked={emp.status === "Late"}
+                              onChange={() => handleStatusChange(emp.id, "Late")}
+                              className="w-4 h-4"
+                            />
+                            <span className="text-xs text-[var(--text-secondary)]">Late</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name={`status-${emp.id}`}
+                              checked={emp.status === "Absent"}
+                              onChange={() => handleStatusChange(emp.id, "Absent")}
+                              className="w-4 h-4"
+                            />
+                            <span className="text-xs text-[var(--text-secondary)]">Absent</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name={`status-${emp.id}`}
+                              checked={emp.status === "Halfday"}
+                              onChange={() => handleStatusChange(emp.id, "Halfday")}
+                              className="w-4 h-4"
+                            />
+                            <span className="text-xs text-[var(--text-secondary)]">Halfday</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name={`status-${emp.id}`}
+                              checked={emp.status === "Holiday"}
+                              onChange={() => handleStatusChange(emp.id, "Holiday")}
+                              className="w-4 h-4"
+                            />
+                            <span className="text-xs text-[var(--text-secondary)]">Holiday</span>
+                          </label>
+                        </div>
+                      ) : (
+                        <span className={`text-sm font-medium ${statusColor[emp.status]}`}>
+                          {emp.status}
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      {isManager ? (
+                        <input
+                          type="text"
+                          placeholder="Write note..."
+                          value={emp.note}
+                          onChange={(e) => handleNoteChange(emp.id, e.target.value)}
+                          className="w-full max-w-xs px-2 py-1 text-xs border border-[var(--border)] rounded bg-white dark:bg-[#0f172a] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      ) : (
+                        <span className="text-xs text-[var(--text-secondary)]">{emp.note || "-"}</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </>
