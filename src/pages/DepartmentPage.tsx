@@ -94,9 +94,6 @@ export default function DepartmentPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b divide-(--border) bg-[#f8fafc] dark:bg-[#0f172a]">
-                <th className="w-12 px-4 py-3 text-left">
-                  <input type="checkbox" className="rounded" />
-                </th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary) whitespace-nowrap">S.L</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary)">Name</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary)">Description</th>
@@ -106,7 +103,7 @@ export default function DepartmentPage() {
             <tbody className="divide-y divide-(--border)">
               {departments.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-4 py-12 text-center">
+                  <td colSpan={4} className="px-4 py-12 text-center">
                     <Building2 size={48} className="text-(--text-muted) mx-auto mb-4 opacity-30" />
                     <p className="text-(--text-primary) font-medium mb-1">No departments yet</p>
                     <p className="text-(--text-muted) text-sm">Create your first department to get started</p>
@@ -115,9 +112,6 @@ export default function DepartmentPage() {
               ) : (
                 departments.map((dept, idx) => (
                   <tr key={dept.id} className="hover:bg-[#f8fafc] dark:hover:bg-[#0f172a] transition-colors">
-                    <td className="px-4 py-3">
-                      <input type="checkbox" className="rounded" />
-                    </td>
                     <td className="px-4 py-3 text-sm text-(--text-primary) font-medium">{String(idx + 1).padStart(2, '0')}</td>
                     <td className="px-4 py-3 text-sm text-(--text-primary) font-medium">{dept.name}</td>
                     <td className="px-4 py-3 text-sm text-(--text-primary)">{dept.description}</td>
@@ -153,7 +147,7 @@ export default function DepartmentPage() {
         size="md"
         footer={
           <>
-            <Button variant="primary" onClick={() => setShowModal(false)} className="flex-1">
+            <Button variant="secondary" onClick={() => setShowModal(false)} className="flex-1">
               Cancel
             </Button>
             <Button onClick={handleSave} className="flex-1">
@@ -172,7 +166,7 @@ export default function DepartmentPage() {
               placeholder="e.g., Engineering, Marketing, Sales"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full border divide-(--border) rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-(--text-primary) placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border divide-(--border) rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-(--text-primary) placeholder-(--text-muted) focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -185,7 +179,7 @@ export default function DepartmentPage() {
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               rows={4}
-              className="w-full border divide-(--border) rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-(--text-primary) placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="w-full border divide-(--border) rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-(--text-primary) placeholder-(--text-muted) focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
             />
           </div>
         </div>

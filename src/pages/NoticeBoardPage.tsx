@@ -2,9 +2,14 @@ import { useState } from "react";
 import { PageHeader } from "../components/PageHeader";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
-import ConfirmDialog from "../components/ConfirmDialog";
+import DataTable from "../components/DataTable";
+import Pagination from "../components/Pagination";
+import SearchBox from "../components/SearchBox";
+import TableActionButtons from "../components/TableActionButtons";
+import { useTableState } from "../hooks/useTableState";
+import { Badge } from "../components/Badge";
 import toast, { Toaster } from "react-hot-toast";
-import { Trash2, Edit2, Bell } from "lucide-react";
+import { Plus } from "lucide-react";
 
 interface Notice {
   id: number;
@@ -25,10 +30,15 @@ const initialNotices: Notice[] = [
 export default function NoticeBoardPage() {
   const [notices, setNotices] = useState(initialNotices);
   const [showModal, setShowModal] = useState(false);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [editingNotice, setEditingNotice] = useState<Notice | null>(null);
-  const [noticeToDelete, setNoticeToDelete] = useState<Notice | null>(null);
   const [form, setForm] = useState<{ title: string; description: string; priority: "high" | "medium" | "low" }>({ title: "", description: "", priority: "medium" });
+  const [filterPriority, setFilterPriority] = useState<string>("");
+
+  const filteredNotices = filterPriority 
+    ? notices.filter(n => n.priority === filterPriority)
+    : notices;
+
+  const tableState = useTableState(filteredNotices, 10, ["title", "description"]);
 
   const handleOpenModal = (notice?: Notice) => {
     if (notice) {
@@ -72,41 +82,81 @@ export default function NoticeBoardPage() {
     setEditingNotice(null);
   };
 
-  const handleDeleteClick = (notice: Notice) => {
-    setNoticeToDelete(notice);
-    setShowDeleteDialog(true);
+  const handleDelete = (id: number) => {
+    setNotices(notices.filter(n => n.id !== id));
+    toast.success("Notice deleted");
   };
 
-  const handleConfirmDelete = () => {
-    if (noticeToDelete) {
-      setNotices(notices.filter(n => n.id !== noticeToDelete.id));
-      setShowDeleteDialog(false);
-      setNoticeToDelete(null);
-      toast.success("Notice deleted");
-    }
-  };
-
-  const getPriorityColor = (priority?: string) => {
+  const getPriorityBadgeVariant = (priority?: string) => {
     switch (priority) {
       case "high":
-        return "bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800";
+        return "red" as const;
       case "medium":
-        return "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800";
+        return "amber" as const;
       default:
-        return "bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800";
+        return "blue" as const;
     }
   };
 
-  const getPriorityBadgeColor = (priority?: string) => {
-    switch (priority) {
-      case "high":
-        return "bg-red-100 dark:bg-red-950/40 text-red-700 dark:text-red-300";
-      case "medium":
-        return "bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300";
-      default:
-        return "bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300";
-    }
-  };
+  const columns = [
+    {
+      key: "id" as const,
+      label: "S.L",
+      width: "60px",
+      render: (_: any, __: any, idx: number) => (
+        <span className="text-(--text-muted)">{idx + 1}</span>
+      ),
+    },
+    {
+      key: "title" as const,
+      label: "Title",
+      sortable: true,
+      render: (value: string) => (
+        <span className="font-semibold text-(--text-primary)">{value}</span>
+      ),
+    },
+    {
+      key: "date" as const,
+      label: "Date",
+      sortable: true,
+      render: (value: string) => (
+        <span className="text-(--text-muted) text-sm">{value}</span>
+      ),
+    },
+    {
+      key: "priority" as const,
+      label: "Priority",
+      sortable: true,
+      render: (value: string) => (
+        <Badge variant={getPriorityBadgeVariant(value)} dot>
+          {value?.charAt(0).toUpperCase() + value?.slice(1) || "Low"}
+        </Badge>
+      ),
+    },
+    {
+      key: "description" as const,
+      label: "Description",
+      render: (value: string) => (
+        <p className="text-(--text-muted) text-sm truncate max-w-xs">
+          {value}
+        </p>
+      ),
+    },
+    {
+      key: "id" as const,
+      label: "Action",
+      width: "100px",
+      render: (id: number) => {
+        const notice = notices.find(n => n.id === id);
+        return (
+          <TableActionButtons
+            onEdit={() => handleOpenModal(notice)}
+            onDelete={() => handleDelete(id)}
+          />
+        );
+      },
+    },
+  ];
 
   return (
     <>
@@ -114,142 +164,128 @@ export default function NoticeBoardPage() {
       <div className="space-y-6">
         <PageHeader
           title="Notice Board"
-          description="Company announcements and HR updates"
+          description="Important announcements and updates"
           crumbs={[
             { label: "Dashboard", to: "/dashboard" },
             { label: "Notice Board" },
           ]}
-          action={<Button onClick={() => handleOpenModal()}>+ Add Notice</Button>}
+          action={
+            <Button onClick={() => handleOpenModal()} icon={<Plus size={18} />}>
+              Add Notice
+            </Button>
+          }
         />
 
-        {notices.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 bg-white dark:bg-[#111827] border border-(--border) rounded-2xl">
-            <Bell size={48} className="text-(--text-muted) mb-4 opacity-30" />
-            <p className="text-(--text-primary) font-medium mb-1">No notices yet</p>
-            <p className="text-(--text-muted) text-sm">Create your first notice to get started</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {notices.map((notice) => (
-              <div
-                key={notice.id}
-                className={`border-l-4 rounded-xl p-5 bg-white dark:bg-[#111827] border border-(--border) hover:shadow-md transition-all ${getPriorityColor(notice.priority)}`}
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-semibold text-(--text-primary) wrap-break-word">{notice.title}</h3>
-                    <p className="text-[11px] text-(--text-muted) mt-1">{notice.date}</p>
-                  </div>
-                  <span className={`px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider whitespace-nowrap ml-3 shrink-0 ${getPriorityBadgeColor(notice.priority)}`}>
-                    {notice.priority || "Normal"}
-                  </span>
-                </div>
-
-                <p className="text-sm text-(--text-secondary) leading-relaxed mb-4 line-clamp-3">
-                  {notice.description}
-                </p>
-
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleOpenModal(notice)}
-                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-950/30 transition-colors text-sm font-medium"
-                  >
-                    <Edit2 size={14} />
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDeleteClick(notice)}
-                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-950/30 transition-colors text-sm font-medium"
-                  >
-                    <Trash2 size={14} />
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Add/Edit Modal */}
-      <Modal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        title={editingNotice ? "Edit Notice" : "Add Notice"}
-        size="md"
-        footer={
-          <>
-            <Button
-              variant="primary"
-              onClick={() => setShowModal(false)}
-              className="flex-1"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleSave}
-              className="flex-1"
-            >
-              {editingNotice ? "Update" : "Create"}
-            </Button>
-          </>
-        }
-      >
-        <div className="space-y-4">
-          <div>
-            <label className="text-sm font-medium text-(--text-primary) block mb-2">
-              Title
-            </label>
-            <input
-              type="text"
-              placeholder="e.g., Q2 Performance Reviews Open"
-              value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
-              className="w-full border border-(--border) rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-(--text-primary) placeholder-(--text-muted) focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label className="text-sm font-medium text-(--text-primary) block mb-2">
-              Priority
-            </label>
-            <select
-              value={form.priority}
-              onChange={(e) => setForm({ ...form, priority: e.target.value as "high" | "medium" | "low" })}
-              className="w-full border border-(--border) rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="low">Low Priority</option>
-              <option value="medium">Medium Priority</option>
-              <option value="high">High Priority</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="text-sm font-medium text-(--text-primary) block mb-2">
-              Description
-            </label>
-            <textarea
-              placeholder="Announcement details, deadlines, and important information..."
-              value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
-              rows={5}
-              className="w-full border border-(--border) rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-(--text-primary) placeholder-(--text-muted) focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-            />
-          </div>
+        {/* Search and Filter Bar */}
+        <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-4 flex items-center gap-4 flex-wrap">
+          <SearchBox
+            value={tableState.searchTerm}
+            onChange={tableState.setSearchTerm}
+            placeholder="Search notices..."
+          />
+          <select
+            value={filterPriority}
+            onChange={(e) => setFilterPriority(e.target.value)}
+            className="px-3 py-2 text-sm border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-lg bg-white dark:bg-[#111827] text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">All Priorities</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
         </div>
-      </Modal>
 
-      {/* Delete Confirmation Dialog */}
-      <ConfirmDialog
-        isOpen={showDeleteDialog}
-        onClose={() => setShowDeleteDialog(false)}
-        onConfirm={handleConfirmDelete}
-        title="Delete Notice"
-        message={`Are you sure you want to delete "${noticeToDelete?.title}"? This action cannot be undone.`}
-        confirmText="Delete"
-        cancelText="Cancel"
-        isDangerous
-      />
+        {/* Data Table */}
+        <DataTable
+          columns={columns as any}
+          data={tableState.paginatedData}
+          sortBy={tableState.sortBy}
+          sortOrder={tableState.sortOrder}
+          onSort={tableState.handleSort}
+          emptyMessage="No notices found"
+        />
+
+        {/* Pagination */}
+        <Pagination
+          currentPage={tableState.currentPage}
+          totalPages={tableState.totalPages}
+          totalItems={tableState.filteredData.length}
+          itemsPerPage={10}
+          onPageChange={tableState.setCurrentPage}
+        />
+
+        {/* Add/Edit Modal */}
+        <Modal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          title={editingNotice ? "Edit Notice" : "Add New Notice"}
+          size="md"
+          footer={
+            <>
+              <button
+                onClick={() => setShowModal(false)}
+                className="px-4 py-2 text-sm font-medium text-(--text-primary) border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-lg hover:bg-gray-50 dark:hover:bg-[#1f2a3d] transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 text-sm font-medium text-white bg-gray-900 dark:bg-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+              >
+                Save
+              </button>
+            </>
+          }
+        >
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-(--text-primary) mb-2">
+                Title <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={form.title}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                className="w-full px-3 py-2 border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-lg bg-white dark:bg-[#111827] text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Notice title"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-(--text-primary) mb-2">
+                Description <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                className="w-full px-3 py-2 border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-lg bg-white dark:bg-[#111827] text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Notice description"
+                rows={4}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-(--text-primary) mb-2">
+                Priority
+              </label>
+              <select
+                value={form.priority}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    priority: e.target.value as "high" | "medium" | "low",
+                  })
+                }
+                className="w-full px-3 py-2 border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-lg bg-white dark:bg-[#111827] text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+          </div>
+        </Modal>
+      </div>
     </>
   );
 }

@@ -4,7 +4,7 @@ import { useAuth } from "../hooks/useAuth";
 import { motion, AnimatePresence } from "motion/react";
 import {
   LayoutDashboard, Users, UserCircle, LogOut, X,
-  ChevronDown, Clock, Calendar, CreditCard, TrendingUp, MapPin
+  ChevronDown, Clock, Calendar, CreditCard, TrendingUp, MapPin, FileText, ChevronLeft
 } from "lucide-react";
 import type { ReactNode } from "react";
 import ThemeToggle from "../components/ThemeToggle";
@@ -34,16 +34,23 @@ const managerNav: NavItem[] = [
   },
   {
     label: "Leave",
-    to: "/leave",
     icon: <Calendar size={18} />,
+    children: [
+      { label: "Leave Requests", to: "/leave", icon: <Calendar size={15} /> },
+      { label: "Leave Types", to: "/leave/types", icon: <Calendar size={15} /> },
+    ],
   },
   {
     label: "Payroll",
     icon: <CreditCard size={18} />,
     children: [
       { label: "Salary", to: "/payroll/salary", icon: <CreditCard size={15} /> },
-      { label: "Reports", to: "/payroll/reports", icon: <TrendingUp size={15} /> },
     ],
+  },
+  {
+    label: "Reports",
+    to: "/reports",
+    icon: <FileText size={18} />,
   },
   // ✨ New HRM Section
   {
@@ -63,10 +70,12 @@ const employeeNav: NavItem[] = [
   { label: "Dashboard", to: "/dashboard", icon: <LayoutDashboard size={18} /> },
   { label: "Attendance", to: "/attendance/me", icon: <Clock size={18} /> },
   { label: "Leave", to: "/leave/me", icon: <Calendar size={18} /> },
+  { label: "Notice Board", to: "/notice-board", icon: <LayoutDashboard size={18} /> },
+  { label: "Events", to: "/event", icon: <Calendar size={18} /> },
   { label: "My Profile", to: "/profile", icon: <UserCircle size={18} /> },
 ];
 
-function NavGroup({ item }: { item: NavItem }) {
+function NavGroup({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
   const location = useLocation();
   const isChildActive = item.children?.some((c) => location.pathname === c.to);
   const [open, setOpen] = useState(isChildActive);
@@ -74,6 +83,22 @@ function NavGroup({ item }: { item: NavItem }) {
   useEffect(() => {
     if (isChildActive) setOpen(true);
   }, [isChildActive]);
+
+  if (collapsed) {
+    return (
+      <div title={item.label} className="flex justify-center">
+        <button
+          className={`p-2.5 rounded-lg transition-all ${
+            isChildActive 
+              ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900" 
+              : "text-(--text-secondary) hover:bg-(--bg-card2) hover:text-(--text-primary)"
+          }`}
+        >
+          {item.icon}
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -131,6 +156,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
   const navItems = user?.role === "manager" ? managerNav : employeeNav;
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     setSidebarOpen(false);
@@ -144,55 +170,69 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-(--bg-base) flex">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-64 flex-col shrink-0 border-r border-(--border) bg-(--bg-card)">
-        <div className="px-6 py-5 border-b border-(--border)">
-          <span className="text-2xl font-bold tracking-tight text-blue-600 dark:text-blue-500">
-            emp<span className="text-(--text-primary)">desk</span>
-          </span>
+      <aside className={`hidden md:flex flex-col shrink-0 border-r border-(--border) bg-(--bg-card) transition-all duration-300 ${sidebarCollapsed ? "w-20" : "w-64"}`}>
+        <div className="px-6 py-5 border-b border-(--border) flex items-center justify-between">
+          {!sidebarCollapsed && (
+            <span className="text-2xl font-bold tracking-tight text-blue-600 dark:text-blue-500">
+              emp<span className="text-(--text-primary)">desk</span>
+            </span>
+          )}
+          <button
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className="p-1.5 hover:bg-(--bg-card2) rounded-lg transition-colors ml-auto"
+            title={sidebarCollapsed ? "Expand" : "Collapse"}
+          >
+            <ChevronLeft size={20} className={`text-(--text-secondary) transition-transform ${sidebarCollapsed ? "rotate-180" : ""}`} />
+          </button>
         </div>
 
-        <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
+        <nav className="flex-1 px-2 py-6 space-y-1 overflow-y-auto">
           {navItems.map((item) =>
             item.children ? (
-              <NavGroup key={item.label} item={item} />
+              <NavGroup key={item.label} item={item} collapsed={sidebarCollapsed} />
             ) : (
               <NavLink
                 key={item.to}
                 to={item.to!}
+                title={sidebarCollapsed ? item.label : undefined}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition-all ${
+                  `flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all ${
                     isActive 
                       ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900" 
                       : "text-(--text-secondary) hover:bg-(--bg-card2) hover:text-(--text-primary)"
-                  }`
+                  } ${sidebarCollapsed ? "justify-center" : ""}`
                 }
               >
                 {item.icon}
-                {item.label}
+                {!sidebarCollapsed && item.label}
               </NavLink>
             )
           )}
         </nav>
 
-        <div className="p-4 border-t border-(--border) mt-auto">
-          <div className="flex items-center gap-3 mb-4">
-            <img
-              src={user?.image || "https://dummyjson.com/icon/user/128"}
-              alt={user?.firstName}
-              className="w-10 h-10 rounded-full object-cover ring-2 ring-(--border)"
-            />
-            <div>
-              <p className="font-medium text-(--text-primary)">
-                {user?.firstName} {user?.lastName}
-              </p>
-              <p className="text-xs text-(--text-muted) capitalize">{user?.role}</p>
+        <div className="p-3 border-t border-(--border) mt-auto">
+          {!sidebarCollapsed && (
+            <div className="flex items-center gap-3 mb-4 px-1">
+              <img
+                src={user?.image || "https://dummyjson.com/icon/user/128"}
+                alt={user?.firstName}
+                className="w-10 h-10 rounded-full object-cover ring-2 ring-(--border)"
+              />
+              <div className="min-w-0">
+                <p className="font-medium text-(--text-primary) text-sm truncate">
+                  {user?.firstName}
+                </p>
+                <p className="text-xs text-(--text-muted) capitalize truncate">{user?.role}</p>
+              </div>
             </div>
-          </div>
+          )}
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2 w-full text-sm text-(--text-secondary) hover:text-red-500 transition-colors py-2"
+            title={sidebarCollapsed ? "Sign out" : undefined}
+            className={`flex items-center gap-2 w-full text-sm text-(--text-secondary) hover:text-red-500 transition-colors py-2 px-1 ${sidebarCollapsed ? "justify-center" : ""}`}
           >
-            <LogOut size={16} /> Sign out
+            <LogOut size={16} />
+            {!sidebarCollapsed && "Sign out"}
           </button>
         </div>
       </aside>
@@ -229,7 +269,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
               <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
                 {navItems.map((item) =>
                   item.children ? (
-                    <NavGroup key={item.label} item={item} />
+                    <NavGroup key={item.label} item={item} collapsed={false} />
                   ) : (
                     <NavLink
                       key={item.to}

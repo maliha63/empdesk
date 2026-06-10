@@ -126,9 +126,6 @@ export default function LeavePage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-(--border) bg-[#f8fafc] dark:bg-[#0f172a]">
-                  <th className="w-12 px-4 py-3 text-left">
-                    <input type="checkbox" className="rounded" />
-                  </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary) whitespace-nowrap">S.L</th>
                   {isManager && <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary)">Name</th>}
                   <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary)">Leave Type</th>
@@ -141,7 +138,7 @@ export default function LeavePage() {
               <tbody className="divide-y divide-(--border)">
                 {displayedRequests.length === 0 ? (
                   <tr>
-                    <td colSpan={isManager ? 8 : 6} className="px-4 py-12 text-center">
+                    <td colSpan={isManager ? 7 : 5} className="px-4 py-12 text-center">
                       <Calendar size={48} className="text-(--text-muted) mx-auto mb-4 opacity-30" />
                       <p className="text-(--text-primary) font-medium mb-1">No leave requests</p>
                       <p className="text-(--text-muted) text-sm">
@@ -152,9 +149,6 @@ export default function LeavePage() {
                 ) : (
                   displayedRequests.map((req, idx) => (
                     <tr key={req.id} className="hover:bg-[#f8fafc] dark:hover:bg-[#0f172a] transition-colors">
-                      <td className="px-4 py-3">
-                        <input type="checkbox" className="rounded" />
-                      </td>
                       <td className="px-4 py-3 text-sm font-medium text-(--text-primary)">
                         {String(idx + 1).padStart(2, '0')}
                       </td>

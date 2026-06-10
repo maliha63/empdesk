@@ -111,7 +111,7 @@ export default function AddEmployeePage() {
         }}
       />
 
-      <div className="max-w-3xl space-y-6">
+      <div className="w-full space-y-6">
         <PageHeader
           title="Add Employee"
           description="Fill in the details to add a new employee to the system"
@@ -145,7 +145,7 @@ export default function AddEmployeePage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 {([
                   { name: "firstName" as const, label: "First Name", type: "text" },
                   { name: "lastName" as const, label: "Last Name", type: "text" },
@@ -182,7 +182,7 @@ export default function AddEmployeePage() {
               <h2 className="text-sm font-semibold text-(--text-primary)">Address Information</h2>
             </div>
             <div className="p-6 space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 {([
                   { name: "city" as const, label: "City", type: "text" },
                   { name: "country" as const, label: "Country", type: "text" },
@@ -208,7 +208,7 @@ export default function AddEmployeePage() {
               <h2 className="text-sm font-semibold text-(--text-primary)">Professional Information</h2>
             </div>
             <div className="p-6 space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <div>
                   <label className="block text-xs font-medium text-(--text-primary) mb-1.5">Department</label>
                   <Controller

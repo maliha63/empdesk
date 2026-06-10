@@ -18,6 +18,7 @@ const NotFoundPage = lazy(() => import("../pages/NotFoundPage"));
 // Employee Management Pages
 const AttendancePage = lazy(() => import("../pages/AttendancePage"));
 const LeavePage = lazy(() => import("../pages/LeavePage"));
+const LeaveTypesPage = lazy(() => import("../pages/LeaveTypesPage"));
 const PerformancePage = lazy(() => import("../pages/PerformancePage"));
 const PositionsPage = lazy(() => import("../pages/PositionsPage"));
 const PayrollPage = lazy(() => import("../pages/PayrollPage"));
@@ -27,6 +28,7 @@ const NoticeBoardPage = lazy(() => import("../pages/NoticeBoardPage"));
 const EventPage = lazy(() => import("../pages/EventPage"));
 const DesignationPage = lazy(() => import("../pages/DesignationPage"));
 const DepartmentPage = lazy(() => import("../pages/DepartmentPage"));
+const ReportsPage = lazy(() => import("../pages/ReportsPage"));
 
 function PageLoader() {
   return (
@@ -66,14 +68,15 @@ export function AppRouter() {
                       <Route path="attendance/me" element={<AttendancePage />} />
                       <Route path="leave" element={<LeavePage />} />
                       <Route path="leave/me" element={<LeavePage />} />
+                      <Route path="leave/types" element={<LeaveTypesPage />} />
 
                       {/* Employee Sub-pages */}
                       <Route path="employees/positions" element={<PositionsPage />} />
                       <Route path="employees/performance" element={<PerformancePage />} />
 
-                      {/* Payroll */}
+                      {/* Payroll & Reports */}
                       <Route path="payroll/salary" element={<RoleGuard allowedRoles={["manager"]}><PayrollPage /></RoleGuard>} />
-                      <Route path="payroll/reports" element={<RoleGuard allowedRoles={["manager"]}><PayrollPage /></RoleGuard>} />
+                      <Route path="reports" element={<RoleGuard allowedRoles={["manager"]}><ReportsPage /></RoleGuard>} />
 
                       {/* New HRM Pages */}
                       <Route path="notice-board" element={<NoticeBoardPage />} />

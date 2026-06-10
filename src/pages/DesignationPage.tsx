@@ -95,9 +95,6 @@ export default function DesignationPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-(--border) bg-[#f8fafc] dark:bg-[#0f172a]">
-                <th className="w-12 px-4 py-3 text-left">
-                  <input type="checkbox" className="rounded" />
-                </th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary) whitespace-nowrap">S.L</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary)">Name</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary)">Description</th>
@@ -107,7 +104,7 @@ export default function DesignationPage() {
             <tbody className="divide-y divide-(--border)">
               {designations.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-4 py-12 text-center">
+                  <td colSpan={4} className="px-4 py-12 text-center">
                     <Briefcase size={48} className="text-(--text-muted) mx-auto mb-4 opacity-30" />
                     <p className="text-(--text-primary) font-medium mb-1">No designations yet</p>
                     <p className="text-(--text-muted) text-sm">Create your first designation to get started</p>
@@ -116,9 +113,6 @@ export default function DesignationPage() {
               ) : (
                 designations.map((desig, idx) => (
                   <tr key={desig.id} className="hover:bg-[#f8fafc] dark:hover:bg-[#0f172a] transition-colors">
-                    <td className="px-4 py-3">
-                      <input type="checkbox" className="rounded" />
-                    </td>
                     <td className="px-4 py-3 text-sm text-(--text-primary) font-medium">{String(idx + 1).padStart(2, '0')}</td>
                     <td className="px-4 py-3 text-sm text-(--text-primary) font-medium">{desig.name}</td>
                     <td className="px-4 py-3 text-sm text-(--text-muted)">{desig.description}</td>
@@ -154,7 +148,7 @@ export default function DesignationPage() {
         size="md"
         footer={
           <>
-            <Button variant="primary" onClick={() => setShowModal(false)} className="flex-1">
+            <Button variant="secondary" onClick={() => setShowModal(false)} className="flex-1">
               Cancel
             </Button>
             <Button onClick={handleSave} className="flex-1">

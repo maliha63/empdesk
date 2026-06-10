@@ -105,7 +105,7 @@ export default function EditEmployeePage() {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-5 grid grid-cols-1 gap-4">
             {([
               { name: "firstName" as const, label: "First Name", type: "text"   },
               { name: "lastName"  as const, label: "Last Name",  type: "text"   },

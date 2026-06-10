@@ -1,53 +1,222 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useEmployees } from "../hooks/useEmployees";
 import { PageHeader } from "../components/PageHeader";
+import DataTable from "../components/DataTable";
+import Pagination from "../components/Pagination";
+import SearchBox from "../components/SearchBox";
+import TableActionButtons from "../components/TableActionButtons";
+import { useTableState } from "../hooks/useTableState";
+import Modal from "../components/Modal";
+import { Badge } from "../components/Badge";
+import { getDepartmentBadgeVariant } from "../utils/departmentColors";
+import toast, { Toaster } from "react-hot-toast";
+
+interface PositionData {
+  id: string;
+  department: string;
+  title: string;
+  count: number;
+}
+
+interface EditForm {
+  title: string;
+  department: string;
+}
 
 export default function PositionsPage() {
   const { employees } = useEmployees();
+  const [showModal, setShowModal] = useState(false);
+  const [formData, setFormData] = useState<EditForm>({ title: "", department: "" });
 
-  const positionCards = useMemo(() => {
-    const map = new Map();
+  const positionData = useMemo(() => {
+    const map = new Map<string, PositionData>();
 
-    employees.forEach(emp => {
+    employees.forEach((emp) => {
       const dept = emp.company?.department || "Other";
       const title = emp.company?.title || "Staff";
       const key = `${dept}-${title}`;
 
       if (!map.has(key)) {
-        map.set(key, { department: dept, title, count: 0 });
+        map.set(key, {
+          id: key,
+          department: dept,
+          title,
+          count: 0,
+        });
       }
-      map.get(key).count++;
+      map.get(key)!.count++;
     });
 
     return Array.from(map.values());
   }, [employees]);
 
-  return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Positions"
-        description="Job roles and department distribution"
-        crumbs={[
-          { label: "Dashboard", to: "/dashboard" },
-          { label: "Employee" },
-          { label: "Position" },
-        ]}
-      />
+  const tableState = useTableState(positionData, 10, ["department", "title"]);
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {positionCards.map((pos, i) => (
-          <div key={i} className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-2xl p-6 hover:shadow-md transition-all">
-            <div className="inline-block px-3 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-800 rounded-full mb-3">
-              {pos.department}
+  const handleEdit = (id: string) => {
+    const position = positionData.find(p => p.id === id);
+    if (position) {
+      setFormData({ title: position.title, department: position.department });
+      setShowModal(true);
+    }
+  };
+
+  const handleDelete = (_: string) => {
+    toast.success("Position archived");
+  };
+
+  const handleSave = () => {
+    if (formData.title.trim() && formData.department.trim()) {
+      toast.success("Position updated successfully");
+      setShowModal(false);
+      setFormData({ title: "", department: "" });
+    } else {
+      toast.error("Please fill all fields");
+    }
+  };
+
+  const columns = [
+    {
+      key: "id" as const,
+      label: "S.L",
+      width: "60px",
+      render: (_: any, __: any, idx: number) => (
+        <span className="text-(--text-muted)">{idx + 1}</span>
+      ),
+    },
+    {
+      key: "title" as const,
+      label: "Position",
+      sortable: true,
+      render: (value: string) => (
+        <span className="font-semibold text-(--text-primary)">{value}</span>
+      ),
+    },
+    {
+      key: "department" as const,
+      label: "Department",
+      sortable: true,
+      render: (value: string) => (
+        <Badge variant={getDepartmentBadgeVariant(value) as any}>
+          {value}
+        </Badge>
+      ),
+    },
+    {
+      key: "count" as const,
+      label: "Employee Count",
+      sortable: true,
+      render: (value: number) => (
+        <span className="font-semibold text-blue-600 dark:text-blue-400 text-lg">
+          {value}
+        </span>
+      ),
+    },
+    {
+      key: "id" as const,
+      label: "Action",
+      width: "120px",
+      render: (id: string) => (
+        <TableActionButtons
+          onEdit={() => handleEdit(id)}
+          onDelete={() => handleDelete(id)}
+        />
+      ),
+    },
+  ];
+
+  return (
+    <>
+      <Toaster position="top-right" />
+      <div className="space-y-6">
+        <PageHeader
+          title="Positions"
+          description="Job roles and department distribution"
+          crumbs={[
+            { label: "Dashboard", to: "/dashboard" },
+            { label: "Employee" },
+            { label: "Position" },
+          ]}
+        />
+
+        {/* Search Bar */}
+        <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-4 flex items-center gap-4">
+          <SearchBox
+            value={tableState.searchTerm}
+            onChange={tableState.setSearchTerm}
+            placeholder="Search positions..."
+          />
+        </div>
+
+        {/* Data Table */}
+        <DataTable
+          columns={columns as any}
+          data={tableState.paginatedData}
+          sortBy={tableState.sortBy}
+          sortOrder={tableState.sortOrder}
+          onSort={tableState.handleSort}
+          emptyMessage="No positions found"
+        />
+
+        {/* Pagination */}
+        <Pagination
+          currentPage={tableState.currentPage}
+          totalPages={tableState.totalPages}
+          totalItems={tableState.filteredData.length}
+          itemsPerPage={10}
+          onPageChange={tableState.setCurrentPage}
+        />
+
+        {/* Edit Modal */}
+        <Modal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          title="Edit Position"
+          size="md"
+          footer={
+            <>
+              <button
+                onClick={() => setShowModal(false)}
+                className="px-3 py-2 text-sm font-medium text-(--text-primary) border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-lg hover:bg-gray-50 dark:hover:bg-[#1f2a3d] transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSave}
+                className="px-3 py-2 text-sm font-medium text-white bg-gray-900 dark:bg-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+              >
+                Save
+              </button>
+            </>
+          }
+        >
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-(--text-primary) mb-2">
+                Position Title <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                className="w-full px-3 py-2 border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-lg bg-white dark:bg-[#111827] text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="e.g. Senior Developer"
+              />
             </div>
-            <h3 className="text-xl font-semibold text-(--text-primary) mb-1">{pos.title}</h3>
-            <div className="flex items-baseline gap-1 mt-6">
-              <span className="text-5xl font-bold text-brand-600">{pos.count}</span>
-              <span className="text-(--text-muted) text-lg">Employees</span>
+            <div>
+              <label className="block text-sm font-medium text-(--text-primary) mb-2">
+                Department <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={formData.department}
+                onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                className="w-full px-3 py-2 border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-lg bg-white dark:bg-[#111827] text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="e.g. Engineering"
+              />
             </div>
           </div>
-        ))}
+        </Modal>
       </div>
-    </div>
+    </>
   );
 }

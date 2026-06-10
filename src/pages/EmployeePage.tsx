@@ -277,7 +277,7 @@ export default function EmployeePage() {
                   </Button>
                 )}
               </div>
-              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              <div className="mt-4 grid grid-cols-1 lg:grid-cols-3 gap-3">
                 {[
                   { label: "Email", value: employee.email },
                   { label: "Phone", value: employee.phone },
@@ -405,7 +405,7 @@ export default function EmployeePage() {
                 No documents uploaded yet.
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3">
                 {employee.documents.map((doc: UploadedDocument) => (
                   <motion.div
                     key={doc.id}
@@ -484,7 +484,7 @@ export default function EmployeePage() {
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
-            <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="mt-4 grid grid-cols-2 lg:grid-cols-4 gap-3">
               {performance.slice(-4).map((p: PerformanceRecord) => (
                 <div
                   key={p.month}
