@@ -4,7 +4,8 @@ import Button from "../components/Button";
 import Modal from "../components/Modal";
 import Calendar from "../components/Calendar";
 import toast, { Toaster } from "react-hot-toast";
-import { Trash2, Edit2, Clock, MapPin, Users } from "lucide-react";
+import { Trash2, Edit2, Clock, MapPin, Users, X } from "lucide-react";
+import { usePagination } from "../hooks/usePagination";
 
 interface Event {
   id: number;
@@ -84,6 +85,7 @@ export default function EventPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showModal, setShowModal] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [form, setForm] = useState({
     title: "",
     date: "",
@@ -103,8 +105,22 @@ export default function EventPage() {
 
   const selectedDateEvents = useMemo(() => {
     const dateStr = selectedDate.toISOString().split("T")[0];
-    return events.filter((e) => e.date === dateStr).sort((a, b) => a.time.localeCompare(b.time));
-  }, [events, selectedDate]);
+    let filtered = events.filter((e) => e.date === dateStr).sort((a, b) => a.time.localeCompare(b.time));
+    if (selectedCategory) {
+      filtered = filtered.filter((e) => e.category === selectedCategory);
+    }
+    return filtered;
+  }, [events, selectedDate, selectedCategory]);
+
+  const { currentPage, totalPages, getCurrentItems, goToPage } = usePagination(selectedDateEvents, 5);
+  const currentEvents = getCurrentItems();
+
+  const categories: Array<{ value: string; label: string }> = [
+    { value: "meeting", label: "Meeting" },
+    { value: "deadline", label: "Deadline" },
+    { value: "social", label: "Social" },
+    { value: "training", label: "Training" },
+  ];
 
   const handleOpenModal = (event?: Event) => {
     if (event) {
@@ -208,20 +224,49 @@ export default function EventPage() {
 
           {/* Events List */}
           <div className="lg:col-span-2">
-            <div className="bg-white dark:bg-[#111827] border border-[var(--border)] rounded-2xl p-6">
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+            <div className="bg-white dark:bg-[#111827] border border-[var(--border)] rounded-2xl">
+              <div className="p-6 border-b border-[var(--border)]">
+                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
                   {selectedDate.toLocaleDateString("en-US", {
                     weekday: "long",
                     month: "long",
                     day: "numeric",
                   })}
                 </h3>
-                <p className="text-sm text-[var(--text-muted)]">
-                  {selectedDateEvents.length}{" "}
-                  {selectedDateEvents.length === 1 ? "event" : "events"} scheduled
-                </p>
+                
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs font-medium text-[var(--text-muted)] uppercase">Filter:</span>
+                  <button
+                    onClick={() => setSelectedCategory(null)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                      selectedCategory === null
+                        ? "bg-blue-600 text-white"
+                        : "bg-[#f8fafc] dark:bg-[#0f172a] text-[var(--text-primary)] hover:bg-blue-50 dark:hover:bg-blue-950/20"
+                    }`}
+                  >
+                    All
+                  </button>
+                  {categories.map(cat => (
+                    <button
+                      key={cat.value}
+                      onClick={() => setSelectedCategory(selectedCategory === cat.value ? null : cat.value)}
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                        selectedCategory === cat.value
+                          ? "bg-blue-600 text-white"
+                          : "bg-[#f8fafc] dark:bg-[#0f172a] text-[var(--text-primary)] hover:bg-blue-50 dark:hover:bg-blue-950/20"
+                      }`}
+                    >
+                      {cat.label}
+                    </button>
+                  ))}
+                </div>
               </div>
+
+              <div className="p-6">
+                <p className="text-sm text-[var(--text-muted)] mb-4">
+                  {selectedDateEvents.length}{" "}
+                  {selectedDateEvents.length === 1 ? "event" : "events"} scheduled{selectedCategory ? ` (${selectedCategory})` : ""}
+                </p>
 
               {selectedDateEvents.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -231,7 +276,7 @@ export default function EventPage() {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {selectedDateEvents.map((event) => (
+                  {currentEvents.map((event) => (
                     <div
                       key={event.id}
                       className={`border-l-4 rounded-lg p-4 transition-all hover:shadow-md ${categoryColors[event.category || "meeting"]}`}
@@ -284,6 +329,30 @@ export default function EventPage() {
                     </div>
                   ))}
                 </div>
+
+                {totalPages > 1 && (
+                  <div className="mt-6 pt-6 border-t border-[var(--border)] flex items-center justify-between">
+                    <div className="text-xs text-[var(--text-muted)]">
+                      Page {currentPage} of {totalPages}
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => goToPage(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className="px-3 py-1.5 rounded-lg border border-[var(--border)] text-sm font-medium text-[var(--text-primary)] hover:bg-[#f8fafc] dark:hover:bg-[#0f172a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      >
+                        Previous
+                      </button>
+                      <button
+                        onClick={() => goToPage(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className="px-3 py-1.5 rounded-lg border border-[var(--border)] text-sm font-medium text-[var(--text-primary)] hover:bg-[#f8fafc] dark:hover:bg-[#0f172a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                )}
               )}
             </div>
           </div>

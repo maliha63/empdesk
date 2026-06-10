@@ -4,116 +4,103 @@ import Button from "../components/Button";
 import Modal from "../components/Modal";
 import ConfirmDialog from "../components/ConfirmDialog";
 import toast, { Toaster } from "react-hot-toast";
-import { Trash2, Edit2, Bell, ChevronLeft, ChevronRight } from "lucide-react";
+import { Trash2, Edit2, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { usePagination } from "../hooks/usePagination";
 
-interface Notice {
+interface LeaveType {
   id: number;
-  date: string;
-  title: string;
+  name: string;
+  maxDays: number;
   description: string;
-  priority?: "high" | "medium" | "low";
+  status: "active" | "inactive";
 }
 
-const initialNotices: Notice[] = [
-  { id: 1, date: "June 5, 2025", title: "Q2 Performance Reviews - Schedule Your Session", description: "All employees are required to complete their Q2 performance review by June 15. Sign up for 1-on-1 slots with your manager.", priority: "high" },
-  { id: 2, date: "June 3, 2025", title: "Updated Remote Work Policy", description: "Effective immediately: Flexible remote work policy now allows up to 3 days WFH per week. Details in HR portal.", priority: "high" },
-  { id: 3, date: "June 1, 2025", title: "Professional Development Fund Open", description: "Apply now for training courses, certifications, and conferences. Up to $2,000 per employee this fiscal year.", priority: "medium" },
-  { id: 4, date: "May 28, 2025", title: "Annual Team Offsite - June 15-17", description: "Save the dates! Join us at Tahoe Resort for our annual team building event. Agenda and registration details coming soon.", priority: "medium" },
-  { id: 5, date: "May 20, 2025", title: "New Health Insurance Plan", description: "Comprehensive medical, dental, and vision coverage now available. Review plan options in the benefits portal.", priority: "low" },
+const initialLeaveTypes: LeaveType[] = [
+  { id: 1, name: "Medical Leave", maxDays: 10, description: "For illness or medical emergencies", status: "active" },
+  { id: 2, name: "Casual Leave", maxDays: 12, description: "For personal reasons and casual absences", status: "active" },
+  { id: 3, name: "Earned Leave", maxDays: 20, description: "Vacation and planned time off", status: "active" },
+  { id: 4, name: "Special Leave", maxDays: 5, description: "For special circumstances", status: "inactive" },
+  { id: 5, name: "Maternity Leave", maxDays: 90, description: "For expecting mothers", status: "active" },
+  { id: 6, name: "Paternity Leave", maxDays: 15, description: "For new fathers", status: "active" },
+  { id: 7, name: "Bereavement Leave", maxDays: 3, description: "For family emergencies", status: "active" },
+  { id: 8, name: "Sick Leave", maxDays: 8, description: "For medical situations", status: "active" },
 ];
 
-export default function NoticeBoardPage() {
-  const [notices, setNotices] = useState(initialNotices);
+export default function LeaveTypesPage() {
+  const [leaveTypes, setLeaveTypes] = useState(initialLeaveTypes);
   const [showModal, setShowModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [editingNotice, setEditingNotice] = useState<Notice | null>(null);
-  const [noticeToDelete, setNoticeToDelete] = useState<Notice | null>(null);
-  const [form, setForm] = useState({ title: "", description: "", priority: "medium" as const });
+  const [editingType, setEditingType] = useState<LeaveType | null>(null);
+  const [typeToDelete, setTypeToDelete] = useState<LeaveType | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [form, setForm] = useState({ name: "", maxDays: 0, description: "", status: "active" as const });
 
-  const filteredNotices = notices.filter(n =>
-    n.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    n.description.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredTypes = leaveTypes.filter(t =>
+    t.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    t.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const { currentPage, totalPages, getCurrentItems, goToPage } = usePagination(filteredNotices, 10);
-  const currentNotices = getCurrentItems();
+  const { currentPage, totalPages, getCurrentItems, goToPage } = usePagination(filteredTypes, 10);
+  const currentTypes = getCurrentItems();
 
-  const handleOpenModal = (notice?: Notice) => {
-    if (notice) {
-      setEditingNotice(notice);
-      setForm({ title: notice.title, description: notice.description, priority: notice.priority || "medium" });
+  const handleOpenModal = (type?: LeaveType) => {
+    if (type) {
+      setEditingType(type);
+      setForm({
+        name: type.name,
+        maxDays: type.maxDays,
+        description: type.description,
+        status: type.status,
+      });
     } else {
-      setEditingNotice(null);
-      setForm({ title: "", description: "", priority: "medium" });
+      setEditingType(null);
+      setForm({ name: "", maxDays: 0, description: "", status: "active" });
     }
     setShowModal(true);
   };
 
   const handleSave = () => {
-    if (!form.title.trim() || !form.description.trim()) {
-      toast.error("Title and description are required");
+    if (!form.name.trim() || form.maxDays <= 0) {
+      toast.error("Name and max days are required");
       return;
     }
 
-    if (editingNotice) {
-      setNotices(notices.map(n => 
-        n.id === editingNotice.id 
-          ? { ...n, ...form, priority: form.priority as "high" | "medium" | "low" } 
-          : n
+    if (editingType) {
+      setLeaveTypes(leaveTypes.map(t =>
+        t.id === editingType.id
+          ? { ...t, ...form, status: form.status as "active" | "inactive" }
+          : t
       ));
-      toast.success("Notice updated");
+      toast.success("Leave type updated");
     } else {
-      setNotices([
-        { 
-          id: Date.now(), 
-          date: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }), 
-          ...form,
-          priority: form.priority as "high" | "medium" | "low"
-        },
-        ...notices
+      setLeaveTypes([
+        { id: Date.now(), ...form, status: form.status as "active" | "inactive" },
+        ...leaveTypes
       ]);
-      toast.success("Notice added");
+      toast.success("Leave type added");
     }
 
     setShowModal(false);
-    setForm({ title: "", description: "", priority: "medium" });
-    setEditingNotice(null);
+    setForm({ name: "", maxDays: 0, description: "", status: "active" });
+    setEditingType(null);
   };
 
-  const handleDeleteClick = (notice: Notice) => {
-    setNoticeToDelete(notice);
+  const handleDeleteClick = (type: LeaveType) => {
+    setTypeToDelete(type);
     setShowDeleteDialog(true);
   };
 
   const handleConfirmDelete = () => {
-    if (noticeToDelete) {
-      setNotices(notices.filter(n => n.id !== noticeToDelete.id));
-      toast.success("Notice deleted");
+    if (typeToDelete) {
+      setLeaveTypes(leaveTypes.filter(t => t.id !== typeToDelete.id));
+      toast.success("Leave type deleted");
     }
   };
 
-  const getPriorityColor = (priority?: string) => {
-    switch (priority) {
-      case "high":
-        return "bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800";
-      case "medium":
-        return "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800";
-      default:
-        return "bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800";
-    }
-  };
-
-  const getPriorityBadgeColor = (priority?: string) => {
-    switch (priority) {
-      case "high":
-        return "bg-red-100 dark:bg-red-950/40 text-red-700 dark:text-red-300";
-      case "medium":
-        return "bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300";
-      default:
-        return "bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300";
-    }
+  const getStatusBadgeColor = (status: string) => {
+    return status === "active"
+      ? "bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300"
+      : "bg-gray-100 dark:bg-gray-950/40 text-gray-700 dark:text-gray-300";
   };
 
   return (
@@ -121,13 +108,14 @@ export default function NoticeBoardPage() {
       <Toaster position="top-right" />
       <div className="space-y-6">
         <PageHeader
-          title="Notice Board"
-          description="Company announcements and HR updates"
+          title="Leave Types"
+          description="Manage leave types and policies"
           crumbs={[
             { label: "Dashboard", to: "/dashboard" },
-            { label: "Notice Board" },
+            { label: "Leave" },
+            { label: "Types" },
           ]}
-          action={<Button onClick={() => handleOpenModal()}>+ Add Notice</Button>}
+          action={<Button onClick={() => handleOpenModal()}>+ Add Leave Type</Button>}
         />
 
         <div className="bg-white dark:bg-[#111827] border border-[var(--border)] rounded-xl">
@@ -135,7 +123,7 @@ export default function NoticeBoardPage() {
             <div className="flex-1 max-w-xs">
               <input
                 type="text"
-                placeholder="Search notices..."
+                placeholder="Search leave types..."
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
@@ -145,7 +133,7 @@ export default function NoticeBoardPage() {
               />
             </div>
             <div className="text-sm text-[var(--text-muted)]">
-              {filteredNotices.length} notices
+              {filteredTypes.length} leave types
             </div>
           </div>
 
@@ -153,41 +141,44 @@ export default function NoticeBoardPage() {
             <table className="w-full">
               <thead className="bg-[#f8fafc] dark:bg-[#0f172a] border-b border-[var(--border)]">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-[var(--text-primary)]">Title</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-[var(--text-primary)]">Leave Type</th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-[var(--text-primary)]">Description</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-[var(--text-primary)]">Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-[var(--text-primary)]">Priority</th>
+                  <th className="px-6 py-3 text-center text-xs font-semibold text-[var(--text-primary)]">Max Days</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-[var(--text-primary)]">Status</th>
                   <th className="px-6 py-3 text-right text-xs font-semibold text-[var(--text-primary)]">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {currentNotices.length === 0 ? (
+                {currentTypes.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="px-6 py-8 text-center">
-                      <p className="text-[var(--text-muted)]">No notices found</p>
+                      <p className="text-[var(--text-muted)]">No leave types found</p>
                     </td>
                   </tr>
                 ) : (
-                  currentNotices.map((notice) => (
-                    <tr key={notice.id} className="border-b border-[var(--border)] hover:bg-[#f8fafc] dark:hover:bg-[#0f172a] transition-colors">
-                      <td className="px-6 py-4 text-sm font-medium text-[var(--text-primary)]">{notice.title}</td>
-                      <td className="px-6 py-4 text-sm text-[var(--text-secondary)] max-w-xs truncate">{notice.description}</td>
-                      <td className="px-6 py-4 text-sm text-[var(--text-muted)]">{notice.date}</td>
+                  currentTypes.map((type) => (
+                    <tr key={type.id} className="border-b border-[var(--border)] hover:bg-[#f8fafc] dark:hover:bg-[#0f172a] transition-colors">
+                      <td className="px-6 py-4 text-sm font-medium text-[var(--text-primary)]">{type.name}</td>
+                      <td className="px-6 py-4 text-sm text-[var(--text-secondary)] max-w-xs truncate">{type.description}</td>
+                      <td className="px-6 py-4 text-center">
+                        <span className="text-sm font-semibold text-[var(--text-primary)]">{type.maxDays}</span>
+                        <span className="text-xs text-[var(--text-muted)] ml-1">days</span>
+                      </td>
                       <td className="px-6 py-4">
-                        <span className={`px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider inline-block ${getPriorityBadgeColor(notice.priority)}`}>
-                          {notice.priority || "Normal"}
+                        <span className={`px-2.5 py-1 rounded-md text-xs font-semibold inline-block ${getStatusBadgeColor(type.status)}`}>
+                          {type.status.charAt(0).toUpperCase() + type.status.slice(1)}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <button
-                            onClick={() => handleOpenModal(notice)}
+                            onClick={() => handleOpenModal(type)}
                             className="p-2 text-[var(--text-muted)] hover:text-blue-600 dark:hover:text-blue-400 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-colors"
                           >
                             <Edit2 size={16} />
                           </button>
                           <button
-                            onClick={() => handleDeleteClick(notice)}
+                            onClick={() => handleDeleteClick(type)}
                             className="p-2 text-[var(--text-muted)] hover:text-red-600 dark:hover:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors"
                           >
                             <Trash2 size={16} />
@@ -231,7 +222,7 @@ export default function NoticeBoardPage() {
       <Modal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
-        title={editingNotice ? "Edit Notice" : "Add Notice"}
+        title={editingType ? "Edit Leave Type" : "Add Leave Type"}
         size="md"
         footer={
           <>
@@ -246,7 +237,7 @@ export default function NoticeBoardPage() {
               onClick={handleSave}
               className="flex-1"
             >
-              {editingNotice ? "Update" : "Create"}
+              {editingType ? "Update" : "Create"}
             </Button>
           </>
         }
@@ -254,29 +245,42 @@ export default function NoticeBoardPage() {
         <div className="space-y-4">
           <div>
             <label className="text-sm font-medium text-[var(--text-primary)] block mb-2">
-              Title
+              Leave Type Name
             </label>
             <input
               type="text"
-              placeholder="e.g., Q2 Performance Reviews Open"
-              value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              placeholder="e.g., Medical Leave, Earned Leave"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
               className="w-full border border-[var(--border)] rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div>
             <label className="text-sm font-medium text-[var(--text-primary)] block mb-2">
-              Priority
+              Max Days Allowed
+            </label>
+            <input
+              type="number"
+              placeholder="e.g., 10"
+              value={form.maxDays}
+              onChange={(e) => setForm({ ...form, maxDays: parseInt(e.target.value) || 0 })}
+              min="1"
+              className="w-full border border-[var(--border)] rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-[var(--text-primary)] block mb-2">
+              Status
             </label>
             <select
-              value={form.priority}
-              onChange={(e) => setForm({ ...form, priority: e.target.value as "high" | "medium" | "low" })}
+              value={form.status}
+              onChange={(e) => setForm({ ...form, status: e.target.value as "active" | "inactive" })}
               className="w-full border border-[var(--border)] rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="low">Low Priority</option>
-              <option value="medium">Medium Priority</option>
-              <option value="high">High Priority</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
             </select>
           </div>
 
@@ -285,10 +289,10 @@ export default function NoticeBoardPage() {
               Description
             </label>
             <textarea
-              placeholder="Announcement details, deadlines, and important information..."
+              placeholder="Describe the leave type..."
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
-              rows={5}
+              rows={3}
               className="w-full border border-[var(--border)] rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
             />
           </div>
@@ -300,8 +304,8 @@ export default function NoticeBoardPage() {
         isOpen={showDeleteDialog}
         onClose={() => setShowDeleteDialog(false)}
         onConfirm={handleConfirmDelete}
-        title="Delete Notice"
-        message={`Are you sure you want to delete "${noticeToDelete?.title}"? This action cannot be undone.`}
+        title="Delete Leave Type"
+        message={`Are you sure you want to delete "${typeToDelete?.name}"? This action cannot be undone.`}
         confirmText="Delete"
         cancelText="Cancel"
         isDangerous
