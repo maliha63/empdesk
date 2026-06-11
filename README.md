@@ -22,9 +22,11 @@ EmpDesk is a frontend-driven Employee Management System focused on **clarity, pe
 
 ### 👨‍💼 Employee Management
 
-* Add, edit, delete employees
-* Structured employee profiles
+* Add, edit, delete employees with full-page forms
+* Structured employee profiles with multiple sections
 * Department-based organization
+* Optimized table layout with proper column spacing
+* Horizontal scrollbar for large datasets
 
 ### 📊 Dashboard & Analytics
 
@@ -32,6 +34,8 @@ EmpDesk is a frontend-driven Employee Management System focused on **clarity, pe
 * Department distribution charts
 * Recent activity tracking
 * Dynamic performance charts that update based on selected employee
+* Varied performance ratings (Excellent, Good, Average, Poor) with color-coded badges
+* Interactive employee selection with visual feedback
 
 ### 🗓️ Events Management
 
@@ -70,9 +74,16 @@ EmpDesk is a frontend-driven Employee Management System focused on **clarity, pe
 
 ---
 
-## 📝 Recent Updates (v1.1)
+## 📝 Recent Updates (v1.2)
 
-### UI Improvements & Bug Fixes
+### Critical Fixes & UI Polish
+* **Employee List**: Fixed S.L and EMP ID column spacing with proper widths and added horizontal scrollbar for table overflow
+* **Performance Ratings**: Implemented varied ratings system (Excellent, Good, Average, Poor) with color differentiation (green, blue, amber, red)
+* **Button Components**: Replaced old blue buttons with custom Button component in Add Employee and Edit Employee pages
+* **Edit Employee Layout**: Restructured full-page form with organized sections (Personal, Address, Professional, Skills) matching Add Employee design
+* **Form Consistency**: Unified form structure and styling across all employee management pages
+
+### Previous Updates (v1.1)
 * **Events Page**: Fixed date synchronization bug, removed duplicate buttons, revamped UI with category icons
 * **Profile Pages**: Added Skills & Expertise, Performance Insight, and Activity Status sections
 * **Performance Module**: Implemented dynamic chart updates when selecting employees
