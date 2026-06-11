@@ -19,6 +19,7 @@ import {
 export default function PerformancePage() {
   const { employees } = useEmployees();
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | null>(null);
 
   const performanceData = useMemo(() => {
     return employees.map((emp) => {
@@ -40,7 +41,22 @@ export default function PerformancePage() {
 
   const tableState = useTableState(performanceData, rowsPerPage, ["firstName", "lastName", "department"]);
 
-  const chartData = performanceData.slice(0, 8);
+  // When table data changes, update selected employee to first visible employee or clear
+  useMemo(() => {
+    if (tableState.paginatedData.length > 0) {
+      if (!selectedEmployeeId || !tableState.paginatedData.find(e => e.id === selectedEmployeeId)) {
+        setSelectedEmployeeId(tableState.paginatedData[0].id);
+      }
+    }
+  }, [tableState.paginatedData, selectedEmployeeId]);
+
+  // Chart data: show all employees but highlight selected one
+  const chartData = useMemo(() => {
+    return performanceData.map(emp => ({
+      ...emp,
+      isSelected: emp.id === selectedEmployeeId
+    }));
+  }, [performanceData, selectedEmployeeId]);
 
   return (
     <div className="space-y-6">
@@ -55,16 +71,20 @@ export default function PerformancePage() {
       />
 
       <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-2xl p-6">
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
+          Performance Overview {selectedEmployeeId && `- ${performanceData.find(e => e.id === selectedEmployeeId)?.firstName} ${performanceData.find(e => e.id === selectedEmployeeId)?.lastName}`}
+        </h3>
         <ResponsiveContainer width="100%" height={320}>
           <BarChart data={chartData}>
             <XAxis dataKey="firstName" tick={{ fontSize: 12 }} />
             <YAxis domain={[0, 100]} />
             <Tooltip />
             <Bar dataKey="avgScore" radius={[4, 4, 0, 0]}>
-              {chartData.map((_, index) => (
+              {chartData.map((item) => (
                 <Cell
-                  key={index}
-                  fill={index % 3 === 0 ? "#3b82f6" : index % 3 === 1 ? "#10b981" : "#f59e0b"}
+                  key={item.id}
+                  fill={item.isSelected ? "#3b82f6" : "#cbd5e1"}
+                  opacity={item.isSelected ? 1 : 0.5}
                 />
               ))}
             </Bar>
@@ -95,39 +115,54 @@ export default function PerformancePage() {
       </div>
 
       <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-2xl overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-[#e2e8f0] dark:border-[#1f2a3d] bg-gray-50 dark:bg-[#0f172a]">
-              <th className="text-left pl-8 py-4 font-semibold text-(--text-muted)">Employee</th>
-              <th className="text-left py-4 font-semibold text-(--text-muted)">Department</th>
-              <th className="text-center py-4 font-semibold text-(--text-muted)">Avg Score</th>
-              <th className="text-center py-4 font-semibold text-(--text-muted)">Rating</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[#e2e8f0] dark:divide-[#1f2a3d]">
-            {tableState.paginatedData.map((emp) => {
-              const rating = emp.avgScore >= 90 ? "Excellent" : emp.avgScore >= 75 ? "Good" : "Average";
-              const ratingVariant = rating === "Excellent" ? "green" : rating === "Good" ? "blue" : "amber";
-              return (
-                <tr key={emp.id} className="hover:bg-gray-50 dark:hover:bg-[#0f172a]">
-                  <td className="pl-8 py-4">
-                    <div className="flex items-center gap-3">
-                      <img src={emp.image} className="w-8 h-8 rounded-full" alt="" />
-                      <span className="font-medium text-(--text-primary)">{emp.firstName} {emp.lastName}</span>
-                    </div>
-                  </td>
-                  <td className="py-4">
-                    <Badge variant="blue">{emp.department}</Badge>
-                  </td>
-                  <td className="py-4 text-center font-mono font-semibold text-lg">{emp.avgScore}</td>
-                  <td className="py-4 text-center">
-                    <Badge variant={ratingVariant as any}>{rating}</Badge>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        {tableState.paginatedData.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 px-4">
+            <div className="text-4xl mb-4 opacity-50">🔍</div>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No employees found</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 text-center max-w-sm">
+              {tableState.searchTerm ? "No employees match your search criteria. Try adjusting your filters." : "No employees available."}
+            </p>
+          </div>
+        ) : (
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-[#e2e8f0] dark:border-[#1f2a3d] bg-gray-50 dark:bg-[#0f172a]">
+                <th className="text-left pl-8 py-4 font-semibold text-(--text-muted)">Employee</th>
+                <th className="text-left py-4 font-semibold text-(--text-muted)">Department</th>
+                <th className="text-center py-4 font-semibold text-(--text-muted)">Avg Score</th>
+                <th className="text-center py-4 font-semibold text-(--text-muted)">Rating</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#e2e8f0] dark:divide-[#1f2a3d]">
+              {tableState.paginatedData.map((emp) => {
+                const rating = emp.avgScore >= 90 ? "Excellent" : emp.avgScore >= 75 ? "Good" : "Average";
+                const ratingVariant = rating === "Excellent" ? "green" : rating === "Good" ? "blue" : "amber";
+                const isSelected = emp.id === selectedEmployeeId;
+                return (
+                  <tr 
+                    key={emp.id} 
+                    onClick={() => setSelectedEmployeeId(emp.id)}
+                    className={`cursor-pointer transition-colors ${isSelected ? "bg-blue-50 dark:bg-blue-950/20" : "hover:bg-gray-50 dark:hover:bg-[#0f172a]"}`}
+                  >
+                    <td className="pl-8 py-4">
+                      <div className="flex items-center gap-3">
+                        <img src={emp.image} className="w-8 h-8 rounded-full" alt="" />
+                        <span className="font-medium text-(--text-primary)">{emp.firstName} {emp.lastName}</span>
+                      </div>
+                    </td>
+                    <td className="py-4">
+                      <Badge variant="blue">{emp.department}</Badge>
+                    </td>
+                    <td className="py-4 text-center font-mono font-semibold text-lg">{emp.avgScore}</td>
+                    <td className="py-4 text-center">
+                      <Badge variant={ratingVariant as any}>{rating}</Badge>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {/* Pagination */}

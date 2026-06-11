@@ -9,6 +9,7 @@ import { Badge }        from "../components/Badge";
 import { DatePicker }   from "../components/DatePicker";
 import { CalendarDays, Mail, Phone, MapPin, Building2 } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
+import { Zap, TrendingUp, Award, Clock } from "lucide-react";
 
 interface LeaveFormValues {
   reason: string;
@@ -114,6 +115,69 @@ export default function ProfilePage() {
             <span className="text-gray-700 dark:text-gray-300">{f.label}</span>
           </div>
         ))}
+      </div>
+
+      {/* Skills & Expertise section — manager only */}
+      {user?.role === "manager" && (
+        <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-5 space-y-4 shadow-[0_1px_3px_rgb(0,0,0,0.04)]">
+          <div className="flex items-center gap-2">
+            <Zap size={16} className="text-amber-500" />
+            <p className="text-sm font-medium text-gray-900 dark:text-white">Key Competencies</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {["Team Leadership", "Performance Management", "Strategic Planning", "Mentoring", "Budget Analysis"].map((skill) => (
+              <span
+                key={skill}
+                className="px-3 py-1.5 bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300 rounded-lg text-xs font-medium border border-amber-200 dark:border-amber-800/50"
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Performance Summary section */}
+      <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-5 space-y-4 shadow-[0_1px_3px_rgb(0,0,0,0.04)]">
+        <div className="flex items-center gap-2">
+          <TrendingUp size={16} className="text-brand-500" />
+          <p className="text-sm font-medium text-gray-900 dark:text-white">Performance Insight</p>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="p-3 rounded-lg bg-brand-50 dark:bg-brand-950/20 border border-brand-100 dark:border-brand-800/30">
+            <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Performance Trend</p>
+            <p className="font-semibold text-brand-600 dark:text-brand-400">↑ 12% this quarter</p>
+          </div>
+          <div className="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-800/30">
+            <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Projects Completed</p>
+            <p className="font-semibold text-emerald-600 dark:text-emerald-400">{performance.length} this month</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Activity Status section */}
+      <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-5 space-y-4 shadow-[0_1px_3px_rgb(0,0,0,0.04)]">
+        <div className="flex items-center gap-2">
+          <Award size={16} className="text-emerald-500" />
+          <p className="text-sm font-medium text-gray-900 dark:text-white">Activity Status</p>
+        </div>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Clock size={14} className="text-gray-400" />
+              <span className="text-sm text-gray-700 dark:text-gray-300">Current Status</span>
+            </div>
+            <Badge variant="green">Active</Badge>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-700 dark:text-gray-300">Last login</span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">Today at 9:45 AM</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-700 dark:text-gray-300">Member since</span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">Jan 2024</span>
+          </div>
+        </div>
       </div>
 
       {/* Leave section — employee only */}
