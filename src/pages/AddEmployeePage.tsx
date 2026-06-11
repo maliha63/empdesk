@@ -6,6 +6,7 @@ import type { Employee } from "../types";
 import { useState, useCallback } from "react";
 import { PageHeader }  from "../components/PageHeader";
 import { Dropdown }    from "../components/Dropdown";
+import Button from "../components/Button";
 import { Plus, X, UserCircle } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 
