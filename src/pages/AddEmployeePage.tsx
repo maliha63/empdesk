@@ -274,10 +274,9 @@ export default function AddEmployeePage() {
               className="px-5 py-2.5 text-sm border border-(--border) text-(--text-secondary) rounded-lg hover:bg-(--bg-card2) transition-colors font-medium">
               Cancel
             </button>
-            <button type="submit"
-              className="px-5 py-2.5 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium">
-              Add Employee
-            </button>
+            <Button type="submit">
+              <Plus size={16} /> Add Employee
+            </Button>
           </div>
         </form>
       </div>

@@ -160,12 +160,12 @@ export default function EmployeesPage() {
         </div>
 
         {/* Enhanced Table - Matches Design Better */}
-        <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-2xl overflow-hidden">
+        <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-2xl overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#e2e8f0] dark:border-[#1f2a3d] bg-gray-50 dark:bg-[#0f172a]">
-                <th className="text-left pl-8 py-4 font-medium text-(--text-muted) w-14">S.L</th>
-                <th className="text-left py-4 font-medium text-(--text-muted) w-24">EMP ID</th>
+                <th className="text-left pl-8 py-4 font-medium text-(--text-muted) w-20">S.L</th>
+                <th className="text-left py-4 font-medium text-(--text-muted) w-28">EMP ID</th>
                 <th
                   className="text-left py-4 font-medium text-(--text-muted) cursor-pointer"
                   onClick={() => toggleSort("name")}

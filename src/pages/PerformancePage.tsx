@@ -135,8 +135,8 @@ export default function PerformancePage() {
             </thead>
             <tbody className="divide-y divide-[#e2e8f0] dark:divide-[#1f2a3d]">
               {tableState.paginatedData.map((emp) => {
-                const rating = emp.avgScore >= 90 ? "Excellent" : emp.avgScore >= 75 ? "Good" : "Average";
-                const ratingVariant = rating === "Excellent" ? "green" : rating === "Good" ? "blue" : "amber";
+                const rating = emp.avgScore >= 90 ? "Excellent" : emp.avgScore >= 75 ? "Good" : emp.avgScore >= 60 ? "Average" : "Poor";
+                const ratingVariant = rating === "Excellent" ? "green" : rating === "Good" ? "blue" : rating === "Average" ? "amber" : "red";
                 const isSelected = emp.id === selectedEmployeeId;
                 return (
                   <tr 
