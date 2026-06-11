@@ -74,16 +74,23 @@ EmpDesk is a frontend-driven Employee Management System focused on **clarity, pe
 
 ---
 
-## 📝 Recent Updates (v1.2)
+## 📝 Recent Updates (v1.3)
 
-### Critical Fixes & UI Polish
-* **Employee List**: Fixed S.L and EMP ID column spacing with proper widths and added horizontal scrollbar for table overflow
-* **Performance Ratings**: Implemented varied ratings system (Excellent, Good, Average, Poor) with color differentiation (green, blue, amber, red)
-* **Button Components**: Replaced old blue buttons with custom Button component in Add Employee and Edit Employee pages
-* **Edit Employee Layout**: Restructured full-page form with organized sections (Personal, Address, Professional, Skills) matching Add Employee design
-* **Form Consistency**: Unified form structure and styling across all employee management pages
+### Bug Fixes & Stability Improvements
+* **Button Component Error**: Fixed missing Button import in AddEmployeePage causing 'Button is not defined' error
+* **Pagination Restoration**: Restored full pagination functionality with numbered buttons, prev/next navigation, and results counter
+* **Table Spacing Enhancement**: Improved column spacing with px-6 padding and min-width constraints for better layout stability
+* **Horizontal Scrollbar**: Added inner scrollable container for table overflow ensuring proper scrolling without breaking layout
+* **Performance Ratings Fix**: Enhanced mock data generation to produce genuinely varied scores resulting in all rating types (Excellent, Good, Average, Poor)
 
-### Previous Updates (v1.1)
+### Previous Updates (v1.2)
+* **Employee List**: Fixed S.L and EMP ID column spacing with proper widths
+* **Performance Ratings**: Implemented color-coded rating system
+* **Button Components**: Replaced old buttons with custom Button component
+* **Edit Employee Layout**: Restructured full-page form with organized sections
+* **Form Consistency**: Unified form structure and styling
+
+### Earlier Updates (v1.1)
 * **Events Page**: Fixed date synchronization bug, removed duplicate buttons, revamped UI with category icons
 * **Profile Pages**: Added Skills & Expertise, Performance Insight, and Activity Status sections
 * **Performance Module**: Implemented dynamic chart updates when selecting employees
