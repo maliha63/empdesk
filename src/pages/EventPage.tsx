@@ -16,13 +16,7 @@ interface Event {
   category?: "meeting" | "deadline" | "social" | "training";
 }
 
-const categoryColors = {
-  meeting: "bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800",
-  deadline: "bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800",
-  social: "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800",
-  training: "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800",
-};
-
+// Category icons for event types
 const categoryIcons = {
   meeting: <Briefcase size={16} />,
   deadline: <Clock size={16} />,
@@ -236,36 +230,41 @@ export default function EventPage() {
 
           {/* Events List */}
           <div className="lg:col-span-2">
-            <div className="bg-white dark:bg-[#111827] border border-(--border) rounded-2xl p-6">
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-(--text-primary) mb-2">
-                  {selectedDate.toLocaleDateString("en-US", {
-                    weekday: "long",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </h3>
-                <p className="text-sm text-(--text-muted)">
-                  {selectedDateEvents.length}{" "}
-                  {selectedDateEvents.length === 1 ? "event" : "events"} scheduled
-                </p>
+            <div className="space-y-4">
+              {/* Header */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-semibold text-(--text-primary)">
+                    {selectedDate.toLocaleDateString("en-US", {
+                      weekday: "long",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </h3>
+                  <p className="text-sm text-(--text-muted) mt-1">
+                    {selectedDateEvents.length}{" "}
+                    {selectedDateEvents.length === 1 ? "event" : "events"} scheduled
+                  </p>
+                </div>
               </div>
 
               {selectedDateEvents.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <CalendarIcon size={48} className="text-(--text-muted) mb-4 opacity-30" />
-                  <p className="text-(--text-muted) mb-4">No events on this date</p>
+                <div className="flex flex-col items-center justify-center py-16 px-6 rounded-2xl bg-gray-50 dark:bg-[#0f172a]">
+                  <CalendarIcon size={56} className="text-(--text-muted) mb-4 opacity-25" />
+                  <p className="text-lg text-(--text-muted) font-medium">No events on this date</p>
+                  <p className="text-sm text-(--text-muted) mt-1">Select another date or create a new event</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {selectedDateEvents.map((event) => (
                     <div
                       key={event.id}
-                      className={`border-l-4 rounded-lg p-4 transition-all hover:shadow-lg hover:-translate-y-0.5 ${categoryColors[event.category || "meeting"]}`}
+                      className="bg-white dark:bg-[#111827] border border-(--border) rounded-xl p-5 hover:shadow-md transition-all duration-200 hover:border-(--text-muted)"
                     >
-                      <div className="flex items-start justify-between mb-2">
+                      {/* Event Header */}
+                      <div className="flex items-start justify-between gap-4 mb-3">
                         <div className="flex-1 flex items-start gap-3">
-                          <div className={`p-2 rounded-lg flex items-center justify-center shrink-0 ${
+                          <div className={`p-2.5 rounded-lg flex items-center justify-center shrink-0 ${
                             event.category === "meeting" ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400" :
                             event.category === "deadline" ? "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400" :
                             event.category === "social" ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400" :
@@ -273,51 +272,56 @@ export default function EventPage() {
                           }`}>
                             {categoryIcons[event.category || "meeting"]}
                           </div>
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-(--text-primary) leading-tight">
-                              {event.title}
-                            </h4>
-                            <div className="flex flex-wrap gap-4 mt-2">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="font-semibold text-(--text-primary) text-base leading-tight">
+                                {event.title}
+                              </h4>
+                              <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${getCategoryBadge(event.category)}`}>
+                                {event.category === "meeting" ? "Meeting" :
+                                 event.category === "deadline" ? "Deadline" :
+                                 event.category === "social" ? "Social" :
+                                 "Training"}
+                              </span>
+                            </div>
+                            {/* Time and Location */}
+                            <div className="flex flex-wrap gap-3 mt-2">
                               <div className="flex items-center gap-1.5 text-xs text-(--text-muted)">
-                                <Clock size={13} />
-                                {event.time}
+                                <Clock size={14} className="text-(--text-muted)" />
+                                <span>{event.time}</span>
                               </div>
                               {event.location && (
                                 <div className="flex items-center gap-1.5 text-xs text-(--text-muted)">
-                                  <MapPin size={13} />
-                                  {event.location}
+                                  <MapPin size={14} className="text-(--text-muted)" />
+                                  <span>{event.location}</span>
                                 </div>
                               )}
                             </div>
                           </div>
                         </div>
-                        <span className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ml-2 flex items-center gap-1.5 ${getCategoryBadge(event.category)}`}>
-                          {event.category === "meeting" ? "Meeting" :
-                           event.category === "deadline" ? "Deadline" :
-                           event.category === "social" ? "Social" :
-                           "Training"}
-                        </span>
                       </div>
 
+                      {/* Description */}
                       {event.description && (
-                        <p className="text-sm text-(--text-secondary) mt-3 mb-3 pl-11">
+                        <p className="text-sm text-(--text-secondary) mb-4 px-0">
                           {event.description}
                         </p>
                       )}
 
-                      <div className="flex gap-2 pt-3 border-t border-current border-opacity-20 pl-11">
+                      {/* Action Buttons */}
+                      <div className="flex gap-2 pt-3 border-t border-(--border)">
                         <button
                           onClick={() => handleOpenModal(event)}
-                          className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium rounded-lg hover:bg-white/40 dark:hover:bg-black/20 transition-colors"
+                          className="flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-medium text-(--text-secondary) hover:bg-gray-100 dark:hover:bg-[#1f2a3d] rounded-lg transition-colors"
                         >
-                          <Edit2 size={13} />
+                          <Edit2 size={14} />
                           Edit
                         </button>
                         <button
                           onClick={() => handleDelete(event.id)}
-                          className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium rounded-lg hover:bg-red-100/50 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 transition-colors"
+                          className="flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                         >
-                          <Trash2 size={13} />
+                          <Trash2 size={14} />
                           Delete
                         </button>
                       </div>
@@ -338,10 +342,10 @@ export default function EventPage() {
         size="md"
         footer={
           <>
-            <Button variant="primary" onClick={() => setShowModal(false)} className="flex-1">
+            <Button variant="secondary" onClick={() => setShowModal(false)} size="md" className="flex-1">
               Cancel
             </Button>
-            <Button onClick={handleSave} className="flex-1">
+            <Button variant="primary" onClick={handleSave} size="md" className="flex-1">
               {editingEvent ? "Update" : "Create"} Event
             </Button>
           </>
