@@ -13,7 +13,10 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
+  LineChart,
+  Line,
 } from "recharts";
+import { TrendingUp, TrendingDown, Building2 } from "lucide-react";
 
 export default function PerformancePage() {
   const { employees } = useEmployees();
@@ -37,6 +40,26 @@ export default function PerformancePage() {
       };
     });
   }, [employees]);
+
+  // Calculate stat cards data
+  const statsData = useMemo(() => {
+    const scores = performanceData.map(e => e.avgScore);
+    const avgScore = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+    const maxScore = Math.max(...scores);
+    const minScore = Math.min(...scores);
+    const maxEmployee = performanceData.find(e => e.avgScore === maxScore);
+    const minEmployee = performanceData.find(e => e.avgScore === minScore);
+    
+    return {
+      avgScore,
+      maxScore,
+      maxEmployeeName: maxEmployee ? `${maxEmployee.firstName} ${maxEmployee.lastName}` : "N/A",
+      minScore,
+      minEmployeeName: minEmployee ? `${minEmployee.firstName} ${minEmployee.lastName}` : "N/A",
+      totalEmployees: performanceData.length,
+      activeInEval: performanceData.length,
+    };
+  }, [performanceData]);
 
   const tableState = useTableState(performanceData, rowsPerPage, ["firstName", "lastName", "department"]);
 
@@ -68,6 +91,53 @@ export default function PerformancePage() {
           { label: "Performance" },
         ]}
       />
+
+      {/* Stat Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Average Score Card */}
+        <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-sm text-(--text-muted)">Average Score</h4>
+            <TrendingUp size={18} className="text-green-500" />
+          </div>
+          <div className="text-3xl font-bold text-(--text-primary) mb-1">{statsData.avgScore}</div>
+          <div className="text-xs text-(--text-muted) mb-3">/100</div>
+          <div className="text-xs text-green-600 dark:text-green-400 font-medium">↑ 4.2% from last month</div>
+        </div>
+
+        {/* Highest Score Card */}
+        <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-sm text-(--text-muted)">Highest Score</h4>
+            <TrendingUp size={18} className="text-green-500" />
+          </div>
+          <div className="text-3xl font-bold text-(--text-primary) mb-1">{statsData.maxScore}</div>
+          <div className="text-xs text-(--text-muted) mb-3">/100</div>
+          <div className="text-xs text-(--text-primary) font-medium">{statsData.maxEmployeeName}</div>
+        </div>
+
+        {/* Lowest Score Card */}
+        <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-sm text-(--text-muted)">Lowest Score</h4>
+            <TrendingDown size={18} className="text-red-500" />
+          </div>
+          <div className="text-3xl font-bold text-(--text-primary) mb-1">{statsData.minScore}</div>
+          <div className="text-xs text-(--text-muted) mb-3">/100</div>
+          <div className="text-xs text-(--text-primary) font-medium">{statsData.minEmployeeName}</div>
+        </div>
+
+        {/* Total Employees Card */}
+        <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-sm text-(--text-muted)">Total Employees</h4>
+            <Building2 size={18} className="text-blue-500" />
+          </div>
+          <div className="text-3xl font-bold text-(--text-primary) mb-1">{statsData.totalEmployees}</div>
+          <div className="text-xs text-(--text-muted) mb-3">/total</div>
+          <div className="text-xs text-(--text-primary) font-medium">Active in evaluations</div>
+        </div>
+      </div>
 
       <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-2xl p-6">
         <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
@@ -129,6 +199,7 @@ export default function PerformancePage() {
                 <th className="text-left py-4 font-semibold text-(--text-muted)">Department</th>
                 <th className="text-center py-4 font-semibold text-(--text-muted)">Avg Score</th>
                 <th className="text-center py-4 font-semibold text-(--text-muted)">Rating</th>
+                <th className="text-center py-4 font-semibold text-(--text-muted)">Trend</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#e2e8f0] dark:divide-[#1f2a3d]">
@@ -154,6 +225,13 @@ export default function PerformancePage() {
                     <td className="py-4 text-center font-mono font-semibold text-lg">{emp.avgScore}</td>
                     <td className="py-4 text-center">
                       <Badge variant={ratingVariant as any}>{rating}</Badge>
+                    </td>
+                    <td className="py-4 px-4 text-center">
+                      <ResponsiveContainer width={60} height={24}>
+                        <LineChart data={emp.performance}>
+                          <Line type="monotone" dataKey="score" stroke={emp.avgScore >= 75 ? "#10b981" : "#ef4444"} dot={false} isAnimationActive={false} strokeWidth={2} />
+                        </LineChart>
+                      </ResponsiveContainer>
                     </td>
                   </tr>
                 );
