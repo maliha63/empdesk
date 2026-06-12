@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import { useEmployees } from "../hooks/useEmployees";
 import { PageHeader } from "../components/PageHeader";
-import Pagination from "../components/Pagination";
 import SearchBox from "../components/SearchBox";
 import { useTableState } from "../hooks/useTableState";
 import { Badge } from "../components/Badge";
@@ -15,7 +14,6 @@ export default function ReportsPage() {
   const [activeReport, setActiveReport] = useState<ReportType>("payroll");
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  // Payroll Report Data
   const payrollData = useMemo(() => {
     return employees.map((emp, idx) => ({
       id: emp.id || idx,
@@ -30,7 +28,6 @@ export default function ReportsPage() {
     }));
   }, [employees]);
 
-  // Team Report Data
   const teamData = useMemo(() => {
     return employees.map((emp) => ({
       id: emp.id,
@@ -43,7 +40,6 @@ export default function ReportsPage() {
     }));
   }, [employees]);
 
-  // Leave Report Data
   const leaveData = useMemo(() => {
     return employees.map((emp) => ({
       id: emp.id,
@@ -56,7 +52,6 @@ export default function ReportsPage() {
     }));
   }, [employees]);
 
-  // Contact Report Data
   const contactData = useMemo(() => {
     return employees.map((emp) => ({
       id: emp.id,
@@ -68,7 +63,6 @@ export default function ReportsPage() {
     }));
   }, [employees]);
 
-  // Work From Home Report Data
   const wfhData = useMemo(() => {
     return employees.map((emp) => ({
       id: emp.id,
@@ -81,7 +75,6 @@ export default function ReportsPage() {
     }));
   }, [employees]);
 
-  // Email Report Data
   const emailData = useMemo(() => {
     return employees.map((emp) => ({
       id: emp.id,
@@ -94,7 +87,6 @@ export default function ReportsPage() {
     }));
   }, [employees]);
 
-  // Security Report Data
   const securityData = useMemo(() => {
     return employees.map((emp) => ({
       id: emp.id,
@@ -115,9 +107,68 @@ export default function ReportsPage() {
   const emailTableState = useTableState(emailData, rowsPerPage, ["name", "email", "department"]);
   const securityTableState = useTableState(securityData, rowsPerPage, ["name", "department"]);
 
+  // Global standardized render logic for your pagination block inside tabs
+  const renderPagination = (targetState: any) => {
+    const totalPages = Math.ceil(targetState.filteredData.length / rowsPerPage);
+    if (totalPages <= 1) return null;
+
+    return (
+      <div className="flex items-center justify-between mt-4">
+        <p className="text-xs text-gray-400 dark:text-[#4b5e7a]">
+          Showing {((targetState.currentPage - 1) * rowsPerPage) + 1} to {Math.min(targetState.currentPage * rowsPerPage, targetState.filteredData.length)} of {targetState.filteredData.length} results
+        </p>
+        <div className="flex gap-2 items-center">
+          <button
+            onClick={() => targetState.setCurrentPage(Math.max(1, targetState.currentPage - 1))}
+            disabled={targetState.currentPage === 1}
+            className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#e2e8f0] dark:border-[#1f2a3d] text-gray-500 dark:text-[#4b5e7a] hover:text-gray-900 dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          >
+            &larr; Prev
+          </button>
+          
+          <div className="flex gap-1">
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter((p) => p === 1 || p === totalPages || Math.abs(p - targetState.currentPage) <= 1)
+              .reduce<(number | "...")[]>((acc, p, i, arr) => {
+                if (i > 0 && p - (arr[i - 1] as number) > 1) acc.push("...");
+                acc.push(p);
+                return acc;
+              }, [])
+              .map((p, i) =>
+                p === "..." ? (
+                  <span key={`ellipse-${i}`} className="px-2 py-1.5 text-xs text-gray-400 dark:text-[#4b5e7a]">
+                    ...
+                  </span>
+                ) : (
+                  <button
+                    key={p}
+                    onClick={() => targetState.setCurrentPage(p as number)}
+                    className={`px-3 py-1.5 text-xs rounded-lg border font-medium transition-colors ${
+                      targetState.currentPage === p
+                        ? "bg-gray-900 dark:bg-white border-gray-900 dark:border-white text-white dark:text-gray-900"
+                        : "border-[#e2e8f0] dark:border-[#1f2a3d] text-gray-500 dark:text-[#4b5e7a] hover:text-gray-900 dark:hover:text-white"
+                    }`}
+                  >
+                    {p}
+                  </button>
+                )
+              )}
+          </div>
+
+          <button
+            onClick={() => targetState.setCurrentPage(Math.min(totalPages, targetState.currentPage + 1))}
+            disabled={targetState.currentPage === totalPages}
+            className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#e2e8f0] dark:border-[#1f2a3d] text-gray-500 dark:text-[#4b5e7a] hover:text-gray-900 dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          >
+            Next &rarr;
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   const renderPayrollReport = () => (
     <div className="space-y-6">
-      {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-4">
           <p className="text-xs text-(--text-muted) mb-1">Total Payroll</p>
@@ -139,7 +190,6 @@ export default function ReportsPage() {
         </div>
       </div>
 
-      {/* Search and Filter */}
       <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-4 flex items-center gap-4 flex-wrap">
         <SearchBox
           value={payrollTableState.searchTerm}
@@ -161,7 +211,6 @@ export default function ReportsPage() {
         />
       </div>
 
-      {/* Table */}
       <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
@@ -200,20 +249,12 @@ export default function ReportsPage() {
           </tbody>
         </table>
       </div>
-
-      <Pagination
-        currentPage={payrollTableState.currentPage}
-        totalPages={Math.ceil(payrollTableState.filteredData.length / rowsPerPage)}
-        totalItems={payrollTableState.filteredData.length}
-        itemsPerPage={rowsPerPage}
-        onPageChange={payrollTableState.setCurrentPage}
-      />
+      {renderPagination(payrollTableState)}
     </div>
   );
 
   const renderTeamReport = () => (
     <div className="space-y-6">
-      {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-4">
           <p className="text-xs text-(--text-muted) mb-1">Total Employees</p>
@@ -233,7 +274,6 @@ export default function ReportsPage() {
         </div>
       </div>
 
-      {/* Search and Filter */}
       <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-4 flex items-center gap-4 flex-wrap">
         <SearchBox
           value={teamTableState.searchTerm}
@@ -255,7 +295,6 @@ export default function ReportsPage() {
         </select>
       </div>
 
-      {/* Table */}
       <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
@@ -288,14 +327,7 @@ export default function ReportsPage() {
           </tbody>
         </table>
       </div>
-
-      <Pagination
-        currentPage={teamTableState.currentPage}
-        totalPages={Math.ceil(teamTableState.filteredData.length / rowsPerPage)}
-        totalItems={teamTableState.filteredData.length}
-        itemsPerPage={rowsPerPage}
-        onPageChange={teamTableState.setCurrentPage}
-      />
+      {renderPagination(teamTableState)}
     </div>
   );
 
@@ -329,7 +361,7 @@ export default function ReportsPage() {
           </tbody>
         </table>
       </div>
-      <Pagination currentPage={leaveTableState.currentPage} totalPages={Math.ceil(leaveTableState.filteredData.length / rowsPerPage)} totalItems={leaveTableState.filteredData.length} itemsPerPage={rowsPerPage} onPageChange={leaveTableState.setCurrentPage} />
+      {renderPagination(leaveTableState)}
     </div>
   );
 
@@ -361,7 +393,7 @@ export default function ReportsPage() {
           </tbody>
         </table>
       </div>
-      <Pagination currentPage={contactTableState.currentPage} totalPages={Math.ceil(contactTableState.filteredData.length / rowsPerPage)} totalItems={contactTableState.filteredData.length} itemsPerPage={rowsPerPage} onPageChange={contactTableState.setCurrentPage} />
+      {renderPagination(contactTableState)}
     </div>
   );
 
@@ -395,7 +427,7 @@ export default function ReportsPage() {
           </tbody>
         </table>
       </div>
-      <Pagination currentPage={wfhTableState.currentPage} totalPages={Math.ceil(wfhTableState.filteredData.length / rowsPerPage)} totalItems={wfhTableState.filteredData.length} itemsPerPage={rowsPerPage} onPageChange={wfhTableState.setCurrentPage} />
+      {renderPagination(wfhTableState)}
     </div>
   );
 
@@ -429,7 +461,7 @@ export default function ReportsPage() {
           </tbody>
         </table>
       </div>
-      <Pagination currentPage={emailTableState.currentPage} totalPages={Math.ceil(emailTableState.filteredData.length / rowsPerPage)} totalItems={emailTableState.filteredData.length} itemsPerPage={rowsPerPage} onPageChange={emailTableState.setCurrentPage} />
+      {renderPagination(emailTableState)}
     </div>
   );
 
@@ -463,7 +495,7 @@ export default function ReportsPage() {
           </tbody>
         </table>
       </div>
-      <Pagination currentPage={securityTableState.currentPage} totalPages={Math.ceil(securityTableState.filteredData.length / rowsPerPage)} totalItems={securityTableState.filteredData.length} itemsPerPage={rowsPerPage} onPageChange={securityTableState.setCurrentPage} />
+      {renderPagination(securityTableState)}
     </div>
   );
 
@@ -480,7 +512,6 @@ export default function ReportsPage() {
           ]}
         />
 
-        {/* Report Type Tabs */}
         <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl overflow-x-auto">
           <div className="flex items-center">
             {[
@@ -507,7 +538,6 @@ export default function ReportsPage() {
           </div>
         </div>
 
-        {/* Report Content */}
         <div>
           {activeReport === "payroll" && renderPayrollReport()}
           {activeReport === "team" && renderTeamReport()}

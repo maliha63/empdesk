@@ -35,7 +35,9 @@ export function getMockDocuments(userId: number): Document[] {
 
 export function getMockPerformance(userId: number): PerformanceRecord[] {
   return months.map((month, i) => {
-    const score = Math.floor(seed(userId, i) * 40 + 60);
+    const baseScore = Math.floor(seed(userId, i) * 40 + 55);
+    const variation = Math.floor(seed(userId * 2, i) * 20 - 10);
+    const score = Math.max(30, Math.min(100, baseScore + variation));
     return {
       month,
       score,

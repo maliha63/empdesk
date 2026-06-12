@@ -4,7 +4,7 @@ import Button from "../components/Button";
 import Modal from "../components/Modal";
 import Calendar from "../components/Calendar";
 import toast, { Toaster } from "react-hot-toast";
-import { Trash2, Edit2, Clock, MapPin, Calendar as CalendarIcon } from "lucide-react";
+import { Trash2, Edit2, Clock, MapPin, Calendar as CalendarIcon, Briefcase, Users, Book } from "lucide-react";
 
 interface Event {
   id: number;
@@ -23,11 +23,18 @@ const categoryColors = {
   training: "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800",
 };
 
+const categoryIcons = {
+  meeting: <Briefcase size={16} />,
+  deadline: <Clock size={16} />,
+  social: <Users size={16} />,
+  training: <Book size={16} />,
+};
+
 const initialEvents: Event[] = [
   {
     id: 1,
     title: "All-Hands Meeting",
-    date: "2026-06-10",
+    date: "2026-06-11",
     time: "14:00",
     description: "Quarterly company update, product roadmap review, and Q&A with leadership",
     location: "Main Hall / Zoom",
@@ -234,55 +241,67 @@ export default function EventPage() {
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <CalendarIcon size={48} className="text-(--text-muted) mb-4 opacity-30" />
                   <p className="text-(--text-muted) mb-4">No events on this date</p>
-                  <Button onClick={() => handleOpenModal()}>+ Add Event</Button>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {selectedDateEvents.map((event) => (
                     <div
                       key={event.id}
-                      className={`border-l-4 rounded-lg p-4 transition-all hover:shadow-md ${categoryColors[event.category || "meeting"]}`}
+                      className={`border-l-4 rounded-lg p-4 transition-all hover:shadow-lg hover:-translate-y-0.5 ${categoryColors[event.category || "meeting"]}`}
                     >
                       <div className="flex items-start justify-between mb-2">
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-(--text-primary)">
-                            {event.title}
-                          </h4>
-                          <div className="flex flex-wrap gap-3 mt-2">
-                            <div className="flex items-center gap-1.5 text-xs text-(--text-muted)">
-                              <Clock size={14} />
-                              {event.time}
-                            </div>
-                            {event.location && (
+                        <div className="flex-1 flex items-start gap-3">
+                          <div className={`p-2 rounded-lg flex items-center justify-center shrink-0 ${
+                            event.category === "meeting" ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400" :
+                            event.category === "deadline" ? "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400" :
+                            event.category === "social" ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400" :
+                            "bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400"
+                          }`}>
+                            {categoryIcons[event.category || "meeting"]}
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-(--text-primary) leading-tight">
+                              {event.title}
+                            </h4>
+                            <div className="flex flex-wrap gap-4 mt-2">
                               <div className="flex items-center gap-1.5 text-xs text-(--text-muted)">
-                                <MapPin size={14} />
-                                {event.location}
+                                <Clock size={13} />
+                                {event.time}
                               </div>
-                            )}
+                              {event.location && (
+                                <div className="flex items-center gap-1.5 text-xs text-(--text-muted)">
+                                  <MapPin size={13} />
+                                  {event.location}
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
-                        <span className={`px-2.5 py-1 rounded text-xs font-semibold whitespace-nowrap ml-3 ${getCategoryBadge(event.category)}`}>
-                          {event.category || "Meeting"}
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ml-2 flex items-center gap-1.5 ${getCategoryBadge(event.category)}`}>
+                          {event.category === "meeting" ? "Meeting" :
+                           event.category === "deadline" ? "Deadline" :
+                           event.category === "social" ? "Social" :
+                           "Training"}
                         </span>
                       </div>
 
                       {event.description && (
-                        <p className="text-sm text-(--text-secondary) mt-2 mb-3">
+                        <p className="text-sm text-(--text-secondary) mt-3 mb-3 pl-11">
                           {event.description}
                         </p>
                       )}
 
-                      <div className="flex gap-2 pt-3 border-t border-current border-opacity-20">
+                      <div className="flex gap-2 pt-3 border-t border-current border-opacity-20 pl-11">
                         <button
                           onClick={() => handleOpenModal(event)}
-                          className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium rounded hover:opacity-75 transition-opacity"
+                          className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium rounded-lg hover:bg-white/40 dark:hover:bg-black/20 transition-colors"
                         >
                           <Edit2 size={13} />
                           Edit
                         </button>
                         <button
                           onClick={() => handleDelete(event.id)}
-                          className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium rounded hover:opacity-75 transition-opacity"
+                          className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium rounded-lg hover:bg-red-100/50 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 transition-colors"
                         >
                           <Trash2 size={13} />
                           Delete

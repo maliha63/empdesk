@@ -167,7 +167,7 @@ export default function LeavePage() {
                         </div>
                       </td>
                       <td className="px-4 py-3 text-center text-sm text-(--text-primary) font-medium">
-                        {Math.ceil((new Date(req.to).getTime() - new Date(req.from).getTime()) / (1000 * 60 * 60 * 24)) + 1} days
+                        {Math.abs(Math.ceil((new Date(req.to).getTime() - new Date(req.from).getTime()) / (1000 * 60 * 60 * 24))) + 1} days
                       </td>
                       <td className="px-4 py-3 text-center">
                         <span className={`inline-flex px-3 py-1.5 rounded-full text-xs font-semibold ${getStatusBadgeColor(req.status)}`}>
@@ -176,7 +176,7 @@ export default function LeavePage() {
                       </td>
                       {isManager && (
                         <td className="px-4 py-3 text-right">
-                          {req.status === "pending" && (
+                          {req.status === "pending" ? (
                             <div className="flex justify-end gap-2">
                               <button
                                 onClick={() => {
@@ -197,6 +197,26 @@ export default function LeavePage() {
                                 Reject
                               </button>
                             </div>
+                          ) : req.status === "approved" ? (
+                            <button
+                              onClick={() => {
+                                rejectLeave(req.id);
+                                toast.success("Leave rejected");
+                              }}
+                              className="px-3 py-1.5 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 rounded text-xs font-medium hover:bg-red-100 dark:hover:bg-red-950/30 transition-colors"
+                            >
+                              Reject
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => {
+                                approveLeave(req.id);
+                                toast.success("Leave approved");
+                              }}
+                              className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 rounded text-xs font-medium hover:bg-emerald-100 dark:hover:bg-emerald-950/30 transition-colors"
+                            >
+                              Approve
+                            </button>
                           )}
                         </td>
                       )}
@@ -217,10 +237,10 @@ export default function LeavePage() {
         size="md"
         footer={
           <>
-            <Button variant="primary" onClick={() => setShowModal(false)} className="flex-1">
+            <Button variant="secondary" onClick={() => setShowModal(false)}>
               Cancel
             </Button>
-            <Button onClick={(e) => handleSubmit(e as any)} className="flex-1">
+            <Button onClick={(e) => handleSubmit(e as any)}>
               Submit Request
             </Button>
           </>

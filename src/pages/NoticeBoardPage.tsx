@@ -5,8 +5,10 @@ import Modal from "../components/Modal";
 import DataTable from "../components/DataTable";
 import Pagination from "../components/Pagination";
 import SearchBox from "../components/SearchBox";
+import CustomSelect from "../components/CustomSelect";
 import TableActionButtons from "../components/TableActionButtons";
 import { useTableState } from "../hooks/useTableState";
+import { useAuth } from "../hooks/useAuth";
 import { Badge } from "../components/Badge";
 import toast, { Toaster } from "react-hot-toast";
 import { Plus } from "lucide-react";
@@ -28,6 +30,8 @@ const initialNotices: Notice[] = [
 ];
 
 export default function NoticeBoardPage() {
+  const { user } = useAuth();
+  const isManager = user?.role === "manager";
   const [notices, setNotices] = useState(initialNotices);
   const [showModal, setShowModal] = useState(false);
   const [editingNotice, setEditingNotice] = useState<Notice | null>(null);
@@ -142,20 +146,25 @@ export default function NoticeBoardPage() {
         </p>
       ),
     },
-    {
-      key: "id" as const,
-      label: "Action",
-      width: "100px",
-      render: (id: number) => {
-        const notice = notices.find(n => n.id === id);
-        return (
-          <TableActionButtons
-            onEdit={() => handleOpenModal(notice)}
-            onDelete={() => handleDelete(id)}
-          />
-        );
-      },
-    },
+    // Only managers can edit/delete notices
+    ...(isManager
+      ? [
+          {
+            key: "id" as const,
+            label: "Action",
+            width: "100px",
+            render: (id: number) => {
+              const notice = notices.find((n) => n.id === id);
+              return (
+                <TableActionButtons
+                  onEdit={() => handleOpenModal(notice)}
+                  onDelete={() => handleDelete(id)}
+                />
+              );
+            },
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -170,9 +179,11 @@ export default function NoticeBoardPage() {
             { label: "Notice Board" },
           ]}
           action={
-            <Button onClick={() => handleOpenModal()} icon={<Plus size={18} />}>
-              Add Notice
-            </Button>
+            isManager && (
+              <Button onClick={() => handleOpenModal()} icon={<Plus size={18} />}>
+                Add Notice
+              </Button>
+            )
           }
         />
 
@@ -183,16 +194,16 @@ export default function NoticeBoardPage() {
             onChange={tableState.setSearchTerm}
             placeholder="Search notices..."
           />
-          <select
+          <CustomSelect
             value={filterPriority}
-            onChange={(e) => setFilterPriority(e.target.value)}
-            className="px-3 py-2 text-sm border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-lg bg-white dark:bg-[#111827] text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">All Priorities</option>
-            <option value="high">High</option>
-            <option value="medium">Medium</option>
-            <option value="low">Low</option>
-          </select>
+            onChange={(value) => setFilterPriority(String(value))}
+            options={[
+              { value: "", label: "All Priorities" },
+              { value: "high", label: "High" },
+              { value: "medium", label: "Medium" },
+              { value: "low", label: "Low" },
+            ]}
+          />
         </div>
 
         {/* Data Table */}
@@ -222,18 +233,12 @@ export default function NoticeBoardPage() {
           size="md"
           footer={
             <>
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 text-sm font-medium text-(--text-primary) border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-lg hover:bg-gray-50 dark:hover:bg-[#1f2a3d] transition-colors"
-              >
+              <Button variant="secondary" onClick={() => setShowModal(false)}>
                 Cancel
-              </button>
-              <button
-                onClick={handleSave}
-                className="px-4 py-2 text-sm font-medium text-white bg-gray-900 dark:bg-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
-              >
-                Save
-              </button>
+              </Button>
+              <Button onClick={handleSave}>
+                {editingNotice ? "Update" : "Save"}
+              </Button>
             </>
           }
         >
@@ -268,20 +273,21 @@ export default function NoticeBoardPage() {
               <label className="block text-sm font-medium text-(--text-primary) mb-2">
                 Priority
               </label>
-              <select
+              <CustomSelect
                 value={form.priority}
-                onChange={(e) =>
+                onChange={(value) =>
                   setForm({
                     ...form,
-                    priority: e.target.value as "high" | "medium" | "low",
+                    priority: value as "high" | "medium" | "low",
                   })
                 }
-                className="w-full px-3 py-2 border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-lg bg-white dark:bg-[#111827] text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-              </select>
+                className="w-full"
+                options={[
+                  { value: "low", label: "Low" },
+                  { value: "medium", label: "Medium" },
+                  { value: "high", label: "High" },
+                ]}
+              />
             </div>
           </div>
         </Modal>

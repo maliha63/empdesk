@@ -18,18 +18,31 @@ EmpDesk is a frontend-driven Employee Management System focused on **clarity, pe
 
 * Manager and Employee roles
 * Protected routes and conditional UI rendering
+* Professional split-layout login with branded design
 
 ### 👨‍💼 Employee Management
 
-* Add, edit, delete employees
-* Structured employee profiles
+* Add, edit, delete employees with full-page forms
+* Structured employee profiles with multiple sections
 * Department-based organization
+* Optimized table layout with proper column spacing
+* Horizontal scrollbar for large datasets
 
 ### 📊 Dashboard & Analytics
 
 * Key metrics overview
 * Department distribution charts
 * Recent activity tracking
+* Dynamic performance charts that update based on selected employee
+* Varied performance ratings (Excellent, Good, Average, Poor) with color-coded badges
+* Interactive employee selection with visual feedback
+
+### 🗓️ Events Management
+
+* Create, edit, and delete company events
+* Event categorization (meetings, deadlines, social, training)
+* Category icons and visual hierarchy
+* Date synchronization with calendar
 
 ### 🧾 Leave Management
 
@@ -40,18 +53,24 @@ EmpDesk is a frontend-driven Employee Management System focused on **clarity, pe
 ### 👤 Profile System
 
 * Personal profile view
-* Attendance and performance tracking (UI-level)
+* Attendance and performance tracking
+* Role-specific sections (skills, competencies for managers)
+* Activity status and login tracking
 
 ### 🔎 Search & Filtering
 
-* Real-time search
+* Real-time search with friendly "no results" messaging
 * Department-based filtering
+* Dynamic search feedback
 
 ### 🎨 UI/UX
 
 * Fully responsive (mobile → desktop)
 * Dark & Light mode with smooth transitions
-* Modern UI with reusable components
+* Modern, branded UI with reusable components
+* Improved 404 page with navigation options
+* Enhanced event cards with icons and animations
+* Professional login interface with split-layout design
 
 ---
 

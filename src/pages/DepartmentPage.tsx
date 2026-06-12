@@ -90,10 +90,10 @@ export default function DepartmentPage() {
           action={<Button onClick={() => handleOpenModal()}>+ Add Department</Button>}
         />
 
-        <div className="bg-white dark:bg-[#111827] border divide-(--border) rounded-xl overflow-hidden">
-          <table className="w-full">
+        <div className="bg-white dark:bg-[#111827] border border-(--border) rounded-xl overflow-hidden">
+            <table className="w-full">
             <thead>
-              <tr className="border-b divide-(--border) bg-[#f8fafc] dark:bg-[#0f172a]">
+              <tr className="border-b border-(--border) bg-[#f8fafc] dark:bg-[#0f172a]">
                 <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary) whitespace-nowrap">S.L</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary)">Name</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary)">Description</th>
@@ -147,10 +147,10 @@ export default function DepartmentPage() {
         size="md"
         footer={
           <>
-            <Button variant="secondary" onClick={() => setShowModal(false)} className="flex-1">
+            <Button variant="secondary" onClick={() => setShowModal(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSave} className="flex-1">
+            <Button onClick={handleSave}>
               {editingDept ? "Update" : "Create"}
             </Button>
           </>

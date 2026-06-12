@@ -2,11 +2,14 @@ import { useState } from "react";
 import { PageHeader } from "../components/PageHeader";
 import Modal from "../components/Modal";
 import Button from "../components/Button";
-import { Eye, DollarSign, TrendingUp } from "lucide-react";
+import { Badge } from "../components/Badge";
+import { Eye, DollarSign, TrendingUp, Clock } from "lucide-react";
 
 interface PayrollRecord {
+  id: string;
   name: string;
   department: string;
+  designation: string;
   salary: number;
   status: "Paid" | "Pending" | "Failed";
   baseSalary: number;
@@ -20,8 +23,10 @@ interface PayrollRecord {
 
 const mockPayroll: PayrollRecord[] = [
   {
+    id: "EMP1024",
     name: "Khubaib Ahmed",
     department: "Engineering",
+    designation: "Senior Software Engineer",
     salary: 125000,
     status: "Paid",
     baseSalary: 110000,
@@ -29,12 +34,14 @@ const mockPayroll: PayrollRecord[] = [
     bonuses: 8000,
     deductions: 3000,
     netSalary: 125000,
-    paymentMethod: "Bank",
+    paymentMethod: "Bank Transfer",
     lastPaid: "2025-06-01",
   },
   {
+    id: "EMP1025",
     name: "Katona Beatrix",
-    department: "HR",
+    department: "Human Resources",
+    designation: "HR Manager",
     salary: 98000,
     status: "Paid",
     baseSalary: 90000,
@@ -42,12 +49,14 @@ const mockPayroll: PayrollRecord[] = [
     bonuses: 5000,
     deductions: 2000,
     netSalary: 98000,
-    paymentMethod: "Bank",
+    paymentMethod: "Bank Transfer",
     lastPaid: "2025-06-01",
   },
   {
+    id: "EMP1026",
     name: "Török Melinda",
     department: "Marketing",
+    designation: "Marketing Specialist",
     salary: 87000,
     status: "Pending",
     baseSalary: 80000,
@@ -59,8 +68,10 @@ const mockPayroll: PayrollRecord[] = [
     lastPaid: "2025-05-01",
   },
   {
+    id: "EMP1027",
     name: "Sipos Veronika",
     department: "Finance",
+    designation: "Finance Manager",
     salary: 110000,
     status: "Paid",
     baseSalary: 100000,
@@ -71,22 +82,52 @@ const mockPayroll: PayrollRecord[] = [
     paymentMethod: "Cheque",
     lastPaid: "2025-06-01",
   },
+  {
+    id: "EMP1028",
+    name: "James Davis",
+    department: "Support",
+    designation: "Support Lead",
+    salary: 76000,
+    status: "Pending",
+    baseSalary: 70000,
+    overtime: 3000,
+    bonuses: 4000,
+    deductions: 1000,
+    netSalary: 76000,
+    paymentMethod: "Bank Transfer",
+    lastPaid: "2025-05-01",
+  },
+  {
+    id: "EMP1029",
+    name: "Olivia Wilson",
+    department: "Product",
+    designation: "Product Manager",
+    salary: 118000,
+    status: "Failed",
+    baseSalary: 108000,
+    overtime: 6000,
+    bonuses: 7000,
+    deductions: 3000,
+    netSalary: 118000,
+    paymentMethod: "Bank Transfer",
+    lastPaid: "2025-05-01",
+  },
 ];
 
 export default function PayrollPage() {
   const [selectedPayroll, setSelectedPayroll] = useState<PayrollRecord | null>(null);
   const total = mockPayroll.reduce((sum, item) => sum + item.salary, 0);
-  const paidCount = mockPayroll.filter(p => p.status === "Paid").length;
-  const pendingCount = mockPayroll.filter(p => p.status === "Pending").length;
+  const paidCount = mockPayroll.filter((p) => p.status === "Paid").length;
+  const pendingCount = mockPayroll.filter((p) => p.status === "Pending").length;
 
-  const getStatusColor = (status: string) => {
+  const getStatusVariant = (status: string) => {
     switch (status) {
       case "Paid":
-        return "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-300";
+        return "green" as const;
       case "Pending":
-        return "bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-300";
+        return "amber" as const;
       default:
-        return "bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-300";
+        return "red" as const;
     }
   };
 
@@ -116,7 +157,9 @@ export default function PayrollPage() {
             <p className="text-3xl font-bold text-(--text-primary)">
               ${(total / 1000).toFixed(0)}K
             </p>
-            <p className="text-[11px] text-(--text-muted) mt-2">Monthly total for {mockPayroll.length} employees</p>
+            <p className="text-[11px] text-(--text-muted) mt-2">
+              Monthly total for {mockPayroll.length} employees
+            </p>
           </div>
 
           <div className="bg-white dark:bg-[#111827] border border-(--border) rounded-2xl p-5">
@@ -129,7 +172,9 @@ export default function PayrollPage() {
               </div>
             </div>
             <p className="text-3xl font-bold text-emerald-600">{paidCount}</p>
-            <p className="text-[11px] text-(--text-muted) mt-2">{Math.round((paidCount / mockPayroll.length) * 100)}% of workforce</p>
+            <p className="text-[11px] text-(--text-muted) mt-2">
+              {Math.round((paidCount / mockPayroll.length) * 100)}% of workforce
+            </p>
           </div>
 
           <div className="bg-white dark:bg-[#111827] border border-(--border) rounded-2xl p-5">
@@ -138,7 +183,7 @@ export default function PayrollPage() {
                 Pending
               </p>
               <div className="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-600">
-                <Eye size={18} />
+                <Clock size={18} />
               </div>
             </div>
             <p className="text-3xl font-bold text-amber-600">{pendingCount}</p>
@@ -146,59 +191,69 @@ export default function PayrollPage() {
           </div>
         </div>
 
-        {/* Payroll Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {mockPayroll.map((record) => (
-            <div
-              key={record.name}
-              className="bg-white dark:bg-[#111827] border border-(--border) rounded-2xl p-5 hover:shadow-lg transition-all"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h3 className="text-sm font-semibold text-(--text-primary)">
-                    {record.name}
-                  </h3>
-                  <p className="text-xs text-(--text-muted) mt-1">{record.department}</p>
-                </div>
-                <span
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold ${getStatusColor(
-                    record.status
-                  )}`}
-                >
-                  {record.status}
-                </span>
-              </div>
-
-              <div className="space-y-3 mb-4 pb-4 border-b border-(--border)">
-                <div className="flex justify-between items-center">
-                  <span className="text-xs text-(--text-muted)">Net Salary</span>
-                  <span className="text-lg font-bold text-(--text-primary)">
-                    ${record.netSalary.toLocaleString()}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-(--text-muted)">Payment Method</span>
-                  <span className="text-(--text-primary) font-medium">
-                    {record.paymentMethod}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-(--text-muted)">Last Paid</span>
-                  <span className="text-(--text-primary) font-medium">
-                    {new Date(record.lastPaid).toLocaleDateString()}
-                  </span>
-                </div>
-              </div>
-
-              <button
-                onClick={() => setSelectedPayroll(record)}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-950/30 transition-colors text-sm font-medium"
-              >
-                <Eye size={14} />
-                View Details
-              </button>
-            </div>
-          ))}
+        {/* Payroll Table */}
+        <div className="bg-white dark:bg-[#111827] border border-(--border) rounded-xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-(--border) bg-[#f8fafc] dark:bg-[#0f172a]">
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-muted) whitespace-nowrap">S.L</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-muted)">ID</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-muted)">Name</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-muted)">Department</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-muted)">Designation</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-muted)">Payment Method</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-(--text-muted)">Net Salary</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-(--text-muted)">Status</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-(--text-muted)">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-(--border)">
+                {mockPayroll.map((record, idx) => (
+                  <tr
+                    key={record.id}
+                    className="hover:bg-[#f8fafc] dark:hover:bg-[#0f172a] transition-colors"
+                  >
+                    <td className="px-4 py-3 text-sm font-medium text-(--text-muted)">
+                      {String(idx + 1).padStart(2, "0")}
+                    </td>
+                    <td className="px-4 py-3 text-sm font-medium text-blue-600 dark:text-blue-400">
+                      {record.id}
+                    </td>
+                    <td className="px-4 py-3 text-sm font-medium text-(--text-primary) whitespace-nowrap">
+                      {record.name}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-(--text-secondary)">
+                      {record.department}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-(--text-secondary) whitespace-nowrap">
+                      {record.designation}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-(--text-secondary)">
+                      {record.paymentMethod}
+                    </td>
+                    <td className="px-4 py-3 text-sm font-semibold text-(--text-primary) text-right whitespace-nowrap">
+                      ${record.netSalary.toLocaleString()}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <Badge variant={getStatusVariant(record.status)} dot>
+                        {record.status}
+                      </Badge>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <button
+                        onClick={() => setSelectedPayroll(record)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-(--border) text-(--text-primary) rounded-lg hover:bg-(--bg-card2) transition-colors whitespace-nowrap"
+                      >
+                        <Eye size={13} />
+                        View Payslip
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -206,12 +261,10 @@ export default function PayrollPage() {
       <Modal
         isOpen={!!selectedPayroll}
         onClose={() => setSelectedPayroll(null)}
-        title={selectedPayroll?.name ? `Payroll Details - ${selectedPayroll.name}` : "Payroll Details"}
+        title={selectedPayroll?.name ? `Payslip - ${selectedPayroll.name}` : "Payslip"}
         size="md"
         footer={
-          <Button onClick={() => setSelectedPayroll(null)} className="w-full">
-            Close
-          </Button>
+          <Button onClick={() => setSelectedPayroll(null)}>Close</Button>
         }
       >
         {selectedPayroll && (
@@ -225,13 +278,9 @@ export default function PayrollPage() {
               </div>
               <div className="bg-gray-50 dark:bg-[#0f172a] rounded-lg p-3">
                 <p className="text-xs text-(--text-muted) mb-1">Status</p>
-                <span
-                  className={`inline-block px-2 py-1 rounded text-xs font-semibold ${getStatusColor(
-                    selectedPayroll.status
-                  )}`}
-                >
+                <Badge variant={getStatusVariant(selectedPayroll.status)} dot>
                   {selectedPayroll.status}
-                </span>
+                </Badge>
               </div>
             </div>
 

@@ -3,8 +3,19 @@ import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { motion, AnimatePresence } from "motion/react";
 import {
-  LayoutDashboard, Users, UserCircle, LogOut, X,
-  ChevronDown, Clock, Calendar, CreditCard, TrendingUp, MapPin, FileText, ChevronLeft
+  LayoutDashboard,
+  Users,
+  UserCircle,
+  LogOut,
+  X,
+  ChevronDown,
+  Clock,
+  Calendar,
+  CreditCard,
+  TrendingUp,
+  MapPin,
+  FileText,
+  ChevronLeft,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import ThemeToggle from "../components/ThemeToggle";
@@ -27,9 +38,17 @@ const managerNav: NavItem[] = [
     label: "Employee",
     icon: <Users size={18} />,
     children: [
-      { label: "Position", to: "/employees/positions", icon: <MapPin size={15} /> },
+      {
+        label: "Position",
+        to: "/employees/positions",
+        icon: <MapPin size={15} />,
+      },
       { label: "Employee List", to: "/employees", icon: <Users size={15} /> },
-      { label: "Performance", to: "/employees/performance", icon: <TrendingUp size={15} /> },
+      {
+        label: "Performance",
+        to: "/employees/performance",
+        icon: <TrendingUp size={15} />,
+      },
     ],
   },
   {
@@ -37,14 +56,22 @@ const managerNav: NavItem[] = [
     icon: <Calendar size={18} />,
     children: [
       { label: "Leave Requests", to: "/leave", icon: <Calendar size={15} /> },
-      { label: "Leave Types", to: "/leave/types", icon: <Calendar size={15} /> },
+      {
+        label: "Leave Types",
+        to: "/leave/types",
+        icon: <Calendar size={15} />,
+      },
     ],
   },
   {
     label: "Payroll",
     icon: <CreditCard size={18} />,
     children: [
-      { label: "Salary", to: "/payroll/salary", icon: <CreditCard size={15} /> },
+      {
+        label: "Salary",
+        to: "/payroll/salary",
+        icon: <CreditCard size={15} />,
+      },
     ],
   },
   {
@@ -52,12 +79,16 @@ const managerNav: NavItem[] = [
     to: "/reports",
     icon: <FileText size={18} />,
   },
-  // ✨ New HRM Section
+
   {
     label: "HRM",
     icon: <Users size={18} />,
     children: [
-      { label: "Notice Board", to: "/notice-board", icon: <LayoutDashboard size={15} /> },
+      {
+        label: "Notice Board",
+        to: "/notice-board",
+        icon: <LayoutDashboard size={15} />,
+      },
       { label: "Events", to: "/event", icon: <Calendar size={15} /> },
       { label: "Designation", to: "/designation", icon: <Users size={15} /> },
       { label: "Department", to: "/department", icon: <MapPin size={15} /> },
@@ -70,7 +101,11 @@ const employeeNav: NavItem[] = [
   { label: "Dashboard", to: "/dashboard", icon: <LayoutDashboard size={18} /> },
   { label: "Attendance", to: "/attendance/me", icon: <Clock size={18} /> },
   { label: "Leave", to: "/leave/me", icon: <Calendar size={18} /> },
-  { label: "Notice Board", to: "/notice-board", icon: <LayoutDashboard size={18} /> },
+  {
+    label: "Notice Board",
+    to: "/notice-board",
+    icon: <LayoutDashboard size={18} />,
+  },
   { label: "Events", to: "/event", icon: <Calendar size={18} /> },
   { label: "My Profile", to: "/profile", icon: <UserCircle size={18} /> },
 ];
@@ -89,8 +124,8 @@ function NavGroup({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
       <div title={item.label} className="flex justify-center">
         <button
           className={`p-2.5 rounded-lg transition-all ${
-            isChildActive 
-              ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900" 
+            isChildActive
+              ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900"
               : "text-(--text-secondary) hover:bg-(--bg-card2) hover:text-(--text-primary)"
           }`}
         >
@@ -105,9 +140,11 @@ function NavGroup({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
       <button
         onClick={() => setOpen((v) => !v)}
         className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition-all
-          ${isChildActive 
-            ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900" 
-            : "text-(--text-secondary) hover:bg-(--bg-card2) hover:text-(--text-primary)"}`}
+          ${
+            isChildActive
+              ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900"
+              : "text-(--text-secondary) hover:bg-(--bg-card2) hover:text-(--text-primary)"
+          }`}
       >
         <span className="shrink-0">{item.icon}</span>
         <span className="flex-1 text-left">{item.label}</span>
@@ -133,9 +170,12 @@ function NavGroup({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
                     key={child.to}
                     to={child.to}
                     className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
-                      ${isActive 
-                        ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900" 
-                        : "text-(--text-secondary) hover:bg-(--bg-card2) hover:text-(--text-primary)"}`}
+                      ${
+                        isActive
+                          ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900"
+                          : "text-(--text-secondary) hover:bg-(--bg-card2) hover:text-(--text-primary)"
+                      }`}
+                    // isActive is implicitly tracked by NavLink's inner matching logic
                   >
                     {child.icon}
                     {child.label}
@@ -170,7 +210,9 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-(--bg-base) flex">
       {/* Desktop Sidebar */}
-      <aside className={`hidden md:flex flex-col shrink-0 border-r border-(--border) bg-(--bg-card) transition-all duration-300 ${sidebarCollapsed ? "w-20" : "w-64"}`}>
+      <aside
+        className={`hidden md:flex flex-col shrink-0 border-r border-(--border) bg-(--bg-card) transition-all duration-300 ${sidebarCollapsed ? "w-20" : "w-64"}`}
+      >
         <div className="px-6 py-5 border-b border-(--border) flex items-center justify-between">
           {!sidebarCollapsed && (
             <span className="text-2xl font-bold tracking-tight text-blue-600 dark:text-blue-500">
@@ -182,14 +224,21 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
             className="p-1.5 hover:bg-(--bg-card2) rounded-lg transition-colors ml-auto"
             title={sidebarCollapsed ? "Expand" : "Collapse"}
           >
-            <ChevronLeft size={20} className={`text-(--text-secondary) transition-transform ${sidebarCollapsed ? "rotate-180" : ""}`} />
+            <ChevronLeft
+              size={20}
+              className={`text-(--text-secondary) transition-transform ${sidebarCollapsed ? "rotate-180" : ""}`}
+            />
           </button>
         </div>
 
         <nav className="flex-1 px-2 py-6 space-y-1 overflow-y-auto">
           {navItems.map((item) =>
             item.children ? (
-              <NavGroup key={item.label} item={item} collapsed={sidebarCollapsed} />
+              <NavGroup
+                key={item.label}
+                item={item}
+                collapsed={sidebarCollapsed}
+              />
             ) : (
               <NavLink
                 key={item.to}
@@ -197,8 +246,8 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                 title={sidebarCollapsed ? item.label : undefined}
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all ${
-                    isActive 
-                      ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900" 
+                    isActive
+                      ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900"
                       : "text-(--text-secondary) hover:bg-(--bg-card2) hover:text-(--text-primary)"
                   } ${sidebarCollapsed ? "justify-center" : ""}`
                 }
@@ -206,7 +255,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                 {item.icon}
                 {!sidebarCollapsed && item.label}
               </NavLink>
-            )
+            ),
           )}
         </nav>
 
@@ -222,7 +271,9 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                 <p className="font-medium text-(--text-primary) text-sm truncate">
                   {user?.firstName}
                 </p>
-                <p className="text-xs text-(--text-muted) capitalize truncate">{user?.role}</p>
+                <p className="text-xs text-(--text-muted) capitalize truncate">
+                  {user?.role}
+                </p>
               </div>
             </div>
           )}
@@ -255,7 +306,10 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
               className="fixed inset-y-0 left-0 z-50 w-64 bg-(--bg-card) border-r border-(--border) flex flex-col md:hidden"
             >
               <div className="md:hidden flex justify-end p-4">
-                <button onClick={() => setSidebarOpen(false)} className="text-(--text-secondary)">
+                <button
+                  onClick={() => setSidebarOpen(false)}
+                  className="text-(--text-secondary)"
+                >
                   <X size={26} />
                 </button>
               </div>
@@ -276,8 +330,8 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                       to={item.to!}
                       className={({ isActive }) =>
                         `flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition-all ${
-                          isActive 
-                            ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900" 
+                          isActive
+                            ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900"
                             : "text-(--text-secondary) hover:bg-(--bg-card2) hover:text-(--text-primary)"
                         }`
                       }
@@ -285,7 +339,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                       {item.icon}
                       {item.label}
                     </NavLink>
-                  )
+                  ),
                 )}
               </nav>
 
@@ -300,7 +354,9 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                     <p className="font-medium text-(--text-primary)">
                       {user?.firstName} {user?.lastName}
                     </p>
-                    <p className="text-xs text-(--text-muted) capitalize">{user?.role}</p>
+                    <p className="text-xs text-(--text-muted) capitalize">
+                      {user?.role}
+                    </p>
                   </div>
                 </div>
                 <button
@@ -316,10 +372,38 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
       </AnimatePresence>
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-14 border-b border-(--border) bg-(--bg-card) px-5 flex items-center justify-between shrink-0">
-          <button onClick={() => setSidebarOpen(true)} className="md:hidden text-(--text-secondary)">
-            <svg className="size-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        <header className="h-18 border-b border-(--border) bg-(--bg-card) px-5 flex items-center justify-between shrink-0">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="md:hidden text-(--text-secondary)"
+          >
+            <svg
+              aria-hidden="true"
+              className="pointer-events-none size-4.5 fill-current"
+              viewBox="0 0 16 16"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                className="origin-center transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] translate-x-1.75 -translate-y-1.25"
+                y="7"
+                width="9"
+                height="2"
+                rx="1"
+              ></rect>
+              <rect
+                className="origin-center transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.8)] rotate-0 opacity-100"
+                y="7"
+                width="16"
+                height="2"
+                rx="1"
+              ></rect>
+              <rect
+                className="origin-center transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] translate-y-1.25"
+                y="7"
+                width="9"
+                height="2"
+                rx="1"
+              ></rect>
             </svg>
           </button>
           <div className="flex items-center gap-4">

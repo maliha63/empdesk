@@ -148,10 +148,10 @@ export default function DesignationPage() {
         size="md"
         footer={
           <>
-            <Button variant="secondary" onClick={() => setShowModal(false)} className="flex-1">
+            <Button variant="secondary" onClick={() => setShowModal(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSave} className="flex-1">
+            <Button onClick={handleSave}>
               {editingDesig ? "Update" : "Create"}
             </Button>
           </>
@@ -159,7 +159,7 @@ export default function DesignationPage() {
       >
         <div className="space-y-4">
           <div>
-            <label className="text-sm font-medium text-(--text-primary)text-(--text-primary) block mb-2">
+            <label className="text-sm font-medium text-(--text-primary) block mb-2">
               Designation Name
             </label>
             <input
@@ -167,12 +167,12 @@ export default function DesignationPage() {
               placeholder="e.g., Senior Software Engineer"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full border border-(--border) rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-(--text-primary)text-(--text-primary) placeholder-(--text-muted) focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full border border-(--border) rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-(--text-primary) placeholder-(--text-muted) focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium text-(--text-primary)text-(--text-primary) block mb-2">
+            <label className="text-sm font-medium text-(--text-primary) block mb-2">
               Description
             </label>
             <textarea
@@ -180,7 +180,7 @@ export default function DesignationPage() {
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               rows={4}
-              className="w-full border border-(--border) rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-(--text-primary)text-(--text-primary) placeholder-(--text-muted) focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+              className="w-full border border-(--border) rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-(--text-primary) placeholder-(--text-muted) focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
             />
           </div>
         </div>
