@@ -141,7 +141,7 @@ export default function NoticeBoardPage() {
       key: "description" as const,
       label: "Description",
       render: (value: string) => (
-        <p className="text-(--text-muted) text-sm truncate max-w-xs">
+        <p className="text-(--text-muted) text-sm max-w-2xl">
           {value}
         </p>
       ),

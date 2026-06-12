@@ -32,6 +32,15 @@ const categoryIcons = {
 
 const initialEvents: Event[] = [
   {
+    id: 0,
+    title: "All-Hands Meeting",
+    date: "2026-06-12",
+    time: "14:00",
+    description: "Quarterly company update, product roadmap review, and Q&A with leadership",
+    location: "Main Hall / Zoom",
+    category: "meeting",
+  },
+  {
     id: 1,
     title: "All-Hands Meeting",
     date: "2026-06-11",
@@ -88,24 +97,29 @@ const initialEvents: Event[] = [
 
 export default function EventPage() {
   const [events, setEvents] = useState(initialEvents);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  // Initialize with today's date to show today's events immediately
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
+  });
   const [showModal, setShowModal] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
- const [form, setForm] = useState<{
-  title: string;
-  date: string;
-  time: string;
-  description: string;
-  location: string;
-  category: "meeting" | "deadline" | "social" | "training"; 
-}>({
-  title: "",
-  date: "",
-  time: "",
-  description: "",
-  location: "",
-  category: "meeting",
-});
+  const [form, setForm] = useState<{
+    title: string;
+    date: string;
+    time: string;
+    description: string;
+    location: string;
+    category: "meeting" | "deadline" | "social" | "training"; 
+  }>({
+    title: "",
+    date: "",
+    time: "",
+    description: "",
+    location: "",
+    category: "meeting",
+  });
 
   const eventsByDate = useMemo(() => {
     const map: Record<string, number> = {};

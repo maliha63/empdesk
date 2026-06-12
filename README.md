@@ -180,6 +180,25 @@ Open: **http://localhost:5173**
 
 ---
 
+## 🐛 Recent Bug Fixes & Improvements (Latest Release)
+
+### Fixed Issues
+1. **Event Module Display** - Fixed "No events on this date" bug where today's events weren't showing on page load
+2. **Dashboard Redundancy** - Removed duplicate Leave Request card from employee dashboard (already available in Leave module)
+3. **Notice Board UI** - Fixed truncated description display to show full text content
+4. **Sidebar Navigation** - Implemented smart expand behavior: auto-expand sidebar when clicking collapsed parent modules with children
+5. **Module Styling** - Enhanced visual hierarchy with parent modules showing bold text (no background) when child is active
+
+### Code Quality
+* All imports verified as used (no unused dependencies)
+* Clean, production-level code structure
+* Added relevant comments for maintainability
+* Optimized component initialization with proper state handling
+* Full TypeScript type safety
+* Successful production build without warnings
+
+---
+
 ## 🔮 Future Improvements
 
 * Backend integration (Node.js / Firebase)

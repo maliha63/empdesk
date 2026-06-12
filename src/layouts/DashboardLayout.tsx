@@ -110,7 +110,7 @@ const employeeNav: NavItem[] = [
   { label: "My Profile", to: "/profile", icon: <UserCircle size={18} /> },
 ];
 
-function NavGroup({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
+function NavGroup({ item, collapsed, onExpandRequest }: { item: NavItem; collapsed: boolean; onExpandRequest?: () => void }) {
   const location = useLocation();
   const isChildActive = item.children?.some((c) => location.pathname === c.to);
   const [open, setOpen] = useState(isChildActive);
@@ -119,10 +119,19 @@ function NavGroup({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
     if (isChildActive) setOpen(true);
   }, [isChildActive]);
 
+  const handleClick = () => {
+    setOpen((v) => !v);
+    // When collapsed and clicking a parent module with children, request sidebar expansion
+    if (collapsed && onExpandRequest) {
+      onExpandRequest();
+    }
+  };
+
   if (collapsed) {
     return (
       <div title={item.label} className="flex justify-center">
         <button
+          onClick={handleClick}
           className={`p-2.5 rounded-lg transition-all ${
             isChildActive
               ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900"
@@ -138,12 +147,12 @@ function NavGroup({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
   return (
     <div>
       <button
-        onClick={() => setOpen((v) => !v)}
-        className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition-all
+        onClick={handleClick}
+        className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm transition-all
           ${
             isChildActive
-              ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900"
-              : "text-(--text-secondary) hover:bg-(--bg-card2) hover:text-(--text-primary)"
+              ? "font-bold text-(--text-primary)"
+              : "font-medium text-(--text-secondary) hover:bg-(--bg-card2) hover:text-(--text-primary)"
           }`}
       >
         <span className="shrink-0">{item.icon}</span>
@@ -238,6 +247,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                 key={item.label}
                 item={item}
                 collapsed={sidebarCollapsed}
+                onExpandRequest={() => setSidebarCollapsed(false)}
               />
             ) : (
               <NavLink
@@ -323,7 +333,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
               <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
                 {navItems.map((item) =>
                   item.children ? (
-                    <NavGroup key={item.label} item={item} collapsed={false} />
+                    <NavGroup key={item.label} item={item} collapsed={false} onExpandRequest={() => setSidebarOpen(false)} />
                   ) : (
                     <NavLink
                       key={item.to}

@@ -316,42 +316,32 @@ export default function DashboardPage() {
         <div className="lg:col-span-3 flex flex-col gap-6">
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 items-stretch">
             
-            <Card title={isManager ? "Leave status" : "My Leave History"} subtitle="Recent logs timeline" className="shadow-none hover:shadow-none">
-              {/* ... rest of the leave card content remains same ... */}
-              <div className="space-y-0 h-64 overflow-y-auto pr-1">
-                {displayLeaves.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full text-(--text-muted) text-xs p-4 py-12">
-                    <CheckCircle2 size={16} className="text-emerald-500 mb-1" />
-                    <span>No active time-off requests logged.</span>
-                  </div>
-                ) : (
-                  displayLeaves.slice(0, 5).map((req) => (
-                    <div key={req.id} className="flex items-center justify-between gap-3 py-3.5 border-b border-(--border) last:border-0">
-                      <div className="min-w-0 flex-1">
-                        {isManager ? (
-                          <>
-                            <div className="flex justify-between items-baseline">
-                              <p className="text-xs font-semibold text-(--text-primary) truncate">{req.reason}</p>
-                              <span className="text-[9px] text-(--text-muted) shrink-0 ml-2">{req.from}</span>
-                            </div>
-                            <p className="text-[10px] text-(--text-muted) truncate mt-0.5">{req.name} · Staff Member</p>
-                          </>
-                        ) : (
-                          <div className="flex flex-col gap-0.5">
-                            <div className="flex justify-between items-center w-full">
-                              <p className="text-xs font-bold text-(--text-primary) truncate">{req.reason}</p>
-                              <span className="text-[10px] text-(--text-muted) tracking-tight font-mono">{req.from}</span>
-                            </div>
-                            <p className="text-[10px] text-(--text-muted)">Time-off Duration Logs</p>
-                          </div>
-                        )}
-                      </div>
-                      <Badge variant={req.status === "approved" ? "green" : req.status === "pending" ? "amber" : "red"}>{req.status}</Badge>
+            {/* Leave status card - only show for managers */}
+            {isManager && (
+              <Card title="Leave status" subtitle="Recent logs timeline" className="shadow-none hover:shadow-none">
+                <div className="space-y-0 h-64 overflow-y-auto pr-1">
+                  {displayLeaves.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-full text-(--text-muted) text-xs p-4 py-12">
+                      <CheckCircle2 size={16} className="text-emerald-500 mb-1" />
+                      <span>No active time-off requests logged.</span>
                     </div>
-                  ))
-                )}
-              </div>
-            </Card>
+                  ) : (
+                    displayLeaves.slice(0, 5).map((req) => (
+                      <div key={req.id} className="flex items-center justify-between gap-3 py-3.5 border-b border-(--border) last:border-0">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex justify-between items-baseline">
+                            <p className="text-xs font-semibold text-(--text-primary) truncate">{req.reason}</p>
+                            <span className="text-[9px] text-(--text-muted) shrink-0 ml-2">{req.from}</span>
+                          </div>
+                          <p className="text-[10px] text-(--text-muted) truncate mt-0.5">{req.name} · Staff Member</p>
+                        </div>
+                        <Badge variant={req.status === "approved" ? "green" : req.status === "pending" ? "amber" : "red"}>{req.status}</Badge>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </Card>
+            )}
 
             <Card title="Notice board" subtitle="Global organizational logs" className="shadow-none hover:shadow-none">
               <div className="space-y-0 h-64 overflow-y-auto pr-1">
