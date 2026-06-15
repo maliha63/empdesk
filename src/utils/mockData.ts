@@ -58,7 +58,7 @@ export function getRecentActivity() {
   ];
 }
 
-// === NEW FUNCTIONS FOR DASHBOARD ===
+// === FUNCTIONS FOR DASHBOARD ===
 export interface Notice {
   id: number;
   title: string;
