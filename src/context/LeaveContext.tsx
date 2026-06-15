@@ -15,7 +15,7 @@ export interface LeaveRequest {
   employeeId: number;
   name: string;
   image: string;
-  designation: string; // Added field based on Image 4
+  designation: string; 
   reason: string;
   from: string;
   to: string;
@@ -75,7 +75,9 @@ export function LeaveProvider({ children }: { children: ReactNode }) {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) dispatch({ type: "HYDRATE", payload: JSON.parse(raw) });
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
     setHydrated(true);
   }, []);
 
@@ -91,12 +93,13 @@ export function LeaveProvider({ children }: { children: ReactNode }) {
         type: "APPLY",
         payload: {
           ...req,
-          id:        crypto.randomUUID(),
-          status:    "pending",
+          id: crypto.randomUUID(),
+          status: "pending",
           appliedAt: new Date().toISOString().split("T")[0],
         },
       });
-    }, []
+    },
+    [],
   );
 
   const approveLeave = useCallback((id: string) => {
@@ -107,12 +110,15 @@ export function LeaveProvider({ children }: { children: ReactNode }) {
     dispatch({ type: "REJECT", payload: id });
   }, []);
 
-  const memoizedValue = useMemo(() => ({
-    ...state,
-    applyLeave,
-    approveLeave,
-    rejectLeave
-  }), [state, applyLeave, approveLeave, rejectLeave]);
+  const memoizedValue = useMemo(
+    () => ({
+      ...state,
+      applyLeave,
+      approveLeave,
+      rejectLeave,
+    }),
+    [state, applyLeave, approveLeave, rejectLeave],
+  );
 
   return (
     <LeaveContext.Provider value={memoizedValue}>

@@ -16,6 +16,7 @@ import {
   MapPin,
   FileText,
   ChevronLeft,
+  CheckSquare,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import ThemeToggle from "../components/ThemeToggle";
@@ -81,7 +82,7 @@ const managerNav: NavItem[] = [
   },
 
   {
-    label: "HRM",
+    label: "HRMS",
     icon: <Users size={18} />,
     children: [
       {
@@ -98,19 +99,62 @@ const managerNav: NavItem[] = [
 ];
 
 const employeeNav: NavItem[] = [
-  { label: "Dashboard", to: "/dashboard", icon: <LayoutDashboard size={18} /> },
-  { label: "Attendance", to: "/attendance/me", icon: <Clock size={18} /> },
-  { label: "Leave", to: "/leave/me", icon: <Calendar size={18} /> },
+  {
+    label: "Dashboard",
+    to: "/dashboard",
+    icon: <LayoutDashboard size={18} />,
+  },
+  {
+    label: "Attendance",
+    to: "/attendance/me",
+    icon: <Clock size={18} />,
+  },
+  {
+    label: "Leave",
+    to: "/leave/me",
+    icon: <Calendar size={18} />,
+  },
+  {
+    label: "My Documents",
+    to: "/documents",
+    icon: <FileText size={18} />,
+  },
+  {
+    label: "My Performance",
+    to: "/employees/my-performance",
+    icon: <TrendingUp size={18} />,
+  },
+  {
+    label: "My Tasks",
+    to: "/tasks",
+    icon: <CheckSquare size={18} />,
+  },
   {
     label: "Notice Board",
     to: "/notice-board",
     icon: <LayoutDashboard size={18} />,
   },
-  { label: "Events", to: "/event", icon: <Calendar size={18} /> },
-  { label: "My Profile", to: "/profile", icon: <UserCircle size={18} /> },
+  {
+    label: "Events",
+    to: "/event",
+    icon: <Calendar size={18} />,
+  },
+  {
+    label: "My Profile",
+    to: "/profile",
+    icon: <UserCircle size={18} />,
+  },
 ];
 
-function NavGroup({ item, collapsed, onExpandRequest }: { item: NavItem; collapsed: boolean; onExpandRequest?: () => void }) {
+function NavGroup({
+  item,
+  collapsed,
+  onExpandRequest,
+}: {
+  item: NavItem;
+  collapsed: boolean;
+  onExpandRequest?: () => void;
+}) {
   const location = useLocation();
   const isChildActive = item.children?.some((c) => location.pathname === c.to);
   const [open, setOpen] = useState(isChildActive);
@@ -333,7 +377,12 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
               <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
                 {navItems.map((item) =>
                   item.children ? (
-                    <NavGroup key={item.label} item={item} collapsed={false} onExpandRequest={() => setSidebarOpen(false)} />
+                    <NavGroup
+                      key={item.label}
+                      item={item}
+                      collapsed={false}
+                      onExpandRequest={() => setSidebarOpen(false)}
+                    />
                   ) : (
                     <NavLink
                       key={item.to}

@@ -65,10 +65,22 @@ function EmployeeAttendanceView({ userId }: { userId: number }) {
     .filter((d) => d.value > 0);
 
   const monthlyData = useMemo(() => {
-    const map: Record<string, { month: string; Present: number; Late: number; Absent: number; Leave: number }> = {};
+    const map: Record<
+      string,
+      {
+        month: string;
+        Present: number;
+        Late: number;
+        Absent: number;
+        Leave: number;
+      }
+    > = {};
     records.forEach((r) => {
-      const month = new Date(r.date).toLocaleString("en-US", { month: "short" });
-      if (!map[month]) map[month] = { month, Present: 0, Late: 0, Absent: 0, Leave: 0 };
+      const month = new Date(r.date).toLocaleString("en-US", {
+        month: "short",
+      });
+      if (!map[month])
+        map[month] = { month, Present: 0, Late: 0, Absent: 0, Leave: 0 };
       map[month][r.status as "Present" | "Late" | "Absent" | "Leave"] += 1;
     });
     return Object.values(map).reverse();
@@ -89,7 +101,9 @@ function EmployeeAttendanceView({ userId }: { userId: number }) {
             Overall Attendance Rate
           </p>
           <div className="flex items-end gap-2">
-            <span className="text-4xl font-bold text-emerald-600">{attendanceRate}%</span>
+            <span className="text-4xl font-bold text-emerald-600">
+              {attendanceRate}%
+            </span>
             <span className="text-sm text-(--text-muted) mb-1.5">
               of {total} recorded days
             </span>
@@ -117,12 +131,17 @@ function EmployeeAttendanceView({ userId }: { userId: number }) {
                 </p>
                 <span
                   className="w-8 h-8 rounded-lg flex items-center justify-center"
-                  style={{ backgroundColor: `${s.meta.color}1a`, color: s.meta.color }}
+                  style={{
+                    backgroundColor: `${s.meta.color}1a`,
+                    color: s.meta.color,
+                  }}
                 >
                   <Icon size={18} />
                 </span>
               </div>
-              <p className="text-3xl font-bold text-(--text-primary)">{s.value}</p>
+              <p className="text-3xl font-bold text-(--text-primary)">
+                {s.value}
+              </p>
               <p className="text-[11px] text-(--text-muted) mt-2">
                 {total ? Math.round((s.value / total) * 100) : 0}% of total days
               </p>
@@ -151,7 +170,9 @@ function EmployeeAttendanceView({ userId }: { userId: number }) {
                 {pieData.map((entry) => (
                   <Cell
                     key={entry.name}
-                    fill={STATUS_META[entry.name as keyof typeof STATUS_META].color}
+                    fill={
+                      STATUS_META[entry.name as keyof typeof STATUS_META].color
+                    }
                   />
                 ))}
               </Pie>
@@ -171,10 +192,23 @@ function EmployeeAttendanceView({ userId }: { userId: number }) {
               <YAxis allowDecimals={false} />
               <Tooltip />
               <Legend />
-              <Bar dataKey="Present" stackId="a" fill={STATUS_META.Present.color} />
+              <Bar
+                dataKey="Present"
+                stackId="a"
+                fill={STATUS_META.Present.color}
+              />
               <Bar dataKey="Late" stackId="a" fill={STATUS_META.Late.color} />
-              <Bar dataKey="Absent" stackId="a" fill={STATUS_META.Absent.color} />
-              <Bar dataKey="Leave" stackId="a" fill={STATUS_META.Leave.color} radius={[4, 4, 0, 0]} />
+              <Bar
+                dataKey="Absent"
+                stackId="a"
+                fill={STATUS_META.Absent.color}
+              />
+              <Bar
+                dataKey="Leave"
+                stackId="a"
+                fill={STATUS_META.Leave.color}
+                radius={[4, 4, 0, 0]}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -182,21 +216,34 @@ function EmployeeAttendanceView({ userId }: { userId: number }) {
 
       <div className="bg-white dark:bg-[#111827] border border-(--border) rounded-2xl overflow-hidden">
         <div className="px-6 py-4 border-b border-(--border)">
-          <h3 className="text-sm font-semibold text-(--text-primary)">Recent Records</h3>
+          <h3 className="text-sm font-semibold text-(--text-primary)">
+            Recent Records
+          </h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-(--border) bg-[#f8fafc] dark:bg-[#0f172a]">
-                <th className="text-left px-6 py-3 font-semibold text-(--text-muted) text-xs">Date</th>
-                <th className="text-left px-6 py-3 font-semibold text-(--text-muted) text-xs">Check In</th>
-                <th className="text-left px-6 py-3 font-semibold text-(--text-muted) text-xs">Check Out</th>
-                <th className="text-center px-6 py-3 font-semibold text-(--text-muted) text-xs">Status</th>
+                <th className="text-left px-6 py-3 font-semibold text-(--text-muted) text-xs">
+                  Date
+                </th>
+                <th className="text-left px-6 py-3 font-semibold text-(--text-muted) text-xs">
+                  Check In
+                </th>
+                <th className="text-left px-6 py-3 font-semibold text-(--text-muted) text-xs">
+                  Check Out
+                </th>
+                <th className="text-center px-6 py-3 font-semibold text-(--text-muted) text-xs">
+                  Status
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-(--border)">
               {records.map((r, i) => (
-                <tr key={i} className="hover:bg-[#f8fafc] dark:hover:bg-[#0f172a] transition-colors">
+                <tr
+                  key={i}
+                  className="hover:bg-[#f8fafc] dark:hover:bg-[#0f172a] transition-colors"
+                >
                   <td className="px-6 py-3 text-(--text-primary) font-medium">
                     {new Date(r.date).toLocaleDateString("en-US", {
                       weekday: "short",
@@ -204,10 +251,20 @@ function EmployeeAttendanceView({ userId }: { userId: number }) {
                       day: "numeric",
                     })}
                   </td>
-                  <td className="px-6 py-3 text-(--text-secondary) font-mono">{r.checkIn}</td>
-                  <td className="px-6 py-3 text-(--text-secondary) font-mono">{r.checkOut}</td>
+                  <td className="px-6 py-3 text-(--text-secondary) font-mono">
+                    {r.checkIn}
+                  </td>
+                  <td className="px-6 py-3 text-(--text-secondary) font-mono">
+                    {r.checkOut}
+                  </td>
                   <td className="px-6 py-3 text-center">
-                    <Badge variant={STATUS_META[r.status as keyof typeof STATUS_META]?.variant || "slate"} dot>
+                    <Badge
+                      variant={
+                        STATUS_META[r.status as keyof typeof STATUS_META]
+                          ?.variant || "slate"
+                      }
+                      dot
+                    >
                       {r.status}
                     </Badge>
                   </td>
@@ -241,20 +298,28 @@ export default function AttendancePage() {
   }, [employees]);
 
   const [attendances, setAttendances] = useState<EmployeeAttendance[]>(
-    attendanceData as unknown as EmployeeAttendance[]
+    attendanceData as unknown as EmployeeAttendance[],
   );
-  const tableState = useTableState(attendances, rowsPerPage, ["name", "department"]);
+  const tableState = useTableState(attendances, rowsPerPage, [
+    "name",
+    "department",
+  ]);
 
-  const handleStatusChange = (empId: string, newStatus: EmployeeAttendance["status"]) => {
+  const handleStatusChange = (
+    empId: string,
+    newStatus: EmployeeAttendance["status"],
+  ) => {
     setAttendances((prev) =>
-      prev.map((emp) => (emp.id === empId ? { ...emp, status: newStatus } : emp))
+      prev.map((emp) =>
+        emp.id === empId ? { ...emp, status: newStatus } : emp,
+      ),
     );
     toast.success("Attendance updated");
   };
 
   const handleNoteChange = (empId: string, note: string) => {
     setAttendances((prev) =>
-      prev.map((emp) => (emp.id === empId ? { ...emp, note } : emp))
+      prev.map((emp) => (emp.id === empId ? { ...emp, note } : emp)),
     );
   };
 
@@ -318,39 +383,77 @@ export default function AttendancePage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[#e2e8f0] dark:border-[#1f2a3d] bg-gray-50 dark:bg-[#0f172a]">
-                  <th className="text-left px-4 py-3 font-semibold text-(--text-muted) text-xs">Admission No</th>
-                  <th className="text-left px-4 py-3 font-semibold text-(--text-muted) text-xs">Name</th>
-                  <th className="text-left px-4 py-3 font-semibold text-(--text-muted) text-xs">Department</th>
-                  <th className="text-left px-4 py-3 font-semibold text-(--text-muted) text-xs">Designation</th>
-                  <th className="text-center px-4 py-3 font-semibold text-(--text-muted) text-xs">Attendance</th>
-                  <th className="text-left px-4 py-3 font-semibold text-(--text-muted) text-xs">Note</th>
+                  <th className="text-left px-4 py-3 font-semibold text-(--text-muted) text-xs">
+                    Admission No
+                  </th>
+                  <th className="text-left px-4 py-3 font-semibold text-(--text-muted) text-xs">
+                    Name
+                  </th>
+                  <th className="text-left px-4 py-3 font-semibold text-(--text-muted) text-xs">
+                    Department
+                  </th>
+                  <th className="text-left px-4 py-3 font-semibold text-(--text-muted) text-xs">
+                    Designation
+                  </th>
+                  <th className="text-center px-4 py-3 font-semibold text-(--text-muted) text-xs">
+                    Attendance
+                  </th>
+                  <th className="text-left px-4 py-3 font-semibold text-(--text-muted) text-xs">
+                    Note
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#e2e8f0] dark:divide-[#1f2a3d]">
                 {displayData.map((emp) => (
-                  <tr key={emp.id} className="hover:bg-gray-50 dark:hover:bg-[#0f172a] transition-colors">
+                  <tr
+                    key={emp.id}
+                    className="hover:bg-gray-50 dark:hover:bg-[#0f172a] transition-colors"
+                  >
                     <td className="px-4 py-3 text-sm font-medium text-blue-600 dark:text-blue-400">
                       {emp.admissionNo}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         {emp.avatar && (
-                          <img src={emp.avatar} alt={emp.name} className="w-6 h-6 rounded-full" />
+                          <img
+                            src={emp.avatar}
+                            alt={emp.name}
+                            className="w-6 h-6 rounded-full"
+                          />
                         )}
-                        <span className="text-sm font-medium text-(--text-primary)">{emp.name}</span>
+                        <span className="text-sm font-medium text-(--text-primary)">
+                          {emp.name}
+                        </span>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm text-(--text-secondary)">{emp.department}</td>
-                    <td className="px-4 py-3 text-sm text-(--text-secondary)">{emp.designation}</td>
+                    <td className="px-4 py-3 text-sm text-(--text-secondary)">
+                      {emp.department}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-(--text-secondary)">
+                      {emp.designation}
+                    </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-center gap-3 flex-wrap">
-                        {(["Present", "Late", "Absent", "Halfday", "Holiday"] as const).map((status) => (
-                          <label key={status} className="flex items-center gap-1 cursor-pointer">
+                        {(
+                          [
+                            "Present",
+                            "Late",
+                            "Absent",
+                            "Halfday",
+                            "Holiday",
+                          ] as const
+                        ).map((status) => (
+                          <label
+                            key={status}
+                            className="flex items-center gap-1 cursor-pointer"
+                          >
                             <input
                               type="radio"
                               name={`status-${emp.id}`}
                               checked={emp.status === status}
-                              onChange={() => handleStatusChange(emp.id, status)}
+                              onChange={() =>
+                                handleStatusChange(emp.id, status)
+                              }
                               className="w-3 h-3"
                             />
                             <span className="text-xs text-(--text-secondary)">
@@ -365,7 +468,9 @@ export default function AttendancePage() {
                         type="text"
                         placeholder="Write note..."
                         value={emp.note || ""}
-                        onChange={(e) => handleNoteChange(emp.id, e.target.value)}
+                        onChange={(e) =>
+                          handleNoteChange(emp.id, e.target.value)
+                        }
                         className="w-full max-w-xs px-2 py-1 text-xs border border-[#e2e8f0] dark:border-[#1f2a3d] rounded bg-white dark:bg-[#0f172a] text-(--text-primary) placeholder-(--text-muted) focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </td>
@@ -380,28 +485,46 @@ export default function AttendancePage() {
         {tableState.totalPages > 1 && (
           <div className="flex items-center justify-between">
             <p className="text-xs text-gray-400 dark:text-[#4b5e7a]">
-              Showing {((tableState.currentPage - 1) * rowsPerPage) + 1} to {Math.min(tableState.currentPage * rowsPerPage, attendances.length)} of {attendances.length} results
+              Showing {(tableState.currentPage - 1) * rowsPerPage + 1} to{" "}
+              {Math.min(
+                tableState.currentPage * rowsPerPage,
+                attendances.length,
+              )}{" "}
+              of {attendances.length} results
             </p>
             <div className="flex gap-2 items-center">
               <button
-                onClick={() => tableState.setCurrentPage(Math.max(1, tableState.currentPage - 1))}
+                onClick={() =>
+                  tableState.setCurrentPage(
+                    Math.max(1, tableState.currentPage - 1),
+                  )
+                }
                 disabled={tableState.currentPage === 1}
                 className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#e2e8f0] dark:border-[#1f2a3d] text-gray-500 dark:text-[#4b5e7a] hover:text-gray-900 dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 &larr; Prev
               </button>
-              
+
               <div className="flex gap-1">
                 {Array.from({ length: tableState.totalPages }, (_, i) => i + 1)
-                  .filter((p) => p === 1 || p === tableState.totalPages || Math.abs(p - tableState.currentPage) <= 1)
+                  .filter(
+                    (p) =>
+                      p === 1 ||
+                      p === tableState.totalPages ||
+                      Math.abs(p - tableState.currentPage) <= 1,
+                  )
                   .reduce<(number | "...")[]>((acc, p, i, arr) => {
-                    if (i > 0 && p - (arr[i - 1] as number) > 1) acc.push("...");
+                    if (i > 0 && p - (arr[i - 1] as number) > 1)
+                      acc.push("...");
                     acc.push(p);
                     return acc;
                   }, [])
                   .map((p, i) =>
                     p === "..." ? (
-                      <span key={`ellipse-${i}`} className="px-2 py-1.5 text-xs text-gray-400 dark:text-[#4b5e7a]">
+                      <span
+                        key={`ellipse-${i}`}
+                        className="px-2 py-1.5 text-xs text-gray-400 dark:text-[#4b5e7a]"
+                      >
                         ...
                       </span>
                     ) : (
@@ -416,12 +539,16 @@ export default function AttendancePage() {
                       >
                         {p}
                       </button>
-                    )
+                    ),
                   )}
               </div>
 
               <button
-                onClick={() => tableState.setCurrentPage(Math.min(tableState.totalPages, tableState.currentPage + 1))}
+                onClick={() =>
+                  tableState.setCurrentPage(
+                    Math.min(tableState.totalPages, tableState.currentPage + 1),
+                  )
+                }
                 disabled={tableState.currentPage === tableState.totalPages}
                 className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#e2e8f0] dark:border-[#1f2a3d] text-gray-500 dark:text-[#4b5e7a] hover:text-gray-900 dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >

@@ -1,10 +1,25 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { PageHeader } from "../components/PageHeader";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
 import toast, { Toaster } from "react-hot-toast";
-import { Clock, MapPin, Calendar as CalendarIcon, Briefcase, Users, Book, ChevronLeft, ChevronRight, MoreVertical, Edit2, Trash2 } from "lucide-react";
+import {
+  Clock,
+  MapPin,
+  Calendar as CalendarIcon,
+  Briefcase,
+  Users,
+  Book,
+  ChevronLeft,
+  ChevronRight,
+  MoreVertical,
+  Edit2,
+  Trash2,
+  Plus,
+} from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
+import { DatePicker } from "../components/DatePicker";
+import CustomSelect from "../components/CustomSelect";
 
 interface Event {
   id: number;
@@ -16,237 +31,345 @@ interface Event {
   category?: "meeting" | "deadline" | "social" | "training";
 }
 
-// Category icons and colors
-const categoryIcons = {
-  meeting: <Briefcase size={16} />,
-  deadline: <Clock size={16} />,
-  social: <Users size={16} />,
-  training: <Book size={16} />,
-};
-
-const categoryColors = {
-  meeting: { bg: "bg-purple-100 dark:bg-purple-900/30", text: "text-purple-700 dark:text-purple-300", border: "border-purple-200 dark:border-purple-800", lightBg: "bg-purple-50 dark:bg-purple-950/20", icon: "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400" },
-  deadline: { bg: "bg-red-100 dark:bg-red-900/30", text: "text-red-700 dark:text-red-300", border: "border-red-200 dark:border-red-800", lightBg: "bg-red-50 dark:bg-red-950/20", icon: "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400" },
-  social: { bg: "bg-emerald-100 dark:bg-emerald-900/30", text: "text-emerald-700 dark:text-emerald-300", border: "border-emerald-200 dark:border-emerald-800", lightBg: "bg-emerald-50 dark:bg-emerald-950/20", icon: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400" },
-  training: { bg: "bg-orange-100 dark:bg-orange-900/30", text: "text-orange-700 dark:text-orange-300", border: "border-orange-200 dark:border-orange-800", lightBg: "bg-orange-50 dark:bg-orange-950/20", icon: "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400" },
+const categoryMeta = {
+  meeting: {
+    icon: <Briefcase size={16} />,
+    label: "Meeting",
+    dot: "bg-purple-500",
+    card: "bg-purple-50 dark:bg-purple-950/20 border-purple-200 dark:border-purple-800",
+    iconBox:
+      "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400",
+  },
+  deadline: {
+    icon: <Clock size={16} />,
+    label: "Deadline",
+    dot: "bg-red-500",
+    card: "bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800",
+    iconBox: "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400",
+  },
+  social: {
+    icon: <Users size={16} />,
+    label: "Social",
+    dot: "bg-emerald-500",
+    card: "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800",
+    iconBox:
+      "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400",
+  },
+  training: {
+    icon: <Book size={16} />,
+    label: "Training",
+    dot: "bg-orange-500",
+    card: "bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800",
+    iconBox:
+      "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400",
+  },
 };
 
 const initialEvents: Event[] = [
   {
-    id: 0,
+    id: 1,
     title: "Team Building Workshop",
     date: "2026-06-12",
     time: "10:00",
-    description: "Interactive team bonding workshop focused on collaboration and trust",
+    description: "Interactive team bonding workshop",
     location: "Conference Room A",
     category: "meeting",
   },
   {
-    id: 1,
+    id: 2,
     title: "Product Launch",
     date: "2026-06-16",
     time: "09:30",
-    description: "Launch of new AI features with demo and Q&A",
+    description: "Launch of new AI features",
     location: "Main Auditorium",
     category: "social",
   },
   {
-    id: 2,
+    id: 3,
     title: "Monthly Townhall",
     date: "2026-06-19",
     time: "14:00",
-    description: "Company-wide update and employee Q&A session",
+    description: "Company-wide update and Q&A",
     location: "Virtual (Google Meet)",
     category: "meeting",
   },
   {
-    id: 3,
+    id: 4,
     title: "Wellness Session",
     date: "2026-06-26",
     time: "11:00",
-    description: "Guided meditation and wellness activity",
+    description: "Guided meditation and wellness",
     location: "Wellness Room",
     category: "training",
   },
   {
-    id: 4,
+    id: 5,
     title: "Q2 Performance Review Deadline",
     date: "2026-06-15",
     time: "23:59",
-    description: "All performance reviews must be submitted",
+    description: "All reviews must be submitted",
     location: "Online",
     category: "deadline",
   },
 ];
 
+const DAYS_HEADER = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 type ViewType = "month" | "week" | "list";
+
+const TIME_OPTIONS = [
+  { value: "09:00", label: "09:00 AM" },
+  { value: "09:30", label: "09:30 AM" },
+  { value: "10:00", label: "10:00 AM" },
+  { value: "10:30", label: "10:30 AM" },
+  { value: "11:00", label: "11:00 AM" },
+  { value: "11:30", label: "11:30 AM" },
+  { value: "12:00", label: "12:00 PM" },
+  { value: "12:30", label: "12:30 PM" },
+  { value: "13:00", label: "01:00 PM" },
+  { value: "13:30", label: "01:30 PM" },
+  { value: "14:00", label: "02:00 PM" },
+  { value: "14:30", label: "02:30 PM" },
+  { value: "15:00", label: "03:00 PM" },
+  { value: "15:30", label: "03:30 PM" },
+  { value: "16:00", label: "04:00 PM" },
+  { value: "16:30", label: "04:30 PM" },
+  { value: "17:00", label: "05:00 PM" },
+  { value: "17:30", label: "05:30 PM" },
+  { value: "18:00", label: "06:00 PM" },
+  { value: "23:59", label: "11:59 PM" },
+];
+
+// Slots for week view (include an All day row plus all time values)
+const TIME_SLOTS = ["All day", ...TIME_OPTIONS.map((o) => o.value)];
+
+const CATEGORY_OPTIONS = [
+  { value: "meeting", label: "Meeting" },
+  { value: "deadline", label: "Deadline" },
+  { value: "social", label: "Social Event" },
+  { value: "training", label: "Training" },
+];
+
+/* Event Menu */
+function EventMenu({
+  onEdit,
+  onDelete,
+}: {
+  event: Event;
+  onEdit: () => void;
+  onDelete: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node))
+        setOpen(false);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="p-1.5 hover:bg-(--bg-card2) rounded-lg transition-colors"
+      >
+        <MoreVertical size={15} className="text-(--text-muted)" />
+      </button>
+      {open && (
+        <div className="absolute right-0 top-full mt-1 bg-(--bg-card) border border-(--border) rounded-lg shadow-lg z-50 min-w-32 py-1">
+          <button
+            onClick={() => {
+              onEdit();
+              setOpen(false);
+            }}
+            className="w-full flex items-center gap-2 px-3 py-2 text-xs text-(--text-primary) hover:bg-(--bg-card2) transition-colors"
+          >
+            <Edit2 size={13} /> Edit
+          </button>
+          <button
+            onClick={() => {
+              onDelete();
+              setOpen(false);
+            }}
+            className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors border-t border-(--border)"
+          >
+            <Trash2 size={13} /> Delete
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function EventPage() {
   const { user } = useAuth();
   const isManager = user?.role === "manager";
-  
+
+  const today = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
+
   const [events, setEvents] = useState(initialEvents);
   const [selectedDate, setSelectedDate] = useState(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return today;
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
   });
   const [currentDate, setCurrentDate] = useState(() => {
-    const date = new Date();
-    date.setHours(0, 0, 0, 0);
-    return date;
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
   });
+  const [viewMode, setViewMode] = useState<ViewType>("month");
   const [showModal, setShowModal] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
-  const [viewMode, setViewMode] = useState<ViewType>("month");
-  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
-  const [form, setForm] = useState<{
-    title: string;
-    date: string;
-    time: string;
-    description: string;
-    location: string;
-    category: "meeting" | "deadline" | "social" | "training";
-  }>({
+  const [form, setForm] = useState({
     title: "",
     date: "",
-    time: "",
+    time: "09:00",
     description: "",
     location: "",
-    category: "meeting",
+    category: "meeting" as Event["category"],
   });
 
-  const handleOpenModal = (event?: Event) => {
-    if (event) {
-      setEditingEvent(event);
-      setForm({
-        title: event.title,
-        date: event.date,
-        time: event.time,
-        description: event.description,
-        location: event.location || "",
-        category: event.category || "meeting",
-      });
-    } else {
-      setEditingEvent(null);
-      setForm({
-        title: "",
-        date: selectedDate.toISOString().split("T")[0],
-        time: "",
-        description: "",
-        location: "",
-        category: "meeting",
-      });
-    }
-    setShowModal(true);
-  };
+  /* ── derived ── */
+  const upcomingEvents = useMemo(
+    () =>
+      events
+        .filter((e) => {
+          const d = new Date(e.date + "T00:00:00");
+          return d >= today;
+        })
+        .sort(
+          (a, b) =>
+            a.date.localeCompare(b.date) || a.time.localeCompare(b.time),
+        ),
+    [events, today],
+  );
 
-  const handleSave = () => {
-    if (!form.title.trim() || !form.date || !form.time.trim()) {
-      toast.error("Title, date, and time are required");
-      return;
-    }
+  const eventsByDate = useMemo(() => {
+    const map: Record<string, Event[]> = {};
+    events.forEach((e) => {
+      if (!map[e.date]) map[e.date] = [];
+      map[e.date].push(e);
+    });
+    return map;
+  }, [events]);
 
-    if (editingEvent) {
-      setEvents(
-        events.map((e) =>
-          e.id === editingEvent.id
-            ? { ...e, ...form, category: form.category as "meeting" | "deadline" | "social" | "training" }
-            : e
-        )
+  /* ── month grid ── */
+  const monthDays = useMemo(() => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const firstDow = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const cells: (Date | null)[] = Array(firstDow).fill(null);
+    for (let i = 1; i <= daysInMonth; i++) cells.push(new Date(year, month, i));
+    return cells;
+  }, [currentDate]);
+
+  /* ── week days ── */
+  const weekDays = useMemo(() => {
+    const base = new Date(currentDate);
+    const dow = base.getDay();
+    base.setDate(base.getDate() - dow);
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(base);
+      d.setDate(base.getDate() + i);
+      return d;
+    });
+  }, [currentDate]);
+
+  /* ── helpers ── */
+  function dateStr(d: Date) {
+    return d.toISOString().split("T")[0];
+  }
+  function isToday(d: Date) {
+    return d.toDateString() === today.toDateString();
+  }
+  function isSelected(d: Date) {
+    return d.toDateString() === selectedDate.toDateString();
+  }
+
+  function prevPeriod() {
+    if (viewMode === "month")
+      setCurrentDate(
+        new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1),
       );
-      toast.success("Event updated");
-    } else {
-      setEvents([
-        {
-          id: Date.now(),
-          ...form,
-          category: form.category as "meeting" | "deadline" | "social" | "training",
-        },
-        ...events,
-      ]);
-      toast.success("Event added");
-    }
+    else setCurrentDate(new Date(currentDate.getTime() - 7 * 86400000));
+  }
+  function nextPeriod() {
+    if (viewMode === "month")
+      setCurrentDate(
+        new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1),
+      );
+    else setCurrentDate(new Date(currentDate.getTime() + 7 * 86400000));
+  }
 
-    setShowModal(false);
+  function openAdd() {
+    setEditingEvent(null);
     setForm({
       title: "",
-      date: "",
-      time: "",
+      date: dateStr(selectedDate),
+      time: "09:00",
       description: "",
       location: "",
       category: "meeting",
     });
-    setEditingEvent(null);
-  };
-
-  const handleDelete = (id: number) => {
-    setEvents(events.filter((e) => e.id !== id));
+    setShowModal(true);
+  }
+  function openEdit(ev: Event) {
+    setEditingEvent(ev);
+    setForm({
+      title: ev.title,
+      date: ev.date,
+      time: ev.time,
+      description: ev.description,
+      location: ev.location || "",
+      category: ev.category || "meeting",
+    });
+    setShowModal(true);
+  }
+  function handleSave() {
+    if (!form.title.trim() || !form.date || !form.time) {
+      toast.error("Title, date and time are required");
+      return;
+    }
+    if (editingEvent) {
+      setEvents((ev) =>
+        ev.map((e) => (e.id === editingEvent.id ? { ...e, ...form } : e)),
+      );
+      toast.success("Event updated");
+    } else {
+      setEvents((ev) => [{ id: Date.now(), ...form }, ...ev]);
+      toast.success("Event created");
+    }
+    setShowModal(false);
+  }
+  function handleDelete(id: number) {
+    setEvents((ev) => ev.filter((e) => e.id !== id));
     toast.success("Event deleted");
-    setOpenMenuId(null);
-  };
+  }
 
+  const weekLabel = useMemo(() => {
+    const s = weekDays[0];
+    const e = weekDays[6];
+    return `${s.toLocaleDateString("en-US", { month: "long", day: "numeric" })} – ${e.toLocaleDateString("en-US", { month: "long", day: "numeric" })}`;
+  }, [weekDays]);
 
-  const upcomingEvents = useMemo(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return events
-      .filter((e) => new Date(e.date) >= today)
-      .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
-  }, [events]);
+  function getEventHour(e: Event) {
+    // return the event time value (e.g., "09:00")
+    return e.time;
+  }
 
-  const monthDays = useMemo(() => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const daysInMonth = lastDay.getDate();
-    const startingDayOfWeek = firstDay.getDay();
-
-    const days = [];
-    for (let i = 0; i < startingDayOfWeek; i++) {
-      days.push(null);
-    }
-    for (let i = 1; i <= daysInMonth; i++) {
-      days.push(new Date(year, month, i));
-    }
-    return days;
-  }, [currentDate]);
-
-  const weekStart = useMemo(() => {
-    const date = new Date(currentDate);
-    const day = date.getDay();
-    const diff = date.getDate() - day;
-    return new Date(date.setDate(diff));
-  }, [currentDate]);
-
-  const weekDays = useMemo(() => {
-    const days = [];
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(weekStart);
-      date.setDate(weekStart.getDate() + i);
-      days.push(date);
-    }
-    return days;
-  }, [weekStart]);
-
-  const timeSlots = [
-    "All day",
-    "9 AM",
-    "10 AM",
-    "11 AM",
-    "12 PM",
-    "1 PM",
-    "2 PM",
-    "3 PM",
-    "4 PM",
-    "5 PM",
-  ];
-
-  const getEventsForWeekDay = (date: Date) => {
-    const dateStr = date.toISOString().split("T")[0];
-    return events.filter((e) => e.date === dateStr);
-  };
+  function slotHour(slot: any) {
+    // slot is either "All day" or a time value from TIME_SLOTS
+    return slot === "All day" ? null : slot;
+  }
 
   return (
     <>
@@ -255,300 +378,357 @@ export default function EventPage() {
         <PageHeader
           title="Events"
           description="View and manage all company events"
-          crumbs={[{ label: "Dashboard", to: "/dashboard" }, { label: "Events" }]}
-          action={<Button onClick={() => handleOpenModal()}>+ Create Event</Button>}
+          crumbs={[
+            { label: "Dashboard", to: "/dashboard" },
+            { label: "Events" },
+          ]}
+          action={
+            <div className="flex items-center gap-3">
+              <div className="flex bg-(--bg-card2) border border-(--border) rounded-xl p-1">
+                {(["month", "week", "list"] as ViewType[]).map((v) => (
+                  <button
+                    key={v}
+                    onClick={() => setViewMode(v)}
+                    className={`px-3 py-1.5 text-xs font-medium rounded-lg capitalize transition-colors ${viewMode === v ? "bg-white dark:bg-[#1f2a3d] text-(--text-primary) shadow-sm" : "text-(--text-muted) hover:text-(--text-primary)"}`}
+                  >
+                    {v}
+                  </button>
+                ))}
+              </div>
+              <Button onClick={openAdd}>
+                <Plus size={14} /> Create Event
+              </Button>
+            </div>
+          }
         />
 
+        {/* ── Month view ── */}
         {viewMode === "month" && (
           <div className="space-y-6">
-            {/* Month View Calendar */}
-            <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-2xl p-6">
+            <div className="bg-white dark:bg-[#111827] border border-(--border) rounded-2xl p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-(--text-primary)">
-                  {currentDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
-                </h3>
-                <div className="flex items-center gap-2">
-                  <button onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1))} className="p-2 hover:bg-gray-100 dark:hover:bg-[#1f2a3d] rounded-lg">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={prevPeriod}
+                    className="p-2 hover:bg-(--bg-card2) rounded-lg transition-colors"
+                  >
                     <ChevronLeft size={18} />
                   </button>
-                  <button onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1))} className="p-2 hover:bg-gray-100 dark:hover:bg-[#1f2a3d] rounded-lg">
+                  <h3 className="text-lg font-semibold text-(--text-primary)">
+                    {currentDate.toLocaleDateString("en-US", {
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </h3>
+                  <button
+                    onClick={nextPeriod}
+                    className="p-2 hover:bg-(--bg-card2) rounded-lg transition-colors"
+                  >
                     <ChevronRight size={18} />
                   </button>
                 </div>
               </div>
 
-              {/* Calendar Grid */}
-              <div className="grid grid-cols-7 gap-2 mb-6">
-                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-                  <div key={day} className="text-center text-sm font-semibold text-(--text-muted) py-3">
-                    {day}
+              <div className="grid grid-cols-7 gap-1 mb-2">
+                {DAYS_HEADER.map((d) => (
+                  <div
+                    key={d}
+                    className="text-center text-xs font-semibold text-(--text-muted) py-2"
+                  >
+                    {d}
                   </div>
                 ))}
+              </div>
 
+              <div className="grid grid-cols-7 gap-1">
                 {monthDays.map((day, idx) => {
-                  const isToday = day && day.toDateString() === new Date().toDateString();
-                  const isSelected = day && day.toDateString() === selectedDate.toDateString();
-                  const dateStr = day ? day.toISOString().split("T")[0] : "";
-                  const dayEvents = dateStr ? events.filter((e) => e.date === dateStr) : [];
-
+                  if (!day)
+                    return (
+                      <div
+                        key={idx}
+                        className="min-h-20 rounded-lg bg-gray-50 dark:bg-[#0b0f1a]"
+                      />
+                    );
+                  const ds = dateStr(day);
+                  const dayEvts = eventsByDate[ds] || [];
+                  const todayDay = isToday(day);
+                  const selDay = isSelected(day);
                   return (
                     <button
                       key={idx}
-                      onClick={() => day && setSelectedDate(day)}
-                      className={`min-h-25 p-3 rounded-lg border transition-all ${
-                        isSelected
-                          ? "bg-blue-500 border-blue-500 text-white"
-                          : day
-                          ? isToday
-                            ? "bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800"
-                            : "bg-white dark:bg-[#0f172a] border-[#e2e8f0] dark:border-[#1f2a3d] hover:border-blue-300 dark:hover:border-blue-700"
-                          : "bg-gray-50 dark:bg-[#0f172a] border-gray-100 dark:border-[#1f2a3d]"
-                      }`}
+                      onClick={() => setSelectedDate(day)}
+                      className={`min-h-20 p-2 rounded-lg border text-left transition-all
+                        ${
+                          selDay
+                            ? "bg-blue-500 border-blue-500 text-white"
+                            : todayDay
+                              ? "bg-blue-50 dark:bg-blue-950/20 border-blue-300 dark:border-blue-700"
+                              : "bg-white dark:bg-[#0f172a] border-(--border) hover:border-blue-300 dark:hover:border-blue-700"
+                        }`}
                     >
-                      <div className={`text-sm font-semibold mb-2 ${!day ? "text-gray-300" : isSelected ? "text-white" : "text-(--text-primary)"}`}>
-                        {day?.getDate()}
+                      <div
+                        className={`text-sm font-semibold mb-1 ${selDay ? "text-white" : "text-(--text-primary)"}`}
+                      >
+                        {day.getDate()}
                       </div>
                       <div className="flex flex-wrap gap-1">
-                        {dayEvents.slice(0, 3).map((event) => (
-                          <div key={event.id} className={`w-2 h-2 rounded-full ${categoryColors[event.category || "meeting"].bg}`} />
-                        ))}
+                        {dayEvts.slice(0, 3).map((ev) => {
+                          const meta = categoryMeta[ev.category ?? "meeting"];
+                          return (
+                            <span
+                              key={ev.id}
+                              className={`w-2 h-2 rounded-full shrink-0 ${meta.dot} ${selDay ? "opacity-80" : ""}`}
+                              title={ev.title}
+                            />
+                          );
+                        })}
+                        {dayEvts.length > 3 && (
+                          <span className="text-[9px] text-(--text-muted)">
+                            +{dayEvts.length - 3}
+                          </span>
+                        )}
                       </div>
                     </button>
                   );
                 })}
               </div>
 
-              {/* Event Legend */}
-              <div className="flex gap-6 flex-wrap text-sm">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-purple-100"></div>
-                  <span className="text-(--text-muted)">Workshop</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-emerald-100"></div>
-                  <span className="text-(--text-muted)">Launch</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-orange-100"></div>
-                  <span className="text-(--text-muted)">Meeting</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-blue-100"></div>
-                  <span className="text-(--text-muted)">Wellness</span>
-                </div>
+              <div className="flex gap-4 flex-wrap mt-4 text-xs">
+                {Object.entries(categoryMeta).map(([k, v]) => (
+                  <div key={k} className="flex items-center gap-1.5">
+                    <div className={`w-2.5 h-2.5 rounded-full ${v.dot}`} />
+                    <span className="text-(--text-muted)">{v.label}</span>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Upcoming Events Cards */}
             {upcomingEvents.length > 0 && (
-              <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-2xl p-6">
-                <h3 className="text-lg font-semibold text-(--text-primary) mb-4">Upcoming Events</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {upcomingEvents.slice(0, 4).map((event) => (
-                    <div key={event.id} className={`p-4 rounded-xl border-2 ${categoryColors[event.category || "meeting"].lightBg} ${categoryColors[event.category || "meeting"].border}`}>
-                      <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-3 ${categoryColors[event.category || "meeting"].icon}`}>
-                        {categoryIcons[event.category || "meeting"]}
-                      </div>
-                      <h4 className="font-semibold text-(--text-primary) mb-2 line-clamp-2">{event.title}</h4>
-                      <div className="space-y-2 text-sm text-(--text-muted)">
-                        <div className="flex items-center gap-2">
-                          <CalendarIcon size={14} />
-                          {new Date(event.date).toLocaleDateString()}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Clock size={14} />
-                          {event.time}
-                        </div>
-                        {event.location && (
-                          <div className="flex items-center gap-2">
-                            <MapPin size={14} />
-                            <span className="line-clamp-1">{event.location}</span>
+              <div className="bg-white dark:bg-[#111827] border border-(--border) rounded-2xl p-6">
+                <h3 className="text-base font-semibold text-(--text-primary) mb-4">
+                  Upcoming Events
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {upcomingEvents.slice(0, 4).map((ev) => {
+                    const meta = categoryMeta[ev.category ?? "meeting"];
+                    return (
+                      <div
+                        key={ev.id}
+                        className={`p-4 rounded-xl border-2 relative ${meta.card}`}
+                      >
+                        {isManager && (
+                          <div className="absolute top-2 right-2">
+                            <EventMenu
+                              event={ev}
+                              onEdit={() => openEdit(ev)}
+                              onDelete={() => handleDelete(ev.id)}
+                            />
                           </div>
                         )}
+                        <div
+                          className={`w-10 h-10 rounded-lg flex items-center justify-center mb-3 ${meta.iconBox}`}
+                        >
+                          {meta.icon}
+                        </div>
+                        <h4 className="text-sm font-semibold text-(--text-primary) mb-2 pr-6">
+                          {ev.title}
+                        </h4>
+                        <div className="space-y-1.5 text-xs text-(--text-muted)">
+                          <div className="flex items-center gap-1.5">
+                            <CalendarIcon size={12} />
+                            {new Date(ev.date + "T00:00:00").toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              },
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Clock size={12} />
+                            {ev.time}
+                          </div>
+                          {ev.location && (
+                            <div className="flex items-center gap-1.5">
+                              <MapPin size={12} />
+                              <span className="truncate">{ev.location}</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
           </div>
         )}
 
+        {/* ── Week view ── */}
         {viewMode === "week" && (
-          <div className="space-y-6">
-            {/* Week View Header */}
-            <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-(--text-primary)">
-                    {weekStart.toLocaleDateString("en-US", { month: "long", day: "numeric" })} – {new Date(weekStart.getTime() + 6 * 24 * 60 * 60 * 1000).toLocaleDateString("en-US", { month: "long", day: "numeric" })}
-                  </h3>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button onClick={() => setCurrentDate(new Date(currentDate.getTime() - 7 * 24 * 60 * 60 * 1000))} className="p-2 hover:bg-gray-100 dark:hover:bg-[#1f2a3d] rounded-lg">
-                    <ChevronLeft size={18} />
-                  </button>
-                  <button onClick={() => setCurrentDate(new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000))} className="p-2 hover:bg-gray-100 dark:hover:bg-[#1f2a3d] rounded-lg">
-                    <ChevronRight size={18} />
-                  </button>
-                </div>
+          <div className="bg-white dark:bg-[#111827] border border-(--border) rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={prevPeriod}
+                  className="p-2 hover:bg-(--bg-card2) rounded-lg"
+                >
+                  <ChevronLeft size={18} />
+                </button>
+                <h3 className="text-lg font-semibold text-(--text-primary)">
+                  {weekLabel}
+                </h3>
+                <button
+                  onClick={nextPeriod}
+                  className="p-2 hover:bg-(--bg-card2) rounded-lg"
+                >
+                  <ChevronRight size={18} />
+                </button>
               </div>
+            </div>
 
-              {/* Week Grid */}
-              <div className="overflow-x-auto">
-                <div className="grid grid-cols-8 gap-2 min-w-max">
-                  <div className="w-20 pt-8"></div>
-                  {weekDays.map((day, idx) => (
-                    <div key={idx} className="w-32">
-                      <div className="text-center">
-                        <div className="text-sm font-medium text-(--text-muted) mb-1">{day.toLocaleDateString("en-US", { weekday: "short" })}</div>
-                        <div className={`text-2xl font-bold ${day.toDateString() === new Date().toDateString() ? "text-blue-600" : "text-(--text-primary)"}`}>{day.getDate()}</div>
+            <div className="overflow-x-auto">
+              <div style={{ minWidth: "700px" }}>
+                <div className="grid grid-cols-8 gap-1 mb-2">
+                  <div />
+                  {weekDays.map((d, i) => (
+                    <div key={i} className="text-center">
+                      <div className="text-xs text-(--text-muted) font-medium">
+                        {d.toLocaleDateString("en-US", { weekday: "short" })}
+                      </div>
+                      <div
+                        className={`text-xl font-bold mt-0.5 ${isToday(d) ? "text-blue-600 dark:text-blue-400" : "text-(--text-primary)"}`}
+                      >
+                        {d.getDate()}
                       </div>
                     </div>
                   ))}
                 </div>
 
-                {/* Time Slots */}
-                <div className="mt-4 grid grid-cols-8 gap-2 min-w-max">
-                  {timeSlots.map((slot, slotIdx) => (
-                    <div key={slotIdx} className={slotIdx === 0 ? "w-20" : "w-32"}>
-                      {slotIdx === 0 ? (
-                        <div className="text-xs font-medium text-(--text-muted) h-12 flex items-end pb-2">{slot}</div>
-                      ) : (
-                        <div className="space-y-2">
-                          <div className="text-xs text-(--text-muted) mb-2">{slot}</div>
-                          {weekDays.map((day, dayIdx) => {
-                            const dayEvents = getEventsForWeekDay(day).filter((e) => {
-                              const eventHour = parseInt(e.time.split(":")[0]);
-                              const slotHour = parseInt(slot.replace(/\s[AP]M/, ""));
-                              return eventHour === slotHour || (slot === "All day" && eventHour < 9);
-                            });
-
+                {TIME_SLOTS.map((slot) => (
+                  <div key={slot} className="grid grid-cols-8 gap-1 mb-1">
+                    <div className="text-[10px] text-(--text-muted) pt-2 pr-2 text-right">
+                      {slot}
+                    </div>
+                    {weekDays.map((d, di) => {
+                      const ds = dateStr(d);
+                      const dayEvts = (eventsByDate[ds] || []).filter((e) => {
+                        const eh = getEventHour(e);
+                        const sh = slotHour(slot);
+                        return slot === "All day" ? false : eh === sh;
+                      });
+                      return (
+                        <div
+                          key={di}
+                          className={`h-12 rounded-lg border border-(--border) p-1 ${isToday(d) ? "bg-blue-50 dark:bg-blue-950/10" : "bg-gray-50 dark:bg-[#0f172a]"}`}
+                        >
+                          {dayEvts.map((ev) => {
+                            const meta = categoryMeta[ev.category ?? "meeting"];
                             return (
-                              <div key={dayIdx} className="h-12 bg-gray-50 dark:bg-[#0f172a] rounded-lg border border-[#e2e8f0] dark:border-[#1f2a3d] p-1">
-                                {dayEvents.map((event) => (
-                                  <div key={event.id} className={`text-[10px] font-medium p-1 rounded mb-1 ${categoryColors[event.category || "meeting"].bg} cursor-pointer truncate`}>
-                                    {event.title}
-                                  </div>
-                                ))}
+                              <div
+                                key={ev.id}
+                                className={`text-[9px] font-medium px-1 py-0.5 rounded truncate ${meta.card}`}
+                              >
+                                {ev.title}
                               </div>
                             );
                           })}
                         </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                      );
+                    })}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         )}
 
+        {/* ── List view ── */}
         {viewMode === "list" && (
-          <div className="space-y-4">
-            {/* Upcoming Events List */}
-            <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-2xl p-6">
-              <h3 className="text-lg font-semibold text-(--text-primary) mb-4">Upcoming Events</h3>
-
-              {upcomingEvents.length === 0 ? (
-                <div className="text-center py-12">
-                  <CalendarIcon size={48} className="mx-auto mb-4 text-(--text-muted) opacity-50" />
-                  <p className="text-(--text-muted)">No upcoming events</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {upcomingEvents.map((event) => (
-                    <div key={event.id} className="flex items-start gap-4 p-4 rounded-xl bg-gray-50 dark:bg-[#0f172a] border border-[#e2e8f0] dark:border-[#1f2a3d] hover:border-blue-300 dark:hover:border-blue-700 transition-colors">
-                      <div className={`p-3 rounded-lg shrink-0 ${categoryColors[event.category || "meeting"].icon}`}>
-                        {categoryIcons[event.category || "meeting"]}
+          <div className="bg-white dark:bg-[#111827] border border-(--border) rounded-2xl p-6">
+            <h3 className="text-base font-semibold text-(--text-primary) mb-4">
+              Upcoming Events
+            </h3>
+            {upcomingEvents.length === 0 ? (
+              <div className="text-center py-16 text-(--text-muted)">
+                <CalendarIcon size={40} className="mx-auto mb-3 opacity-30" />
+                <p>No upcoming events</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {upcomingEvents.map((ev) => {
+                  const meta = categoryMeta[ev.category ?? "meeting"];
+                  return (
+                    <div
+                      key={ev.id}
+                      className="flex items-start gap-4 p-4 rounded-xl bg-(--bg-card2) border border-(--border) hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
+                    >
+                      <div
+                        className={`p-2.5 rounded-lg shrink-0 ${meta.iconBox}`}
+                      >
+                        {meta.icon}
                       </div>
-
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-(--text-primary) mb-1">{event.title}</h4>
-                        <div className="flex flex-wrap gap-4 text-sm text-(--text-muted)">
-                          <div className="flex items-center gap-1.5">
-                            <CalendarIcon size={14} />
-                            {new Date(event.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <Clock size={14} />
-                            {event.time}
-                          </div>
-                          {event.location && (
-                            <div className="flex items-center gap-1.5">
-                              <MapPin size={14} />
-                              {event.location}
-                            </div>
+                        <h4 className="text-sm font-semibold text-(--text-primary) mb-1">
+                          {ev.title}
+                        </h4>
+                        <div className="flex flex-wrap gap-3 text-xs text-(--text-muted)">
+                          <span className="flex items-center gap-1">
+                            <CalendarIcon size={12} />
+                            {new Date(ev.date + "T00:00:00").toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              },
+                            )}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Clock size={12} />
+                            {ev.time}
+                          </span>
+                          {ev.location && (
+                            <span className="flex items-center gap-1">
+                              <MapPin size={12} />
+                              {ev.location}
+                            </span>
                           )}
                         </div>
                       </div>
-
-                      <div className="relative">
-                        <button onClick={() => setOpenMenuId(openMenuId === event.id ? null : event.id)} className="p-2 hover:bg-gray-200 dark:hover:bg-[#1f2a3d] rounded-lg shrink-0">
-                          <MoreVertical size={18} className="text-(--text-muted)" />
-                        </button>
-                        {isManager && openMenuId === event.id && (
-                          <div className="absolute right-0 top-full mt-1 bg-white dark:bg-[#1f2a3d] border border-[#e2e8f0] dark:border-[#2d3748] rounded-lg shadow-lg z-50 w-40">
-                            <button onClick={() => { handleOpenModal(event); setOpenMenuId(null); }} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-[#111827] text-(--text-primary) transition-colors">
-                              <Edit2 size={14} />
-                              Edit
-                            </button>
-                            <button onClick={() => handleDelete(event.id)} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-left hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 transition-colors border-t border-[#e2e8f0] dark:border-[#2d3748]">
-                              <Trash2 size={14} />
-                              Delete
-                            </button>
-                          </div>
-                        )}
-                      </div>
+                      {isManager && (
+                        <EventMenu
+                          event={ev}
+                          onEdit={() => openEdit(ev)}
+                          onDelete={() => handleDelete(ev.id)}
+                        />
+                      )}
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
-
-        {/* View Tabs */}
-        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 flex gap-2 bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-full p-1 shadow-lg">
-          <Button
-            variant={viewMode === "month" ? "primary" : "secondary"}
-            size="sm"
-            onClick={() => setViewMode("month")}
-            className="rounded-full"
-          >
-            Month
-          </Button>
-          <Button
-            variant={viewMode === "week" ? "primary" : "secondary"}
-            size="sm"
-            onClick={() => setViewMode("week")}
-            className="rounded-full"
-          >
-            Week
-          </Button>
-          <Button
-            variant={viewMode === "list" ? "primary" : "secondary"}
-            size="sm"
-            onClick={() => setViewMode("list")}
-            className="rounded-full"
-          >
-            List
-          </Button>
-        </div>
       </div>
 
-      {/* Add/Edit Event Modal */}
+      {/* ── Modal ── */}
       <Modal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
-        title={editingEvent ? "Edit Event" : "Add Event"}
+        title={editingEvent ? "Edit Event" : "Create Event"}
         size="md"
         footer={
           <>
-            <Button variant="secondary" onClick={() => setShowModal(false)} size="md" className="flex-1">
+            <Button
+              variant="secondary"
+              onClick={() => setShowModal(false)}
+              className="flex-1"
+            >
               Cancel
             </Button>
-            <Button variant="primary" onClick={handleSave} size="md" className="flex-1">
+            <Button variant="primary" onClick={handleSave} className="flex-1">
               {editingEvent ? "Update" : "Create"} Event
             </Button>
           </>
@@ -561,9 +741,9 @@ export default function EventPage() {
             </label>
             <input
               type="text"
-              placeholder="e.g., Q3 Planning Meeting, Team Lunch"
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
+              placeholder="e.g., Q3 Planning Meeting"
               className="w-full border border-(--border) rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-(--text-primary) placeholder-(--text-muted) focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -573,22 +753,21 @@ export default function EventPage() {
               <label className="text-sm font-medium text-(--text-primary) block mb-2">
                 Date
               </label>
-              <input
-                type="date"
+              <DatePicker
                 value={form.date}
-                onChange={(e) => setForm({ ...form, date: e.target.value })}
-                className="w-full border border-(--border) rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(val) => setForm({ ...form, date: val })}
+                placeholder="Select event date"
               />
             </div>
             <div>
               <label className="text-sm font-medium text-(--text-primary) block mb-2">
                 Time
               </label>
-              <input
-                type="time"
+              <CustomSelect
                 value={form.time}
-                onChange={(e) => setForm({ ...form, time: e.target.value })}
-                className="w-full border border-(--border) rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(val) => setForm({ ...form, time: val as string })}
+                options={TIME_OPTIONS}
+                className="w-full"
               />
             </div>
           </div>
@@ -597,16 +776,14 @@ export default function EventPage() {
             <label className="text-sm font-medium text-(--text-primary) block mb-2">
               Category
             </label>
-            <select
-              value={form.category}
-              onChange={(e) => setForm({ ...form, category: e.target.value as "meeting" | "deadline" | "social" | "training" })}
-              className="w-full border border-(--border) rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="meeting">Meeting</option>
-              <option value="deadline">Deadline</option>
-              <option value="social">Social Event</option>
-              <option value="training">Training</option>
-            </select>
+            <CustomSelect
+              value={form.category || "meeting"}
+              onChange={(val) =>
+                setForm({ ...form, category: val as Event["category"] })
+              }
+              options={CATEGORY_OPTIONS}
+              className="w-full"
+            />
           </div>
 
           <div>
@@ -615,22 +792,23 @@ export default function EventPage() {
             </label>
             <input
               type="text"
-              placeholder="e.g., Main Hall, Boardroom, Zoom"
               value={form.location}
               onChange={(e) => setForm({ ...form, location: e.target.value })}
+              placeholder="e.g., Main Hall, Zoom"
               className="w-full border border-(--border) rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-(--text-primary) placeholder-(--text-muted) focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-
           <div>
             <label className="text-sm font-medium text-(--text-primary) block mb-2">
               Description
             </label>
             <textarea
-              placeholder="Event details, agenda, and attendee information..."
               value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
-              rows={4}
+              onChange={(e) =>
+                setForm({ ...form, description: e.target.value })
+              }
+              placeholder="Event details..."
+              rows={3}
               className="w-full border border-(--border) rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-(--text-primary) placeholder-(--text-muted) focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
             />
           </div>

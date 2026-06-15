@@ -9,10 +9,10 @@ import type { AuthState, AuthAction, AuthUser } from "../types";
 import { loginUser } from "../services/authService";
 
 const initialState: AuthState = {
-  user:            null,
+  user: null,
   isAuthenticated: false,
-  isLoading:       false,
-  error:           null,
+  isLoading: false,
+  error: null,
 };
 
 function authReducer(state: AuthState, action: AuthAction): AuthState {
@@ -21,17 +21,17 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
       return { ...state, isLoading: true, error: null };
     case "LOGIN_SUCCESS":
       return {
-        user:            action.payload,
+        user: action.payload,
         isAuthenticated: true,
-        isLoading:       false,
-        error:           null,
+        isLoading: false,
+        error: null,
       };
     case "LOGIN_FAILURE":
       return {
-        user:            null,
+        user: null,
         isAuthenticated: false,
-        isLoading:       false,
-        error:           action.payload,
+        isLoading: false,
+        error: action.payload,
       };
     case "LOGOUT":
       return { ...initialState };
@@ -41,7 +41,7 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
 }
 
 interface AuthContextValue extends AuthState {
-  login:  (username: string, password: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<void>;
   logout: () => void;
 }
 

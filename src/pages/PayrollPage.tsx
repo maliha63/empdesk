@@ -115,7 +115,9 @@ const mockPayroll: PayrollRecord[] = [
 ];
 
 export default function PayrollPage() {
-  const [selectedPayroll, setSelectedPayroll] = useState<PayrollRecord | null>(null);
+  const [selectedPayroll, setSelectedPayroll] = useState<PayrollRecord | null>(
+    null,
+  );
   const total = mockPayroll.reduce((sum, item) => sum + item.salary, 0);
   const paidCount = mockPayroll.filter((p) => p.status === "Paid").length;
   const pendingCount = mockPayroll.filter((p) => p.status === "Pending").length;
@@ -187,7 +189,9 @@ export default function PayrollPage() {
               </div>
             </div>
             <p className="text-3xl font-bold text-amber-600">{pendingCount}</p>
-            <p className="text-[11px] text-(--text-muted) mt-2">Awaiting payment processing</p>
+            <p className="text-[11px] text-(--text-muted) mt-2">
+              Awaiting payment processing
+            </p>
           </div>
         </div>
 
@@ -197,15 +201,33 @@ export default function PayrollPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-(--border) bg-[#f8fafc] dark:bg-[#0f172a]">
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-muted) whitespace-nowrap">S.L</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-muted)">ID</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-muted)">Name</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-muted)">Department</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-muted)">Designation</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-muted)">Payment Method</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-(--text-muted)">Net Salary</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-(--text-muted)">Status</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-(--text-muted)">Action</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-muted) whitespace-nowrap">
+                    S.L
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-muted)">
+                    ID
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-muted)">
+                    Name
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-muted)">
+                    Department
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-muted)">
+                    Designation
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-muted)">
+                    Payment Method
+                  </th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-(--text-muted)">
+                    Net Salary
+                  </th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-(--text-muted)">
+                    Status
+                  </th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-(--text-muted)">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-(--border)">
@@ -261,11 +283,13 @@ export default function PayrollPage() {
       <Modal
         isOpen={!!selectedPayroll}
         onClose={() => setSelectedPayroll(null)}
-        title={selectedPayroll?.name ? `Payslip - ${selectedPayroll.name}` : "Payslip"}
-        size="md"
-        footer={
-          <Button onClick={() => setSelectedPayroll(null)}>Close</Button>
+        title={
+          selectedPayroll?.name
+            ? `Payslip - ${selectedPayroll.name}`
+            : "Payslip"
         }
+        size="md"
+        footer={<Button onClick={() => setSelectedPayroll(null)}>Close</Button>}
       >
         {selectedPayroll && (
           <div className="space-y-5">
@@ -325,7 +349,9 @@ export default function PayrollPage() {
 
             <div className="grid grid-cols-2 gap-3 pt-2">
               <div className="bg-gray-50 dark:bg-[#0f172a] rounded-lg p-3">
-                <p className="text-xs text-(--text-muted) mb-1">Payment Method</p>
+                <p className="text-xs text-(--text-muted) mb-1">
+                  Payment Method
+                </p>
                 <p className="text-sm font-semibold text-(--text-primary)">
                   {selectedPayroll.paymentMethod}
                 </p>

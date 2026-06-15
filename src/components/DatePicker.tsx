@@ -2,18 +2,28 @@ import { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
 
 interface DatePickerProps {
-  value:        string;
-  onChange:     (val: string) => void;
+  value: string;
+  onChange: (val: string) => void;
   placeholder?: string;
-  className?:   string;
-  hasError?:    boolean;
+  className?: string;
+  hasError?: boolean;
 }
 
 const MONTHS = [
-  "January","February","March","April","May","June",
-  "July","August","September","October","November","December",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
-const DAYS = ["Su","Mo","Tu","We","Th","Fr","Sa"];
+const DAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
 function parseDate(s: string): Date | null {
   if (!s) return null;
@@ -24,7 +34,11 @@ function parseDate(s: string): Date | null {
 function formatDisplay(s: string) {
   const d = parseDate(s);
   if (!d) return "";
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 export function DatePicker({
@@ -35,43 +49,53 @@ export function DatePicker({
   hasError = false,
 }: DatePickerProps) {
   const today = new Date();
-  const [open, setOpen]       = useState(false);
-  const [viewYear, setYear]   = useState(today.getFullYear());
+  const [open, setOpen] = useState(false);
+  const [viewYear, setYear] = useState(today.getFullYear());
   const [viewMonth, setMonth] = useState(today.getMonth());
-  const ref                   = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (open) {
       const d = parseDate(value);
-      if (d) { setYear(d.getFullYear()); setMonth(d.getMonth()); }
+      if (d) {
+        setYear(d.getFullYear());
+        setMonth(d.getMonth());
+      }
     }
   }, [open]);
 
   useEffect(() => {
     function handle(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node))
+        setOpen(false);
     }
     document.addEventListener("mousedown", handle);
     return () => document.removeEventListener("mousedown", handle);
   }, []);
 
   useEffect(() => {
-    function handle(e: KeyboardEvent) { if (e.key === "Escape") setOpen(false); }
+    function handle(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
     document.addEventListener("keydown", handle);
     return () => document.removeEventListener("keydown", handle);
   }, []);
 
   function prevMonth() {
-    if (viewMonth === 0) { setMonth(11); setYear((y) => y - 1); }
-    else setMonth((m) => m - 1);
+    if (viewMonth === 0) {
+      setMonth(11);
+      setYear((y) => y - 1);
+    } else setMonth((m) => m - 1);
   }
   function nextMonth() {
-    if (viewMonth === 11) { setMonth(0); setYear((y) => y + 1); }
-    else setMonth((m) => m + 1);
+    if (viewMonth === 11) {
+      setMonth(0);
+      setYear((y) => y + 1);
+    } else setMonth((m) => m + 1);
   }
 
   function buildGrid() {
-    const first  = new Date(viewYear, viewMonth, 1).getDay();
+    const first = new Date(viewYear, viewMonth, 1).getDay();
     const daysIn = new Date(viewYear, viewMonth + 1, 0).getDate();
     const cells: (number | null)[] = Array(first).fill(null);
     for (let d = 1; d <= daysIn; d++) cells.push(d);
@@ -89,12 +113,21 @@ export function DatePicker({
   function isSelected(day: number | null) {
     if (!day) return false;
     const d = parseDate(value);
-    return !!d && d.getFullYear() === viewYear && d.getMonth() === viewMonth && d.getDate() === day;
+    return (
+      !!d &&
+      d.getFullYear() === viewYear &&
+      d.getMonth() === viewMonth &&
+      d.getDate() === day
+    );
   }
 
   function isToday(day: number | null) {
     if (!day) return false;
-    return today.getFullYear() === viewYear && today.getMonth() === viewMonth && today.getDate() === day;
+    return (
+      today.getFullYear() === viewYear &&
+      today.getMonth() === viewMonth &&
+      today.getDate() === day
+    );
   }
 
   const grid = buildGrid();
@@ -108,15 +141,17 @@ export function DatePicker({
         className={`w-full flex items-center justify-between
           bg-[#f8fafc] dark:bg-[#0f1117]
           border rounded-lg px-3 py-2 text-sm outline-none transition-colors
-          ${open
-            ? "border-brand-500"
-            : hasError
-              ? "border-red-400 dark:border-red-500"
-              : "border-[#e2e8f0] dark:border-[#232a3a] hover:border-[#cbd5e1] dark:hover:border-[#2e3749]"
+          ${
+            open
+              ? "border-brand-500"
+              : hasError
+                ? "border-red-400 dark:border-red-500"
+                : "border-[#e2e8f0] dark:border-[#232a3a] hover:border-[#cbd5e1] dark:hover:border-[#2e3749]"
           }
-          ${!value
-            ? "text-gray-400 dark:text-slate-500"
-            : "text-gray-900 dark:text-slate-200"
+          ${
+            !value
+              ? "text-gray-400 dark:text-slate-500"
+              : "text-gray-900 dark:text-slate-200"
           }`}
       >
         <span>{value ? formatDisplay(value) : placeholder}</span>
@@ -128,11 +163,12 @@ export function DatePicker({
 
       {/* Calendar popover */}
       {open && (
-        <div className="absolute left-0 top-full mt-1.5 z-50 w-64
+        <div
+          className="absolute left-0 top-full mt-1.5 z-50 w-64
           bg-white dark:bg-[#171c27]
           border border-[#e2e8f0] dark:border-[#232a3a]
-          rounded-xl shadow-xl p-3">
-
+          rounded-xl shadow-xl p-3"
+        >
           {/* Month / year header */}
           <div className="flex items-center justify-between mb-3">
             <button
@@ -165,7 +201,10 @@ export function DatePicker({
           {/* Day-of-week headers */}
           <div className="grid grid-cols-7 mb-1">
             {DAYS.map((d) => (
-              <div key={d} className="text-center text-[10px] font-medium text-gray-400 dark:text-slate-500 py-1">
+              <div
+                key={d}
+                className="text-center text-[10px] font-medium text-gray-400 dark:text-slate-500 py-1"
+              >
                 {d}
               </div>
             ))}
@@ -184,13 +223,14 @@ export function DatePicker({
                   onClick={() => day && selectDay(day)}
                   className={`h-7 w-full flex items-center justify-center rounded-lg text-xs
                     transition-colors disabled:pointer-events-none
-                    ${sel
-                      ? "bg-brand-500 text-white font-semibold"
-                      : tod
-                        ? "text-brand-500 font-semibold ring-1 ring-brand-500/40"
-                        : day
-                          ? "text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-white/6 hover:text-gray-900 dark:hover:text-white"
-                          : "text-transparent"
+                    ${
+                      sel
+                        ? "bg-brand-500 text-white font-semibold"
+                        : tod
+                          ? "text-brand-500 font-semibold ring-1 ring-brand-500/40"
+                          : day
+                            ? "text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-white/6 hover:text-gray-900 dark:hover:text-white"
+                            : "text-transparent"
                     }`}
                 >
                   {day ?? ""}

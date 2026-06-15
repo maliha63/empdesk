@@ -22,11 +22,46 @@ interface Notice {
 }
 
 const initialNotices: Notice[] = [
-  { id: 1, date: "June 5, 2025", title: "Q2 Performance Reviews - Schedule Your Session", description: "All employees are required to complete their Q2 performance review by June 15. Sign up for 1-on-1 slots with your manager.", priority: "high" },
-  { id: 2, date: "June 3, 2025", title: "Updated Remote Work Policy", description: "Effective immediately: Flexible remote work policy now allows up to 3 days WFH per week. Details in HR portal.", priority: "high" },
-  { id: 3, date: "June 1, 2025", title: "Professional Development Fund Open", description: "Apply now for training courses, certifications, and conferences. Up to $2,000 per employee this fiscal year.", priority: "medium" },
-  { id: 4, date: "May 28, 2025", title: "Annual Team Offsite - June 15-17", description: "Save the dates! Join us at Tahoe Resort for our annual team building event. Agenda and registration details coming soon.", priority: "medium" },
-  { id: 5, date: "May 20, 2025", title: "New Health Insurance Plan", description: "Comprehensive medical, dental, and vision coverage now available. Review plan options in the benefits portal.", priority: "low" },
+  {
+    id: 1,
+    date: "June 5, 2025",
+    title: "Q2 Performance Reviews - Schedule Your Session",
+    description:
+      "All employees are required to complete their Q2 performance review by June 15. Sign up for 1-on-1 slots with your manager.",
+    priority: "high",
+  },
+  {
+    id: 2,
+    date: "June 3, 2025",
+    title: "Updated Remote Work Policy",
+    description:
+      "Effective immediately: Flexible remote work policy now allows up to 3 days WFH per week. Details in HR portal.",
+    priority: "high",
+  },
+  {
+    id: 3,
+    date: "June 1, 2025",
+    title: "Professional Development Fund Open",
+    description:
+      "Apply now for training courses, certifications, and conferences. Up to $2,000 per employee this fiscal year.",
+    priority: "medium",
+  },
+  {
+    id: 4,
+    date: "May 28, 2025",
+    title: "Annual Team Offsite - June 15-17",
+    description:
+      "Save the dates! Join us at Tahoe Resort for our annual team building event. Agenda and registration details coming soon.",
+    priority: "medium",
+  },
+  {
+    id: 5,
+    date: "May 20, 2025",
+    title: "New Health Insurance Plan",
+    description:
+      "Comprehensive medical, dental, and vision coverage now available. Review plan options in the benefits portal.",
+    priority: "low",
+  },
 ];
 
 export default function NoticeBoardPage() {
@@ -35,19 +70,30 @@ export default function NoticeBoardPage() {
   const [notices, setNotices] = useState(initialNotices);
   const [showModal, setShowModal] = useState(false);
   const [editingNotice, setEditingNotice] = useState<Notice | null>(null);
-  const [form, setForm] = useState<{ title: string; description: string; priority: "high" | "medium" | "low" }>({ title: "", description: "", priority: "medium" });
+  const [form, setForm] = useState<{
+    title: string;
+    description: string;
+    priority: "high" | "medium" | "low";
+  }>({ title: "", description: "", priority: "medium" });
   const [filterPriority, setFilterPriority] = useState<string>("");
 
-  const filteredNotices = filterPriority 
-    ? notices.filter(n => n.priority === filterPriority)
+  const filteredNotices = filterPriority
+    ? notices.filter((n) => n.priority === filterPriority)
     : notices;
 
-  const tableState = useTableState(filteredNotices, 10, ["title", "description"]);
+  const tableState = useTableState(filteredNotices, 10, [
+    "title",
+    "description",
+  ]);
 
   const handleOpenModal = (notice?: Notice) => {
     if (notice) {
       setEditingNotice(notice);
-      setForm({ title: notice.title, description: notice.description, priority: notice.priority || "medium" });
+      setForm({
+        title: notice.title,
+        description: notice.description,
+        priority: notice.priority || "medium",
+      });
     } else {
       setEditingNotice(null);
       setForm({ title: "", description: "", priority: "medium" });
@@ -62,21 +108,31 @@ export default function NoticeBoardPage() {
     }
 
     if (editingNotice) {
-      setNotices(notices.map(n => 
-        n.id === editingNotice.id 
-          ? { ...n, ...form, priority: form.priority as "high" | "medium" | "low" } 
-          : n
-      ));
+      setNotices(
+        notices.map((n) =>
+          n.id === editingNotice.id
+            ? {
+                ...n,
+                ...form,
+                priority: form.priority as "high" | "medium" | "low",
+              }
+            : n,
+        ),
+      );
       toast.success("Notice updated");
     } else {
       setNotices([
-        { 
-          id: Date.now(), 
-          date: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }), 
+        {
+          id: Date.now(),
+          date: new Date().toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }),
           ...form,
-          priority: form.priority as "high" | "medium" | "low"
+          priority: form.priority as "high" | "medium" | "low",
         },
-        ...notices
+        ...notices,
       ]);
       toast.success("Notice added");
     }
@@ -87,7 +143,7 @@ export default function NoticeBoardPage() {
   };
 
   const handleDelete = (id: number) => {
-    setNotices(notices.filter(n => n.id !== id));
+    setNotices(notices.filter((n) => n.id !== id));
     toast.success("Notice deleted");
   };
 
@@ -141,9 +197,7 @@ export default function NoticeBoardPage() {
       key: "description" as const,
       label: "Description",
       render: (value: string) => (
-        <p className="text-(--text-muted) text-sm truncate max-w-xs">
-          {value}
-        </p>
+        <p className="text-(--text-muted) text-sm truncate max-w-xs">{value}</p>
       ),
     },
     // Only managers can edit/delete notices
@@ -180,7 +234,10 @@ export default function NoticeBoardPage() {
           ]}
           action={
             isManager && (
-              <Button onClick={() => handleOpenModal()} icon={<Plus size={18} />}>
+              <Button
+                onClick={() => handleOpenModal()}
+                icon={<Plus size={18} />}
+              >
                 Add Notice
               </Button>
             )
@@ -262,7 +319,9 @@ export default function NoticeBoardPage() {
               </label>
               <textarea
                 value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, description: e.target.value })
+                }
                 className="w-full px-3 py-2 border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-lg bg-white dark:bg-[#111827] text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Notice description"
                 rows={4}

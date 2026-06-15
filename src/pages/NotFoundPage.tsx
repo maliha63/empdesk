@@ -28,7 +28,8 @@ export default function NotFoundPage() {
             </h2>
 
             <p className="text-gray-600 dark:text-gray-400 text-base max-w-md mx-auto leading-relaxed">
-              Sorry, the page you&apos;re looking for doesn&apos;t exist or has been moved. Let&apos;s get you back on track with EmpDesk.
+              Sorry, the page you&apos;re looking for doesn&apos;t exist or has
+              been moved. Let&apos;s get you back on track with EmpDesk.
             </p>
           </div>
 
@@ -77,7 +78,14 @@ export default function NotFoundPage() {
 
           {/* Footer Message */}
           <p className="text-xs text-gray-400 dark:text-gray-500 pt-4">
-            If you think this is a mistake, please <button onClick={() => navigate("/dashboard")} className="text-brand-500 hover:underline">contact support</button>.
+            If you think this is a mistake, please{" "}
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="text-brand-500 hover:underline"
+            >
+              contact support
+            </button>
+            .
           </p>
         </div>
       </div>

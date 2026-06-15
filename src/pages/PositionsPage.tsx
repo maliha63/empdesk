@@ -25,7 +25,10 @@ interface EditForm {
 export default function PositionsPage() {
   const { employees } = useEmployees();
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState<EditForm>({ title: "", department: "" });
+  const [formData, setFormData] = useState<EditForm>({
+    title: "",
+    department: "",
+  });
 
   const positionData = useMemo(() => {
     const map = new Map<string, PositionData>();
@@ -52,7 +55,7 @@ export default function PositionsPage() {
   const tableState = useTableState(positionData, 10, ["department", "title"]);
 
   const handleEdit = (id: string) => {
-    const position = positionData.find(p => p.id === id);
+    const position = positionData.find((p) => p.id === id);
     if (position) {
       setFormData({ title: position.title, department: position.department });
       setShowModal(true);
@@ -95,9 +98,7 @@ export default function PositionsPage() {
       label: "Department",
       sortable: true,
       render: (value: string) => (
-        <Badge variant={getDepartmentBadgeVariant(value) as any}>
-          {value}
-        </Badge>
+        <Badge variant={getDepartmentBadgeVariant(value) as any}>{value}</Badge>
       ),
     },
     {
@@ -158,28 +159,46 @@ export default function PositionsPage() {
         {tableState.totalPages > 1 && (
           <div className="flex items-center justify-between">
             <p className="text-xs text-gray-400 dark:text-[#4b5e7a]">
-              Showing {((tableState.currentPage - 1) * 10) + 1} to {Math.min(tableState.currentPage * 10, tableState.filteredData.length)} of {tableState.filteredData.length} results
+              Showing {(tableState.currentPage - 1) * 10 + 1} to{" "}
+              {Math.min(
+                tableState.currentPage * 10,
+                tableState.filteredData.length,
+              )}{" "}
+              of {tableState.filteredData.length} results
             </p>
             <div className="flex gap-2 items-center">
               <button
-                onClick={() => tableState.setCurrentPage(Math.max(1, tableState.currentPage - 1))}
+                onClick={() =>
+                  tableState.setCurrentPage(
+                    Math.max(1, tableState.currentPage - 1),
+                  )
+                }
                 disabled={tableState.currentPage === 1}
                 className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#e2e8f0] dark:border-[#1f2a3d] text-gray-500 dark:text-[#4b5e7a] hover:text-gray-900 dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 &larr; Prev
               </button>
-              
+
               <div className="flex gap-1">
                 {Array.from({ length: tableState.totalPages }, (_, i) => i + 1)
-                  .filter((p) => p === 1 || p === tableState.totalPages || Math.abs(p - tableState.currentPage) <= 1)
+                  .filter(
+                    (p) =>
+                      p === 1 ||
+                      p === tableState.totalPages ||
+                      Math.abs(p - tableState.currentPage) <= 1,
+                  )
                   .reduce<(number | "...")[]>((acc, p, i, arr) => {
-                    if (i > 0 && p - (arr[i - 1] as number) > 1) acc.push("...");
+                    if (i > 0 && p - (arr[i - 1] as number) > 1)
+                      acc.push("...");
                     acc.push(p);
                     return acc;
                   }, [])
                   .map((p, i) =>
                     p === "..." ? (
-                      <span key={`ellipse-${i}`} className="px-2 py-1.5 text-xs text-gray-400 dark:text-[#4b5e7a]">
+                      <span
+                        key={`ellipse-${i}`}
+                        className="px-2 py-1.5 text-xs text-gray-400 dark:text-[#4b5e7a]"
+                      >
                         ...
                       </span>
                     ) : (
@@ -194,12 +213,16 @@ export default function PositionsPage() {
                       >
                         {p}
                       </button>
-                    )
+                    ),
                   )}
               </div>
 
               <button
-                onClick={() => tableState.setCurrentPage(Math.min(tableState.totalPages, tableState.currentPage + 1))}
+                onClick={() =>
+                  tableState.setCurrentPage(
+                    Math.min(tableState.totalPages, tableState.currentPage + 1),
+                  )
+                }
                 disabled={tableState.currentPage === tableState.totalPages}
                 className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#e2e8f0] dark:border-[#1f2a3d] text-gray-500 dark:text-[#4b5e7a] hover:text-gray-900 dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
@@ -239,7 +262,9 @@ export default function PositionsPage() {
               <input
                 type="text"
                 value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
                 className="w-full px-3 py-2 border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-lg bg-white dark:bg-[#111827] text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="e.g. Senior Developer"
               />
@@ -251,7 +276,9 @@ export default function PositionsPage() {
               <input
                 type="text"
                 value={formData.department}
-                onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, department: e.target.value })
+                }
                 className="w-full px-3 py-2 border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-lg bg-white dark:bg-[#111827] text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="e.g. Engineering"
               />

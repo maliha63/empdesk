@@ -35,7 +35,9 @@ export default function TableHeader<T>({
           <th
             key={String(col.key)}
             className={`px-6 py-3 text-left text-xs font-semibold text-(--text-primary) ${
-              col.sortable && onSort ? "cursor-pointer hover:bg-gray-100 dark:hover:bg-[#1f2a3d]" : ""
+              col.sortable && onSort
+                ? "cursor-pointer hover:bg-gray-100 dark:hover:bg-[#1f2a3d]"
+                : ""
             }`}
             onClick={() => handleSort(String(col.key), col.sortable)}
             style={{ width: col.width }}

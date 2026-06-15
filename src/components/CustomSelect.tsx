@@ -21,7 +21,10 @@ export default function CustomSelect({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -36,9 +39,13 @@ export default function CustomSelect({
     <div className={`relative ${className}`} ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between gap-2 px-3 py-2 border border-(--border) rounded-lg bg-white dark:bg-[#111827] text-(--text-primary) hover:bg-(--bg-card2) transition-colors min-w-30"
+        className="flex items-center justify-between gap-2 px-4 py-2.5 w-full border border-(--border) 
+                   rounded-xl bg-white dark:bg-[#111827] text-(--text-primary) 
+                   hover:bg-(--bg-card2) transition-all text-sm font-medium"
       >
-        <span className="text-sm font-medium">{selectedOption?.label || label}</span>
+        <span className="truncate">
+          {selectedOption?.label || label || "Select option"}
+        </span>
         <ChevronDown
           size={16}
           className={`text-(--text-secondary) transition-transform ${isOpen ? "rotate-180" : ""}`}
@@ -46,25 +53,27 @@ export default function CustomSelect({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-full min-w-30 bg-white dark:bg-[#111827] border border-(--border) rounded-lg shadow-lg z-50">
-          <div className="py-1">
-            {options.map((option) => (
-              <button
-                key={option.value}
-                onClick={() => {
-                  onChange(option.value);
-                  setIsOpen(false);
-                }}
-                className={`w-full text-left px-3 py-2 text-sm transition-colors ${
+        <div
+          className="absolute top-full left-0 mt-2 w-full bg-white dark:bg-[#111827] border border-(--border) 
+                        rounded-xl shadow-xl z-50 max-h-65 overflow-auto py-1"
+        >
+          {options.map((option) => (
+            <button
+              key={option.value}
+              onClick={() => {
+                onChange(option.value);
+                setIsOpen(false);
+              }}
+              className={`w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-(--bg-card2)
+                ${
                   value === option.value
-                    ? "bg-blue-500 text-white"
-                    : "text-(--text-primary) hover:bg-(--bg-card2)"
+                    ? "bg-blue-600 text-white font-medium"
+                    : "text-(--text-primary)"
                 }`}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
+            >
+              {option.label}
+            </button>
+          ))}
         </div>
       )}
     </div>

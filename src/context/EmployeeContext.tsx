@@ -10,34 +10,45 @@ import { fetchAllEmployees } from "../services/employeeService";
 
 interface EmployeeState {
   employees: Employee[];
-  cache:     Record<number, Employee>;
+  cache: Record<number, Employee>;
   isLoading: boolean;
-  error:     string | null;
+  error: string | null;
 }
 
 type EmployeeAction =
   | { type: "FETCH_START" }
-  | { type: "FETCH_SUCCESS";   payload: Employee[] }
-  | { type: "FETCH_ERROR";     payload: string }
-  | { type: "ADD_EMPLOYEE";    payload: Employee }
+  | { type: "FETCH_SUCCESS"; payload: Employee[] }
+  | { type: "FETCH_ERROR"; payload: string }
+  | { type: "ADD_EMPLOYEE"; payload: Employee }
   | { type: "UPDATE_EMPLOYEE"; payload: Employee }
   | { type: "DELETE_EMPLOYEE"; payload: number }
-  | { type: "ADD_DOCUMENT";    payload: { employeeId: number; doc: UploadedDocument } }
-  | { type: "CACHE_EMPLOYEE";  payload: Employee };
+  | {
+      type: "ADD_DOCUMENT";
+      payload: { employeeId: number; doc: UploadedDocument };
+    }
+  | { type: "CACHE_EMPLOYEE"; payload: Employee };
 
 const initialState: EmployeeState = {
   employees: [],
-  cache:     {},
+  cache: {},
   isLoading: false,
-  error:     null,
+  error: null,
 };
 
-function employeeReducer(state: EmployeeState, action: EmployeeAction): EmployeeState {
+function employeeReducer(
+  state: EmployeeState,
+  action: EmployeeAction,
+): EmployeeState {
   switch (action.type) {
     case "FETCH_START":
       return { ...state, isLoading: true, error: null };
     case "FETCH_SUCCESS":
-      return { ...state, employees: action.payload, isLoading: false, error: null };
+      return {
+        ...state,
+        employees: action.payload,
+        isLoading: false,
+        error: null,
+      };
     case "FETCH_ERROR":
       return { ...state, isLoading: false, error: action.payload };
     case "ADD_EMPLOYEE":
@@ -46,7 +57,7 @@ function employeeReducer(state: EmployeeState, action: EmployeeAction): Employee
       return {
         ...state,
         employees: state.employees.map((e) =>
-          e.id === action.payload.id ? action.payload : e
+          e.id === action.payload.id ? action.payload : e,
         ),
       };
     case "DELETE_EMPLOYEE":
@@ -60,7 +71,7 @@ function employeeReducer(state: EmployeeState, action: EmployeeAction): Employee
         employees: state.employees.map((e) =>
           e.id === action.payload.employeeId
             ? { ...e, documents: [action.payload.doc, ...(e.documents ?? [])] }
-            : e
+            : e,
         ),
       };
     case "CACHE_EMPLOYEE":
@@ -74,12 +85,12 @@ function employeeReducer(state: EmployeeState, action: EmployeeAction): Employee
 }
 
 interface EmployeeContextValue extends EmployeeState {
-  addEmployee:    (e: Employee) => void;
+  addEmployee: (e: Employee) => void;
   updateEmployee: (e: Employee) => void;
   deleteEmployee: (id: number) => void;
-  addDocument:    (employeeId: number, doc: UploadedDocument) => void;
-  cacheEmployee:  (e: Employee) => void;
-  refetch:        () => void;
+  addDocument: (employeeId: number, doc: UploadedDocument) => void;
+  cacheEmployee: (e: Employee) => void;
+  refetch: () => void;
 }
 
 export const EmployeeContext = createContext<EmployeeContextValue | null>(null);
@@ -98,29 +109,44 @@ export function EmployeeProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  useEffect(() => { loadEmployees(); }, [loadEmployees]);
+  useEffect(() => {
+    loadEmployees();
+  }, [loadEmployees]);
 
-  const addEmployee    = useCallback((e: Employee) =>
-    dispatch({ type: "ADD_EMPLOYEE",    payload: e }), []);
-  const updateEmployee = useCallback((e: Employee) =>
-    dispatch({ type: "UPDATE_EMPLOYEE", payload: e }), []);
-  const deleteEmployee = useCallback((id: number) =>
-    dispatch({ type: "DELETE_EMPLOYEE", payload: id }), []);
-  const addDocument    = useCallback((employeeId: number, doc: UploadedDocument) =>
-    dispatch({ type: "ADD_DOCUMENT", payload: { employeeId, doc } }), []);
-  const cacheEmployee  = useCallback((e: Employee) =>
-    dispatch({ type: "CACHE_EMPLOYEE",  payload: e }), []);
+  const addEmployee = useCallback(
+    (e: Employee) => dispatch({ type: "ADD_EMPLOYEE", payload: e }),
+    [],
+  );
+  const updateEmployee = useCallback(
+    (e: Employee) => dispatch({ type: "UPDATE_EMPLOYEE", payload: e }),
+    [],
+  );
+  const deleteEmployee = useCallback(
+    (id: number) => dispatch({ type: "DELETE_EMPLOYEE", payload: id }),
+    [],
+  );
+  const addDocument = useCallback(
+    (employeeId: number, doc: UploadedDocument) =>
+      dispatch({ type: "ADD_DOCUMENT", payload: { employeeId, doc } }),
+    [],
+  );
+  const cacheEmployee = useCallback(
+    (e: Employee) => dispatch({ type: "CACHE_EMPLOYEE", payload: e }),
+    [],
+  );
 
   return (
-    <EmployeeContext.Provider value={{
-      ...state,
-      addEmployee,
-      updateEmployee,
-      deleteEmployee,
-      addDocument,
-      cacheEmployee,
-      refetch: loadEmployees,
-    }}>
+    <EmployeeContext.Provider
+      value={{
+        ...state,
+        addEmployee,
+        updateEmployee,
+        deleteEmployee,
+        addDocument,
+        cacheEmployee,
+        refetch: loadEmployees,
+      }}
+    >
       {children}
     </EmployeeContext.Provider>
   );

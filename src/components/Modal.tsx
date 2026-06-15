@@ -28,9 +28,13 @@ export default function Modal({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className={`bg-white dark:bg-[#111827] rounded-2xl w-full ${sizeClasses[size]} shadow-lg`}>
+      <div
+        className={`bg-white dark:bg-[#111827] rounded-2xl w-full ${sizeClasses[size]} shadow-lg`}
+      >
         <div className="flex items-center justify-between border-b border-(--border) p-6">
-          <h2 className="text-lg font-semibold text-(--text-primary)">{title}</h2>
+          <h2 className="text-lg font-semibold text-(--text-primary)">
+            {title}
+          </h2>
           <button
             onClick={onClose}
             className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-[#1f2a3d] transition-colors"

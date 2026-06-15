@@ -1,25 +1,25 @@
 import type { ReactNode } from "react";
 
 interface CardProps {
-  children:   ReactNode;
+  children: ReactNode;
   className?: string;
-  title?:     string;
-  subtitle?:  string;
-  action?:    ReactNode;
+  title?: string;
+  subtitle?: string;
+  action?: ReactNode;
   noPadding?: boolean;
   /** Adds a subtle colored top border accent */
-  accent?:    "blue" | "green" | "amber" | "purple" | "none";
+  accent?: "blue" | "green" | "amber" | "purple" | "none";
   /** Disable hover shadow lift */
-  flat?:      boolean;
+  flat?: boolean;
   icon?: React.ReactNode;
 }
 
 const accentMap: Record<string, string> = {
-  blue:   "border-t-2 border-t-blue-400",
-  green:  "border-t-2 border-t-emerald-400",
-  amber:  "border-t-2 border-t-amber-400",
+  blue: "border-t-2 border-t-blue-400",
+  green: "border-t-2 border-t-emerald-400",
+  amber: "border-t-2 border-t-amber-400",
   purple: "border-t-2 border-t-purple-400",
-  none:   "",
+  none: "",
 };
 
 export default function Card({

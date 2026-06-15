@@ -4,9 +4,9 @@ import type { ReactNode } from "react";
 import type { Role } from "../types";
 
 interface RoleGuardProps {
-  children:     ReactNode;
+  children: ReactNode;
   allowedRoles: Role[];
-  fallback?:    string;
+  fallback?: string;
 }
 
 export function RoleGuard({

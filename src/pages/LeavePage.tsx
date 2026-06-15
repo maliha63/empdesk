@@ -22,8 +22,12 @@ export default function LeavePage() {
 
   const myLeaves = requests.filter((r) => r.employeeId === user?.id);
   const displayedRequests = isManager ? requests : myLeaves;
-  const approvedCount = displayedRequests.filter((r) => r.status === "approved").length;
-  const pendingCount = displayedRequests.filter((r) => r.status === "pending").length;
+  const approvedCount = displayedRequests.filter(
+    (r) => r.status === "approved",
+  ).length;
+  const pendingCount = displayedRequests.filter(
+    (r) => r.status === "pending",
+  ).length;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +51,6 @@ export default function LeavePage() {
     setShowModal(false);
   };
 
-
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
       case "approved":
@@ -65,7 +68,11 @@ export default function LeavePage() {
       <div className="space-y-6">
         <PageHeader
           title="Leave Management"
-          description={isManager ? "Review and manage leave requests" : "Your leave requests"}
+          description={
+            isManager
+              ? "Review and manage leave requests"
+              : "Your leave requests"
+          }
           crumbs={[
             { label: "Dashboard", to: "/dashboard" },
             { label: "Leave" },
@@ -103,7 +110,9 @@ export default function LeavePage() {
                   <CheckCircle2 size={18} />
                 </div>
               </div>
-              <p className="text-3xl font-bold text-emerald-600">{approvedCount}</p>
+              <p className="text-3xl font-bold text-emerald-600">
+                {approvedCount}
+              </p>
             </div>
 
             <div className="bg-white dark:bg-[#111827] border border-(--border) rounded-2xl p-5">
@@ -115,7 +124,9 @@ export default function LeavePage() {
                   <Clock size={18} />
                 </div>
               </div>
-              <p className="text-3xl font-bold text-amber-600">{pendingCount}</p>
+              <p className="text-3xl font-bold text-amber-600">
+                {pendingCount}
+              </p>
             </div>
           </div>
         )}
@@ -126,31 +137,62 @@ export default function LeavePage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-(--border) bg-[#f8fafc] dark:bg-[#0f172a]">
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary) whitespace-nowrap">S.L</th>
-                  {isManager && <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary)">Name</th>}
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary)">Leave Type</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary)">Date Range</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-(--text-primary)">Duration</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-(--text-primary)">Status</th>
-                  {isManager && <th className="px-4 py-3 text-right text-xs font-semibold text-(--text-primary)">Action</th>}
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary) whitespace-nowrap">
+                    S.L
+                  </th>
+                  {isManager && (
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary)">
+                      Name
+                    </th>
+                  )}
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary)">
+                    Leave Type
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary)">
+                    Date Range
+                  </th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-(--text-primary)">
+                    Duration
+                  </th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-(--text-primary)">
+                    Status
+                  </th>
+                  {isManager && (
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-(--text-primary)">
+                      Action
+                    </th>
+                  )}
                 </tr>
               </thead>
               <tbody className="divide-y divide-(--border)">
                 {displayedRequests.length === 0 ? (
                   <tr>
-                    <td colSpan={isManager ? 7 : 5} className="px-4 py-12 text-center">
-                      <Calendar size={48} className="text-(--text-muted) mx-auto mb-4 opacity-30" />
-                      <p className="text-(--text-primary) font-medium mb-1">No leave requests</p>
+                    <td
+                      colSpan={isManager ? 7 : 5}
+                      className="px-4 py-12 text-center"
+                    >
+                      <Calendar
+                        size={48}
+                        className="text-(--text-muted) mx-auto mb-4 opacity-30"
+                      />
+                      <p className="text-(--text-primary) font-medium mb-1">
+                        No leave requests
+                      </p>
                       <p className="text-(--text-muted) text-sm">
-                        {isManager ? "No leave requests yet" : "You haven&apos;t applied for leave"}
+                        {isManager
+                          ? "No leave requests yet"
+                          : "You haven&apos;t applied for leave"}
                       </p>
                     </td>
                   </tr>
                 ) : (
                   displayedRequests.map((req, idx) => (
-                    <tr key={req.id} className="hover:bg-[#f8fafc] dark:hover:bg-[#0f172a] transition-colors">
+                    <tr
+                      key={req.id}
+                      className="hover:bg-[#f8fafc] dark:hover:bg-[#0f172a] transition-colors"
+                    >
                       <td className="px-4 py-3 text-sm font-medium text-(--text-primary)">
-                        {String(idx + 1).padStart(2, '0')}
+                        {String(idx + 1).padStart(2, "0")}
                       </td>
                       {isManager && (
                         <td className="px-4 py-3 text-sm font-medium text-(--text-primary)">
@@ -163,15 +205,27 @@ export default function LeavePage() {
                       <td className="px-4 py-3 text-sm text-(--text-secondary)">
                         <div className="flex flex-col gap-1">
                           <span>{req.from}</span>
-                          <span className="text-xs text-(--text-muted)">to {req.to}</span>
+                          <span className="text-xs text-(--text-muted)">
+                            to {req.to}
+                          </span>
                         </div>
                       </td>
                       <td className="px-4 py-3 text-center text-sm text-(--text-primary) font-medium">
-                        {Math.abs(Math.ceil((new Date(req.to).getTime() - new Date(req.from).getTime()) / (1000 * 60 * 60 * 24))) + 1} days
+                        {Math.abs(
+                          Math.ceil(
+                            (new Date(req.to).getTime() -
+                              new Date(req.from).getTime()) /
+                              (1000 * 60 * 60 * 24),
+                          ),
+                        ) + 1}{" "}
+                        days
                       </td>
                       <td className="px-4 py-3 text-center">
-                        <span className={`inline-flex px-3 py-1.5 rounded-full text-xs font-semibold ${getStatusBadgeColor(req.status)}`}>
-                          {req.status.charAt(0).toUpperCase() + req.status.slice(1)}
+                        <span
+                          className={`inline-flex px-3 py-1.5 rounded-full text-xs font-semibold ${getStatusBadgeColor(req.status)}`}
+                        >
+                          {req.status.charAt(0).toUpperCase() +
+                            req.status.slice(1)}
                         </span>
                       </td>
                       {isManager && (
@@ -255,7 +309,9 @@ export default function LeavePage() {
               type="text"
               placeholder="e.g., Medical Leave, Vacation, Family Emergency"
               value={formData.reason}
-              onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, reason: e.target.value })
+              }
               className="w-full border border-(--border) rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-(--text-primary) placeholder-(--text-muted) focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />

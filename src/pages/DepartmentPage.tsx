@@ -13,13 +13,48 @@ interface Department {
 }
 
 const initialDepartments: Department[] = [
-  { id: 1, name: "Engineering", description: "Builds and maintains our core platform, backend systems, and infrastructure. Led by VP Engineering" },
-  { id: 2, name: "Product", description: "Defines product strategy, roadmap, and features. Collaborates with Design and Engineering teams" },
-  { id: 3, name: "Design", description: "Creates user experiences, interfaces, and brand identity. Specializes in UX/UI and product design" },
-  { id: 4, name: "Marketing", description: "Drives growth, brand awareness, and customer acquisition. Handles campaigns and market research" },
-  { id: 5, name: "Sales", description: "Manages client relationships and business development. Owns pipeline and revenue targets" },
-  { id: 6, name: "Finance", description: "Handles accounting, budgeting, financial planning, and payroll management" },
-  { id: 7, name: "Human Resources", description: "Manages recruitment, employee development, benefits, and workplace culture" },
+  {
+    id: 1,
+    name: "Engineering",
+    description:
+      "Builds and maintains our core platform, backend systems, and infrastructure. Led by VP Engineering",
+  },
+  {
+    id: 2,
+    name: "Product",
+    description:
+      "Defines product strategy, roadmap, and features. Collaborates with Design and Engineering teams",
+  },
+  {
+    id: 3,
+    name: "Design",
+    description:
+      "Creates user experiences, interfaces, and brand identity. Specializes in UX/UI and product design",
+  },
+  {
+    id: 4,
+    name: "Marketing",
+    description:
+      "Drives growth, brand awareness, and customer acquisition. Handles campaigns and market research",
+  },
+  {
+    id: 5,
+    name: "Sales",
+    description:
+      "Manages client relationships and business development. Owns pipeline and revenue targets",
+  },
+  {
+    id: 6,
+    name: "Finance",
+    description:
+      "Handles accounting, budgeting, financial planning, and payroll management",
+  },
+  {
+    id: 7,
+    name: "Human Resources",
+    description:
+      "Manages recruitment, employee development, benefits, and workplace culture",
+  },
 ];
 
 export default function DepartmentPage() {
@@ -50,15 +85,12 @@ export default function DepartmentPage() {
     if (editingDept) {
       setDepartments(
         departments.map((d) =>
-          d.id === editingDept.id ? { ...d, ...form } : d
-        )
+          d.id === editingDept.id ? { ...d, ...form } : d,
+        ),
       );
       toast.success("Department updated");
     } else {
-      setDepartments([
-        ...departments,
-        { id: Date.now(), ...form },
-      ]);
+      setDepartments([...departments, { id: Date.now(), ...form }]);
       toast.success("Department added");
     }
 
@@ -86,35 +118,64 @@ export default function DepartmentPage() {
         <PageHeader
           title="Departments"
           description="Manage company departments and teams"
-          crumbs={[{ label: "Dashboard", to: "/dashboard" }, { label: "Departments" }]}
-          action={<Button onClick={() => handleOpenModal()}>+ Add Department</Button>}
+          crumbs={[
+            { label: "Dashboard", to: "/dashboard" },
+            { label: "Departments" },
+          ]}
+          action={
+            <Button onClick={() => handleOpenModal()}>+ Add Department</Button>
+          }
         />
 
         <div className="bg-white dark:bg-[#111827] border border-(--border) rounded-xl overflow-hidden">
-            <table className="w-full">
+          <table className="w-full">
             <thead>
               <tr className="border-b border-(--border) bg-[#f8fafc] dark:bg-[#0f172a]">
-                <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary) whitespace-nowrap">S.L</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary)">Name</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary)">Description</th>
-                <th className="px-4 py-3 text-right text-xs font-semibold text-(--text-primary)">Action</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary) whitespace-nowrap">
+                  S.L
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary)">
+                  Name
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-(--text-primary)">
+                  Description
+                </th>
+                <th className="px-4 py-3 text-right text-xs font-semibold text-(--text-primary)">
+                  Action
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-(--border)">
               {departments.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="px-4 py-12 text-center">
-                    <Building2 size={48} className="text-(--text-muted) mx-auto mb-4 opacity-30" />
-                    <p className="text-(--text-primary) font-medium mb-1">No departments yet</p>
-                    <p className="text-(--text-muted) text-sm">Create your first department to get started</p>
+                    <Building2
+                      size={48}
+                      className="text-(--text-muted) mx-auto mb-4 opacity-30"
+                    />
+                    <p className="text-(--text-primary) font-medium mb-1">
+                      No departments yet
+                    </p>
+                    <p className="text-(--text-muted) text-sm">
+                      Create your first department to get started
+                    </p>
                   </td>
                 </tr>
               ) : (
                 departments.map((dept, idx) => (
-                  <tr key={dept.id} className="hover:bg-[#f8fafc] dark:hover:bg-[#0f172a] transition-colors">
-                    <td className="px-4 py-3 text-sm text-(--text-primary) font-medium">{String(idx + 1).padStart(2, '0')}</td>
-                    <td className="px-4 py-3 text-sm text-(--text-primary) font-medium">{dept.name}</td>
-                    <td className="px-4 py-3 text-sm text-(--text-primary)">{dept.description}</td>
+                  <tr
+                    key={dept.id}
+                    className="hover:bg-[#f8fafc] dark:hover:bg-[#0f172a] transition-colors"
+                  >
+                    <td className="px-4 py-3 text-sm text-(--text-primary) font-medium">
+                      {String(idx + 1).padStart(2, "0")}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-(--text-primary) font-medium">
+                      {dept.name}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-(--text-primary)">
+                      {dept.description}
+                    </td>
                     <td className="px-4 py-3 text-right">
                       <button
                         onClick={() => handleOpenModal(dept)}
@@ -177,7 +238,9 @@ export default function DepartmentPage() {
             <textarea
               placeholder="Department description and responsibilities"
               value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, description: e.target.value })
+              }
               rows={4}
               className="w-full border divide-(--border) rounded-lg px-4 py-2.5 bg-white dark:bg-[#0f172a] text-(--text-primary) placeholder-(--text-muted) focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
             />

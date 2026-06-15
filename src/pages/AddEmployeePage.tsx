@@ -1,34 +1,34 @@
 import { useNavigate } from "react-router-dom";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { useEmployees } from "../hooks/useEmployees";
-import { DEPARTMENTS }  from "../constants";
+import { DEPARTMENTS } from "../constants";
 import type { Employee } from "../types";
 import { useState, useCallback } from "react";
-import { PageHeader }  from "../components/PageHeader";
-import { Dropdown }    from "../components/Dropdown";
+import { PageHeader } from "../components/PageHeader";
+import { Dropdown } from "../components/Dropdown";
 import Button from "../components/Button";
 import { Plus, X, UserCircle } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 
 interface FormValues {
-  firstName:  string;
-  lastName:   string;
-  email:      string;
-  phone:      string;
-  age:        number;
-  gender:     string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  age: number;
+  gender: string;
   department: string;
-  title:      string;
-  company:    string;
-  city:       string;
-  country:    string;
-  skills:     { value: string }[];
+  title: string;
+  company: string;
+  city: string;
+  country: string;
+  skills: { value: string }[];
 }
 
 const GENDER_OPTIONS = [
-  { label: "Male",   value: "male"   },
+  { label: "Male", value: "male" },
   { label: "Female", value: "female" },
-  { label: "Other",  value: "other"  },
+  { label: "Other", value: "other" },
 ];
 
 const JOB_TITLES = [
@@ -52,10 +52,16 @@ const JOB_TITLES = [
 
 export default function AddEmployeePage() {
   const { addEmployee } = useEmployees();
-  const navigate        = useNavigate();
+  const navigate = useNavigate();
   const [preview, setPreview] = useState<string | null>(null);
 
-  const { register, handleSubmit, control, getValues, formState: { errors } } = useForm<FormValues>({
+  const {
+    register,
+    handleSubmit,
+    control,
+    getValues,
+    formState: { errors },
+  } = useForm<FormValues>({
     defaultValues: { skills: [{ value: "" }] },
   });
 
@@ -71,24 +77,36 @@ export default function AddEmployeePage() {
 
   function onSubmit(data: FormValues) {
     const newEmployee: Employee = {
-      id:        Date.now(),
+      id: Date.now(),
       firstName: data.firstName,
-      lastName:  data.lastName,
-      email:     data.email,
-      phone:     data.phone,
-      age:       Number(data.age),
-      gender:    data.gender,
-      username:  `${data.firstName.toLowerCase()}${data.lastName.toLowerCase()}`,
-      image:     preview ?? `https://dummyjson.com/icon/user/128`,
-      address:   { address: "", city: data.city, state: "", country: data.country },
-      company:   { name: data.company, department: data.department, title: data.title },
+      lastName: data.lastName,
+      email: data.email,
+      phone: data.phone,
+      age: Number(data.age),
+      gender: data.gender,
+      username: `${data.firstName.toLowerCase()}${data.lastName.toLowerCase()}`,
+      image: preview ?? `https://dummyjson.com/icon/user/128`,
+      address: {
+        address: "",
+        city: data.city,
+        state: "",
+        country: data.country,
+      },
+      company: {
+        name: data.company,
+        department: data.department,
+        title: data.title,
+      },
     };
     addEmployee(newEmployee);
     toast.success(`${data.firstName} ${data.lastName} added.`);
     setTimeout(() => navigate("/employees"), 1000);
   }
 
-  const deptOptions = DEPARTMENTS.filter((d) => d !== "All").map((d) => ({ label: d, value: d }));
+  const deptOptions = DEPARTMENTS.filter((d) => d !== "All").map((d) => ({
+    label: d,
+    value: d,
+  }));
   const titleOptions = JOB_TITLES;
 
   const inputClass = (hasError: boolean) =>
@@ -127,49 +145,88 @@ export default function AddEmployeePage() {
           {/* Section 1: Personal Information */}
           <div className="bg-white dark:bg-[#111827] border border-(--border) rounded-xl">
             <div className="px-6 py-4 border-b border-(--border) bg-[#f8fafc] dark:bg-[#0f172a]">
-              <h2 className="text-sm font-semibold text-(--text-primary)">Personal Information</h2>
+              <h2 className="text-sm font-semibold text-(--text-primary)">
+                Personal Information
+              </h2>
             </div>
             <div className="p-6 space-y-4">
               <div className="flex items-center gap-6 mb-6 pb-6 border-b border-(--border)">
                 <div className="w-20 h-20 rounded-lg bg-[#f8fafc] dark:bg-[#0b0f1a] border border-(--border) overflow-hidden flex items-center justify-center">
-                  {preview
-                    ? <img src={preview} className="w-full h-full object-cover" alt="Preview" />
-                    : <UserCircle size={40} className="text-(--text-muted)" />
-                  }
+                  {preview ? (
+                    <img
+                      src={preview}
+                      className="w-full h-full object-cover"
+                      alt="Preview"
+                    />
+                  ) : (
+                    <UserCircle size={40} className="text-(--text-muted)" />
+                  )}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-(--text-primary) mb-2">Profile Photo</p>
+                  <p className="text-sm font-medium text-(--text-primary) mb-2">
+                    Profile Photo
+                  </p>
                   <label className="text-xs text-blue-600 cursor-pointer hover:underline font-medium">
                     Upload image
-                    <input type="file" accept="image/*" className="hidden" onChange={handleImage} />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImage}
+                    />
                   </label>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 gap-4">
-                {([
-                  { name: "firstName" as const, label: "First Name", type: "text" },
-                  { name: "lastName" as const, label: "Last Name", type: "text" },
+                {[
+                  {
+                    name: "firstName" as const,
+                    label: "First Name",
+                    type: "text",
+                  },
+                  {
+                    name: "lastName" as const,
+                    label: "Last Name",
+                    type: "text",
+                  },
                   { name: "email" as const, label: "Email", type: "email" },
                   { name: "phone" as const, label: "Phone", type: "text" },
                   { name: "age" as const, label: "Age", type: "number" },
-                ]).map((f) => (
+                ].map((f) => (
                   <div key={f.name}>
-                    <label className="block text-xs font-medium text-(--text-primary) mb-1.5">{f.label}</label>
+                    <label className="block text-xs font-medium text-(--text-primary) mb-1.5">
+                      {f.label}
+                    </label>
                     <input
                       type={f.type}
                       className={inputClass(!!errors[f.name])}
-                      {...register(f.name, { required: `${f.label} is required` })}
+                      {...register(f.name, {
+                        required: `${f.label} is required`,
+                      })}
                     />
-                    {errors[f.name] && <p className="mt-1 text-xs text-red-500">{errors[f.name]?.message}</p>}
+                    {errors[f.name] && (
+                      <p className="mt-1 text-xs text-red-500">
+                        {errors[f.name]?.message}
+                      </p>
+                    )}
                   </div>
                 ))}
                 <div>
-                  <label className="block text-xs font-medium text-(--text-primary) mb-1.5">Gender</label>
+                  <label className="block text-xs font-medium text-(--text-primary) mb-1.5">
+                    Gender
+                  </label>
                   <Controller
-                    name="gender" control={control} rules={{ required: true }}
+                    name="gender"
+                    control={control}
+                    rules={{ required: true }}
                     render={({ field }) => (
-                      <Dropdown options={GENDER_OPTIONS} value={field.value ?? ""} onChange={field.onChange} placeholder="Select gender" />
+                      <Dropdown
+                        options={GENDER_OPTIONS}
+                        value={field.value ?? ""}
+                        onChange={field.onChange}
+                        placeholder="Select gender"
+                      />
                     )}
                   />
                 </div>
@@ -180,23 +237,33 @@ export default function AddEmployeePage() {
           {/* Section 2: Address Information */}
           <div className="bg-white dark:bg-[#111827] border border-(--border) rounded-xl">
             <div className="px-6 py-4 border-b border-(--border) bg-[#f8fafc] dark:bg-[#0f172a]">
-              <h2 className="text-sm font-semibold text-(--text-primary)">Address Information</h2>
+              <h2 className="text-sm font-semibold text-(--text-primary)">
+                Address Information
+              </h2>
             </div>
             <div className="p-6 space-y-4">
               <div className="grid grid-cols-1 gap-4">
-                {([
+                {[
                   { name: "city" as const, label: "City", type: "text" },
                   { name: "country" as const, label: "Country", type: "text" },
                   { name: "company" as const, label: "Company", type: "text" },
-                ]).map((f) => (
+                ].map((f) => (
                   <div key={f.name}>
-                    <label className="block text-xs font-medium text-(--text-primary) mb-1.5">{f.label}</label>
+                    <label className="block text-xs font-medium text-(--text-primary) mb-1.5">
+                      {f.label}
+                    </label>
                     <input
                       type={f.type}
                       className={inputClass(!!errors[f.name])}
-                      {...register(f.name, { required: `${f.label} is required` })}
+                      {...register(f.name, {
+                        required: `${f.label} is required`,
+                      })}
                     />
-                    {errors[f.name] && <p className="mt-1 text-xs text-red-500">{errors[f.name]?.message}</p>}
+                    {errors[f.name] && (
+                      <p className="mt-1 text-xs text-red-500">
+                        {errors[f.name]?.message}
+                      </p>
+                    )}
                   </div>
                 ))}
               </div>
@@ -206,29 +273,53 @@ export default function AddEmployeePage() {
           {/* Section 3: Professional Information */}
           <div className="bg-white dark:bg-[#111827] border border-(--border) rounded-xl">
             <div className="px-6 py-4 border-b border-(--border) bg-[#f8fafc] dark:bg-[#0f172a]">
-              <h2 className="text-sm font-semibold text-(--text-primary)">Professional Information</h2>
+              <h2 className="text-sm font-semibold text-(--text-primary)">
+                Professional Information
+              </h2>
             </div>
             <div className="p-6 space-y-4">
               <div className="grid grid-cols-1 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-(--text-primary) mb-1.5">Department</label>
+                  <label className="block text-xs font-medium text-(--text-primary) mb-1.5">
+                    Department
+                  </label>
                   <Controller
-                    name="department" control={control} rules={{ required: true }}
+                    name="department"
+                    control={control}
+                    rules={{ required: true }}
                     render={({ field }) => (
-                      <Dropdown options={deptOptions} value={field.value ?? ""} onChange={field.onChange} placeholder="Select department" />
+                      <Dropdown
+                        options={deptOptions}
+                        value={field.value ?? ""}
+                        onChange={field.onChange}
+                        placeholder="Select department"
+                      />
                     )}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-(--text-primary) mb-1.5">Job Title</label>
+                  <label className="block text-xs font-medium text-(--text-primary) mb-1.5">
+                    Job Title
+                  </label>
                   <Controller
-                    name="title" control={control} rules={{ required: "Job title is required" }}
+                    name="title"
+                    control={control}
+                    rules={{ required: "Job title is required" }}
                     render={({ field }) => (
-                      <Dropdown options={titleOptions} value={field.value ?? ""} onChange={field.onChange} placeholder="Select job title" />
+                      <Dropdown
+                        options={titleOptions}
+                        value={field.value ?? ""}
+                        onChange={field.onChange}
+                        placeholder="Select job title"
+                      />
                     )}
                   />
-                  {errors.title && <p className="mt-1 text-xs text-red-500">{errors.title?.message}</p>}
+                  {errors.title && (
+                    <p className="mt-1 text-xs text-red-500">
+                      {errors.title?.message}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -237,7 +328,9 @@ export default function AddEmployeePage() {
           {/* Section 4: Skills */}
           <div className="bg-white dark:bg-[#111827] border border-(--border) rounded-xl">
             <div className="px-6 py-4 border-b border-(--border) bg-[#f8fafc] dark:bg-[#0f172a] flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-(--text-primary)">Skills</h2>
+              <h2 className="text-sm font-semibold text-(--text-primary)">
+                Skills
+              </h2>
               <button
                 type="button"
                 onClick={() => {
@@ -261,7 +354,11 @@ export default function AddEmployeePage() {
                     {...register(`skills.${i}.value`)}
                   />
                   {fields.length > 1 && (
-                    <button type="button" onClick={() => remove(i)} className="w-10 flex items-center justify-center text-(--text-muted) hover:text-red-500 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20">
+                    <button
+                      type="button"
+                      onClick={() => remove(i)}
+                      className="w-10 flex items-center justify-center text-(--text-muted) hover:text-red-500 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20"
+                    >
                       <X size={16} />
                     </button>
                   )}
@@ -271,8 +368,11 @@ export default function AddEmployeePage() {
           </div>
 
           <div className="flex gap-3 pt-4">
-            <button type="button" onClick={() => navigate(-1)}
-              className="px-5 py-2.5 text-sm border border-(--border) text-(--text-secondary) rounded-lg hover:bg-(--bg-card2) transition-colors font-medium">
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="px-5 py-2.5 text-sm border border-(--border) text-(--text-secondary) rounded-lg hover:bg-(--bg-card2) transition-colors font-medium"
+            >
               Cancel
             </button>
             <Button type="submit">

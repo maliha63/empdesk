@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../hooks/useAuth";
-import { Eye, EyeOff, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, AlertCircle } from "lucide-react";
 
 interface LoginFormValues {
   username: string;
@@ -31,54 +31,54 @@ export default function LoginPage() {
   return (
     <div className="w-full">
       {/* Logo - Mobile Only */}
-<div className="lg:hidden text-center mb-8">
-  <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-black dark:bg-zinc-800 shadow-[0_4px_16px_rgba(0,0,0,0.2)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.4)] mb-4">
-    <svg width="24" height="24" viewBox="0 0 14 14" fill="none">
-      <rect
-        x="1"
-        y="1"
-        width="5"
-        height="5"
-        rx="1.5"
-        fill="white"
-        fillOpacity="0.95"
-      />
-      <rect
-        x="8"
-        y="1"
-        width="5"
-        height="5"
-        rx="1.5"
-        fill="white"
-        fillOpacity="0.6"
-      />
-      <rect
-        x="1"
-        y="8"
-        width="5"
-        height="5"
-        rx="1.5"
-        fill="white"
-        fillOpacity="0.6"
-      />
-      <rect
-        x="8"
-        y="8"
-        width="5"
-        height="5"
-        rx="1.5"
-        fill="white"
-        fillOpacity="0.95"
-      />
-    </svg>
-  </div>
-  <h1 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
-    emp<span className="text-gray-500 dark:text-gray-400">desk</span>
-  </h1>
-</div>
+      <div className="lg:hidden text-center mb-8">
+        <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-black dark:bg-zinc-800 shadow-[0_4px_16px_rgba(0,0,0,0.2)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.4)] mb-4">
+          <svg width="24" height="24" viewBox="0 0 14 14" fill="none">
+            <rect
+              x="1"
+              y="1"
+              width="5"
+              height="5"
+              rx="1.5"
+              fill="white"
+              fillOpacity="0.95"
+            />
+            <rect
+              x="8"
+              y="1"
+              width="5"
+              height="5"
+              rx="1.5"
+              fill="white"
+              fillOpacity="0.6"
+            />
+            <rect
+              x="1"
+              y="8"
+              width="5"
+              height="5"
+              rx="1.5"
+              fill="white"
+              fillOpacity="0.6"
+            />
+            <rect
+              x="8"
+              y="8"
+              width="5"
+              height="5"
+              rx="1.5"
+              fill="white"
+              fillOpacity="0.95"
+            />
+          </svg>
+        </div>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
+          emp<span className="text-gray-500 dark:text-gray-400">desk</span>
+        </h1>
+      </div>
+
       {/* Card */}
       <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-2xl p-8 shadow-[0_4px_24px_-4px_rgb(0,0,0,0.08)] dark:shadow-[0_4px_24px_-4px_rgb(0,0,0,0.4)]">
-        {/* Heading */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
             Welcome back
@@ -88,10 +88,10 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Error */}
+        {/* Fixed Caution Warning Layout */}
         {error && (
-          <div className="mb-6 p-4 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20 text-red-600 dark:text-red-400 text-sm flex items-start gap-3">
-            <span className="text-lg mt-0.5">⚠</span>
+          <div className="mb-6 flex items-center gap-2.5 py-2.5 px-3.5 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20 text-red-600 dark:text-red-400 text-xs font-semibold">
+            <AlertCircle size={14} className="shrink-0" />
             <span>{error}</span>
           </div>
         )}
@@ -101,7 +101,6 @@ export default function LoginPage() {
           noValidate
           className="space-y-5"
         >
-          {/* Username */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 dark:text-white mb-2">
               Username
@@ -110,21 +109,8 @@ export default function LoginPage() {
               type="text"
               autoComplete="username"
               placeholder="Enter your username"
-              className={`w-full bg-gray-50 dark:bg-[#0b0f1a] border rounded-lg px-4 py-3 text-sm
-             text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-[#545f72]
-             outline-none focus:outline-none focus-visible:outline-none transition-all duration-200 ease-in-out
-             focus:bg-white dark:focus:bg-[#0f1623] 
-             focus:border-black dark:focus:border-zinc-500 
-             focus:ring-2 focus:ring-black/5 dark:focus:ring-white/5
-              ${
-                errors.username
-                ? "border-red-300 dark:border-red-500/50 ring-2 ring-red-500/10"
-                : "border-gray-200 dark:border-[#1f2a3d]"
-                }`}
-              {...register("username", {
-                required: "Username is required",
-                minLength: { value: 3, message: "Min 3 characters" },
-              })}
+              className={`w-full bg-gray-50 dark:bg-[#0b0f1a] border rounded-lg px-4 py-3 text-sm text-gray-900 dark:text-gray-100 outline-none placeholder-gray-400 dark:placeholder-[#545f72] focus:bg-white dark:focus:bg-[#0f1623] focus:border-black dark:focus:border-zinc-500 focus:ring-2 focus:ring-black/5 dark:focus:ring-white/5 ${errors.username ? "border-red-300 dark:border-red-500/50 ring-2 ring-red-500/10" : "border-gray-200 dark:border-[#1f2a3d]"}`}
+              {...register("username", { required: "Username is required" })}
             />
             {errors.username && (
               <p className="mt-2 text-xs text-red-600 dark:text-red-400">
@@ -133,7 +119,6 @@ export default function LoginPage() {
             )}
           </div>
 
-          {/* Password */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 dark:text-white mb-2">
               Password
@@ -143,19 +128,8 @@ export default function LoginPage() {
                 type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
                 placeholder="Enter your password"
-                className={`w-full bg-gray-50 dark:bg-[#0b0f1a] border rounded-lg px-4 py-3 pr-11 text-sm
-                  text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-[#545f72]
-                  outline-none transition-all duration-150
-                  focus:bg-white dark:focus:bg-[#0f1623] focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10
-                  ${
-                    errors.password
-                      ? "border-red-300 dark:border-red-500/50 ring-2 ring-red-500/10"
-                      : "border-gray-200 dark:border-[#1f2a3d]"
-                  }`}
-                {...register("password", {
-                  required: "Password is required",
-                  minLength: { value: 6, message: "Min 6 characters" },
-                })}
+                className={`w-full bg-gray-50 dark:bg-[#0b0f1a] border rounded-lg px-4 py-3 pr-11 text-sm text-gray-900 dark:text-gray-100 outline-none focus:bg-white dark:focus:bg-[#0f1623] focus:border-black dark:focus:border-zinc-500 focus:ring-2 focus:ring-black/5 dark:focus:ring-white/5 ${errors.password ? "border-red-300 dark:border-red-500/50 ring-2 ring-red-500/10" : "border-gray-200 dark:border-[#1f2a3d]"}`}
+                {...register("password", { required: "Password is required" })}
               />
               <button
                 type="button"
@@ -172,17 +146,10 @@ export default function LoginPage() {
             )}
           </div>
 
-          {/* Submit */}
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full flex items-center justify-center gap-2 mt-6
-           bg-black hover:bg-zinc-800 active:bg-zinc-900
-            disabled:opacity-50 disabled:cursor-not-allowed
-           text-white font-semibold text-base py-3 rounded-lg
-            transition-all duration-200 ease-in-out
-            shadow-[0_2px_8px_rgba(0,0,0,0.15)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.25)]
-            hover:-translate-y-px active:translate-y-0"
+            className="w-full flex items-center justify-center gap-2 mt-6 bg-black hover:bg-zinc-800 text-white font-semibold text-base py-3 rounded-lg disabled:opacity-50 shadow-[0_2px_8px_rgba(0,0,0,0.15)] transition-all"
           >
             {isLoading ? (
               <span className="flex items-center gap-2">
@@ -191,8 +158,7 @@ export default function LoginPage() {
               </span>
             ) : (
               <>
-                Sign in
-                <ArrowRight size={16} />
+                Sign in <ArrowRight size={16} />
               </>
             )}
           </button>

@@ -21,7 +21,9 @@ export default function DataTable<T extends Record<string, any>>({
   className = "",
 }: DataTableProps<T>) {
   return (
-    <div className={`overflow-x-auto border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl ${className}`}>
+    <div
+      className={`overflow-x-auto border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl ${className}`}
+    >
       <table className="w-full">
         <TableHeader
           columns={columns}

@@ -22,14 +22,16 @@ async function attemptLogin(credentials: LoginCredentials): Promise<Response> {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      username:      credentials.username,
-      password:      credentials.password,
+      username: credentials.username,
+      password: credentials.password,
       expiresInMins: 60,
     }),
   });
 }
 
-export async function loginUser(credentials: LoginCredentials): Promise<AuthUser> {
+export async function loginUser(
+  credentials: LoginCredentials,
+): Promise<AuthUser> {
   let response = await attemptLogin(credentials);
 
   // Retry once after 1s if rate limited or server error
@@ -49,13 +51,13 @@ export async function loginUser(credentials: LoginCredentials): Promise<AuthUser
   const role = ROLE_MAP[data.username] ?? DEFAULT_ROLE;
 
   return {
-    id:        data.id,
-    username:  data.username,
+    id: data.id,
+    username: data.username,
     firstName: data.firstName,
-    lastName:  data.lastName,
-    email:     data.email,
-    image:     data.image,
-    token:     data.accessToken,
+    lastName: data.lastName,
+    email: data.email,
+    image: data.image,
+    token: data.accessToken,
     role,
   };
 }

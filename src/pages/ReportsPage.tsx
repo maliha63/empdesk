@@ -7,7 +7,14 @@ import { Badge } from "../components/Badge";
 import CustomSelect from "../components/CustomSelect";
 import { Toaster } from "react-hot-toast";
 
-type ReportType = "payroll" | "team" | "leave" | "contact" | "email" | "security" | "workfromhome";
+type ReportType =
+  | "payroll"
+  | "team"
+  | "leave"
+  | "contact"
+  | "email"
+  | "security"
+  | "workfromhome";
 
 export default function ReportsPage() {
   const { employees } = useEmployees();
@@ -23,7 +30,9 @@ export default function ReportsPage() {
       designation: emp.company?.title || "N/A",
       salary: Math.floor(Math.random() * 200000) + 30000,
       status: Math.random() > 0.2 ? "Paid" : "Pending",
-      lastPaid: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+      lastPaid: new Date(
+        Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000,
+      ).toLocaleDateString(),
       paymentMethod: ["Bank", "Check", "Cash"][Math.floor(Math.random() * 3)],
     }));
   }, [employees]);
@@ -35,7 +44,9 @@ export default function ReportsPage() {
       department: emp.company?.department || "N/A",
       designation: emp.company?.title || "N/A",
       email: emp.email,
-      joinDate: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+      joinDate: new Date(
+        Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000,
+      ).toLocaleDateString(),
       status: "Active" as const,
     }));
   }, [employees]);
@@ -70,7 +81,9 @@ export default function ReportsPage() {
       department: emp.company?.department || "N/A",
       daysAllowed: 2,
       daysTaken: Math.floor(Math.random() * 3),
-      lastWFH: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+      lastWFH: new Date(
+        Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000,
+      ).toLocaleDateString(),
       status: Math.random() > 0.5 ? "Approved" : "Pending",
     }));
   }, [employees]);
@@ -83,7 +96,9 @@ export default function ReportsPage() {
       department: emp.company?.department || "N/A",
       emailsSent: Math.floor(Math.random() * 500),
       emailsReceived: Math.floor(Math.random() * 800),
-      lastActive: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+      lastActive: new Date(
+        Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000,
+      ).toLocaleDateString(),
     }));
   }, [employees]);
 
@@ -92,20 +107,49 @@ export default function ReportsPage() {
       id: emp.id,
       name: `${emp.firstName} ${emp.lastName}`,
       department: emp.company?.department || "N/A",
-      lastLogin: new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000).toLocaleDateString(),
-      accessLevel: ["Basic", "Advanced", "Admin"][Math.floor(Math.random() * 3)],
+      lastLogin: new Date(
+        Date.now() - Math.random() * 24 * 60 * 60 * 1000,
+      ).toLocaleDateString(),
+      accessLevel: ["Basic", "Advanced", "Admin"][
+        Math.floor(Math.random() * 3)
+      ],
       mfaEnabled: Math.random() > 0.3,
       status: "Active",
     }));
   }, [employees]);
 
-  const payrollTableState = useTableState(payrollData, rowsPerPage, ["name", "department", "empId"]);
-  const teamTableState = useTableState(teamData, rowsPerPage, ["name", "department", "email"]);
-  const leaveTableState = useTableState(leaveData, rowsPerPage, ["name", "department"]);
-  const contactTableState = useTableState(contactData, rowsPerPage, ["name", "email", "department"]);
-  const wfhTableState = useTableState(wfhData, rowsPerPage, ["name", "department"]);
-  const emailTableState = useTableState(emailData, rowsPerPage, ["name", "email", "department"]);
-  const securityTableState = useTableState(securityData, rowsPerPage, ["name", "department"]);
+  const payrollTableState = useTableState(payrollData, rowsPerPage, [
+    "name",
+    "department",
+    "empId",
+  ]);
+  const teamTableState = useTableState(teamData, rowsPerPage, [
+    "name",
+    "department",
+    "email",
+  ]);
+  const leaveTableState = useTableState(leaveData, rowsPerPage, [
+    "name",
+    "department",
+  ]);
+  const contactTableState = useTableState(contactData, rowsPerPage, [
+    "name",
+    "email",
+    "department",
+  ]);
+  const wfhTableState = useTableState(wfhData, rowsPerPage, [
+    "name",
+    "department",
+  ]);
+  const emailTableState = useTableState(emailData, rowsPerPage, [
+    "name",
+    "email",
+    "department",
+  ]);
+  const securityTableState = useTableState(securityData, rowsPerPage, [
+    "name",
+    "department",
+  ]);
 
   // Global standardized render logic for your pagination block inside tabs
   const renderPagination = (targetState: any) => {
@@ -115,20 +159,34 @@ export default function ReportsPage() {
     return (
       <div className="flex items-center justify-between mt-4">
         <p className="text-xs text-gray-400 dark:text-[#4b5e7a]">
-          Showing {((targetState.currentPage - 1) * rowsPerPage) + 1} to {Math.min(targetState.currentPage * rowsPerPage, targetState.filteredData.length)} of {targetState.filteredData.length} results
+          Showing {(targetState.currentPage - 1) * rowsPerPage + 1} to{" "}
+          {Math.min(
+            targetState.currentPage * rowsPerPage,
+            targetState.filteredData.length,
+          )}{" "}
+          of {targetState.filteredData.length} results
         </p>
         <div className="flex gap-2 items-center">
           <button
-            onClick={() => targetState.setCurrentPage(Math.max(1, targetState.currentPage - 1))}
+            onClick={() =>
+              targetState.setCurrentPage(
+                Math.max(1, targetState.currentPage - 1),
+              )
+            }
             disabled={targetState.currentPage === 1}
             className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#e2e8f0] dark:border-[#1f2a3d] text-gray-500 dark:text-[#4b5e7a] hover:text-gray-900 dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             &larr; Prev
           </button>
-          
+
           <div className="flex gap-1">
             {Array.from({ length: totalPages }, (_, i) => i + 1)
-              .filter((p) => p === 1 || p === totalPages || Math.abs(p - targetState.currentPage) <= 1)
+              .filter(
+                (p) =>
+                  p === 1 ||
+                  p === totalPages ||
+                  Math.abs(p - targetState.currentPage) <= 1,
+              )
               .reduce<(number | "...")[]>((acc, p, i, arr) => {
                 if (i > 0 && p - (arr[i - 1] as number) > 1) acc.push("...");
                 acc.push(p);
@@ -136,7 +194,10 @@ export default function ReportsPage() {
               }, [])
               .map((p, i) =>
                 p === "..." ? (
-                  <span key={`ellipse-${i}`} className="px-2 py-1.5 text-xs text-gray-400 dark:text-[#4b5e7a]">
+                  <span
+                    key={`ellipse-${i}`}
+                    className="px-2 py-1.5 text-xs text-gray-400 dark:text-[#4b5e7a]"
+                  >
                     ...
                   </span>
                 ) : (
@@ -151,12 +212,16 @@ export default function ReportsPage() {
                   >
                     {p}
                   </button>
-                )
+                ),
               )}
           </div>
 
           <button
-            onClick={() => targetState.setCurrentPage(Math.min(totalPages, targetState.currentPage + 1))}
+            onClick={() =>
+              targetState.setCurrentPage(
+                Math.min(totalPages, targetState.currentPage + 1),
+              )
+            }
             disabled={targetState.currentPage === totalPages}
             className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#e2e8f0] dark:border-[#1f2a3d] text-gray-500 dark:text-[#4b5e7a] hover:text-gray-900 dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
@@ -173,19 +238,20 @@ export default function ReportsPage() {
         <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-4">
           <p className="text-xs text-(--text-muted) mb-1">Total Payroll</p>
           <p className="text-2xl font-bold text-(--text-primary)">
-            ${payrollData.reduce((sum, p) => sum + p.salary, 0).toLocaleString()}
+            $
+            {payrollData.reduce((sum, p) => sum + p.salary, 0).toLocaleString()}
           </p>
         </div>
         <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-4">
           <p className="text-xs text-(--text-muted) mb-1">Paid</p>
           <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-            {payrollData.filter(p => p.status === "Paid").length}
+            {payrollData.filter((p) => p.status === "Paid").length}
           </p>
         </div>
         <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-4">
           <p className="text-xs text-(--text-muted) mb-1">Pending</p>
           <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
-            {payrollData.filter(p => p.status === "Pending").length}
+            {payrollData.filter((p) => p.status === "Pending").length}
           </p>
         </div>
       </div>
@@ -215,25 +281,50 @@ export default function ReportsPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-[#e2e8f0] dark:border-[#1f2a3d] bg-gray-50 dark:bg-[#0f172a]">
-              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">S.L</th>
-              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Emp ID</th>
-              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Name</th>
-              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Department</th>
-              <th className="text-right px-6 py-4 font-semibold text-(--text-muted)">Salary</th>
-              <th className="text-center px-6 py-4 font-semibold text-(--text-muted)">Status</th>
-              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Payment Method</th>
-              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Last Paid</th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                S.L
+              </th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Emp ID
+              </th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Name
+              </th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Department
+              </th>
+              <th className="text-right px-6 py-4 font-semibold text-(--text-muted)">
+                Salary
+              </th>
+              <th className="text-center px-6 py-4 font-semibold text-(--text-muted)">
+                Status
+              </th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Payment Method
+              </th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Last Paid
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#e2e8f0] dark:divide-[#1f2a3d]">
             {payrollTableState.paginatedData.map((row, idx) => (
-              <tr key={row.id} className="hover:bg-gray-50 dark:hover:bg-[#0f172a]">
+              <tr
+                key={row.id}
+                className="hover:bg-gray-50 dark:hover:bg-[#0f172a]"
+              >
                 <td className="px-6 py-4 text-(--text-muted)">
                   {(payrollTableState.currentPage - 1) * rowsPerPage + idx + 1}
                 </td>
-                <td className="px-6 py-4 font-medium text-blue-600 dark:text-blue-400">{row.empId}</td>
-                <td className="px-6 py-4 font-medium text-(--text-primary)">{row.name}</td>
-                <td className="px-6 py-4 text-(--text-muted)">{row.department}</td>
+                <td className="px-6 py-4 font-medium text-blue-600 dark:text-blue-400">
+                  {row.empId}
+                </td>
+                <td className="px-6 py-4 font-medium text-(--text-primary)">
+                  {row.name}
+                </td>
+                <td className="px-6 py-4 text-(--text-muted)">
+                  {row.department}
+                </td>
                 <td className="px-6 py-4 text-right font-semibold text-(--text-primary)">
                   ${row.salary.toLocaleString()}
                 </td>
@@ -242,8 +333,12 @@ export default function ReportsPage() {
                     {row.status}
                   </Badge>
                 </td>
-                <td className="px-6 py-4 text-(--text-muted)">{row.paymentMethod}</td>
-                <td className="px-6 py-4 text-(--text-muted) text-xs">{row.lastPaid}</td>
+                <td className="px-6 py-4 text-(--text-muted)">
+                  {row.paymentMethod}
+                </td>
+                <td className="px-6 py-4 text-(--text-muted) text-xs">
+                  {row.lastPaid}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -258,18 +353,20 @@ export default function ReportsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-4">
           <p className="text-xs text-(--text-muted) mb-1">Total Employees</p>
-          <p className="text-2xl font-bold text-(--text-primary)">{teamData.length}</p>
+          <p className="text-2xl font-bold text-(--text-primary)">
+            {teamData.length}
+          </p>
         </div>
         <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-4">
           <p className="text-xs text-(--text-muted) mb-1">Active</p>
           <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-            {teamData.filter(t => t.status === "Active").length}
+            {teamData.filter((t) => t.status === "Active").length}
           </p>
         </div>
         <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-4">
           <p className="text-xs text-(--text-muted) mb-1">Departments</p>
           <p className="text-2xl font-bold text-(--text-primary)">
-            {new Set(teamData.map(t => t.department)).size}
+            {new Set(teamData.map((t) => t.department)).size}
           </p>
         </div>
       </div>
@@ -299,26 +396,53 @@ export default function ReportsPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-[#e2e8f0] dark:border-[#1f2a3d] bg-gray-50 dark:bg-[#0f172a]">
-              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">S.L</th>
-              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Name</th>
-              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Department</th>
-              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Designation</th>
-              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Email</th>
-              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Join Date</th>
-              <th className="text-center px-6 py-4 font-semibold text-(--text-muted)">Status</th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                S.L
+              </th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Name
+              </th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Department
+              </th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Designation
+              </th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Email
+              </th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Join Date
+              </th>
+              <th className="text-center px-6 py-4 font-semibold text-(--text-muted)">
+                Status
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#e2e8f0] dark:divide-[#1f2a3d]">
             {teamTableState.paginatedData.map((row, idx) => (
-              <tr key={row.id} className="hover:bg-gray-50 dark:hover:bg-[#0f172a]">
+              <tr
+                key={row.id}
+                className="hover:bg-gray-50 dark:hover:bg-[#0f172a]"
+              >
                 <td className="px-6 py-4 text-(--text-muted)">
                   {(teamTableState.currentPage - 1) * rowsPerPage + idx + 1}
                 </td>
-                <td className="px-6 py-4 font-medium text-(--text-primary)">{row.name}</td>
-                <td className="px-6 py-4 text-(--text-muted)">{row.department}</td>
-                <td className="px-6 py-4 text-(--text-muted) text-xs">{row.designation}</td>
-                <td className="px-6 py-4 text-blue-600 dark:text-blue-400 text-xs">{row.email}</td>
-                <td className="px-6 py-4 text-(--text-muted) text-xs">{row.joinDate}</td>
+                <td className="px-6 py-4 font-medium text-(--text-primary)">
+                  {row.name}
+                </td>
+                <td className="px-6 py-4 text-(--text-muted)">
+                  {row.department}
+                </td>
+                <td className="px-6 py-4 text-(--text-muted) text-xs">
+                  {row.designation}
+                </td>
+                <td className="px-6 py-4 text-blue-600 dark:text-blue-400 text-xs">
+                  {row.email}
+                </td>
+                <td className="px-6 py-4 text-(--text-muted) text-xs">
+                  {row.joinDate}
+                </td>
                 <td className="px-6 py-4 text-center">
                   <Badge variant="green">{row.status}</Badge>
                 </td>
@@ -334,28 +458,76 @@ export default function ReportsPage() {
   const renderLeaveReport = () => (
     <div className="space-y-6">
       <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-4 flex items-center gap-4 flex-wrap">
-        <SearchBox value={leaveTableState.searchTerm} onChange={leaveTableState.setSearchTerm} placeholder="Search employee..." />
-        <CustomSelect value={rowsPerPage} onChange={(v) => { setRowsPerPage(Number(v)); leaveTableState.setCurrentPage(1); }} options={[{ value: 5, label: "5 rows" }, { value: 10, label: "10 rows" }, { value: 20, label: "20 rows" }]} />
+        <SearchBox
+          value={leaveTableState.searchTerm}
+          onChange={leaveTableState.setSearchTerm}
+          placeholder="Search employee..."
+        />
+        <CustomSelect
+          value={rowsPerPage}
+          onChange={(v) => {
+            setRowsPerPage(Number(v));
+            leaveTableState.setCurrentPage(1);
+          }}
+          options={[
+            { value: 5, label: "5 rows" },
+            { value: 10, label: "10 rows" },
+            { value: 20, label: "20 rows" },
+          ]}
+        />
       </div>
       <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl overflow-x-auto">
         <table className="w-full text-sm">
-          <thead><tr className="border-b border-[#e2e8f0] dark:border-[#1f2a3d] bg-gray-50 dark:bg-[#0f172a]">
-            <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Name</th>
-            <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Department</th>
-            <th className="text-center px-6 py-4 font-semibold text-(--text-muted)">Taken</th>
-            <th className="text-center px-6 py-4 font-semibold text-(--text-muted)">Balance</th>
-            <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Type</th>
-            <th className="text-center px-6 py-4 font-semibold text-(--text-muted)">Status</th>
-          </tr></thead>
+          <thead>
+            <tr className="border-b border-[#e2e8f0] dark:border-[#1f2a3d] bg-gray-50 dark:bg-[#0f172a]">
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Name
+              </th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Department
+              </th>
+              <th className="text-center px-6 py-4 font-semibold text-(--text-muted)">
+                Taken
+              </th>
+              <th className="text-center px-6 py-4 font-semibold text-(--text-muted)">
+                Balance
+              </th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Type
+              </th>
+              <th className="text-center px-6 py-4 font-semibold text-(--text-muted)">
+                Status
+              </th>
+            </tr>
+          </thead>
           <tbody className="divide-y divide-[#e2e8f0] dark:divide-[#1f2a3d]">
             {leaveTableState.paginatedData.map((row) => (
-              <tr key={row.id} className="hover:bg-gray-50 dark:hover:bg-[#0f172a]">
-                <td className="px-6 py-4 font-medium text-(--text-primary)">{row.name}</td>
-                <td className="px-6 py-4 text-(--text-muted)">{row.department}</td>
-                <td className="px-6 py-4 text-center font-medium">{row.leaveTaken}</td>
-                <td className="px-6 py-4 text-center font-medium text-green-600">{row.leaveBalance}</td>
-                <td className="px-6 py-4 text-(--text-muted)">{row.leaveType}</td>
-                <td className="px-6 py-4 text-center"><Badge variant={row.status === "On Leave" ? "amber" : "green"}>{row.status}</Badge></td>
+              <tr
+                key={row.id}
+                className="hover:bg-gray-50 dark:hover:bg-[#0f172a]"
+              >
+                <td className="px-6 py-4 font-medium text-(--text-primary)">
+                  {row.name}
+                </td>
+                <td className="px-6 py-4 text-(--text-muted)">
+                  {row.department}
+                </td>
+                <td className="px-6 py-4 text-center font-medium">
+                  {row.leaveTaken}
+                </td>
+                <td className="px-6 py-4 text-center font-medium text-green-600">
+                  {row.leaveBalance}
+                </td>
+                <td className="px-6 py-4 text-(--text-muted)">
+                  {row.leaveType}
+                </td>
+                <td className="px-6 py-4 text-center">
+                  <Badge
+                    variant={row.status === "On Leave" ? "amber" : "green"}
+                  >
+                    {row.status}
+                  </Badge>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -368,25 +540,63 @@ export default function ReportsPage() {
   const renderContactReport = () => (
     <div className="space-y-6">
       <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-4 flex items-center gap-4 flex-wrap">
-        <SearchBox value={contactTableState.searchTerm} onChange={contactTableState.setSearchTerm} placeholder="Search employee..." />
-        <CustomSelect value={rowsPerPage} onChange={(v) => { setRowsPerPage(Number(v)); contactTableState.setCurrentPage(1); }} options={[{ value: 5, label: "5 rows" }, { value: 10, label: "10 rows" }, { value: 20, label: "20 rows" }]} />
+        <SearchBox
+          value={contactTableState.searchTerm}
+          onChange={contactTableState.setSearchTerm}
+          placeholder="Search employee..."
+        />
+        <CustomSelect
+          value={rowsPerPage}
+          onChange={(v) => {
+            setRowsPerPage(Number(v));
+            contactTableState.setCurrentPage(1);
+          }}
+          options={[
+            { value: 5, label: "5 rows" },
+            { value: 10, label: "10 rows" },
+            { value: 20, label: "20 rows" },
+          ]}
+        />
       </div>
       <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl overflow-x-auto">
         <table className="w-full text-sm">
-          <thead><tr className="border-b border-[#e2e8f0] dark:border-[#1f2a3d] bg-gray-50 dark:bg-[#0f172a]">
-            <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Name</th>
-            <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Email</th>
-            <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Phone</th>
-            <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Department</th>
-            <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">City</th>
-          </tr></thead>
+          <thead>
+            <tr className="border-b border-[#e2e8f0] dark:border-[#1f2a3d] bg-gray-50 dark:bg-[#0f172a]">
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Name
+              </th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Email
+              </th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Phone
+              </th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Department
+              </th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                City
+              </th>
+            </tr>
+          </thead>
           <tbody className="divide-y divide-[#e2e8f0] dark:divide-[#1f2a3d]">
             {contactTableState.paginatedData.map((row) => (
-              <tr key={row.id} className="hover:bg-gray-50 dark:hover:bg-[#0f172a]">
-                <td className="px-6 py-4 font-medium text-(--text-primary)">{row.name}</td>
-                <td className="px-6 py-4 text-blue-600 dark:text-blue-400 text-xs">{row.email}</td>
-                <td className="px-6 py-4 text-(--text-muted) text-xs">{row.phone}</td>
-                <td className="px-6 py-4 text-(--text-muted)">{row.department}</td>
+              <tr
+                key={row.id}
+                className="hover:bg-gray-50 dark:hover:bg-[#0f172a]"
+              >
+                <td className="px-6 py-4 font-medium text-(--text-primary)">
+                  {row.name}
+                </td>
+                <td className="px-6 py-4 text-blue-600 dark:text-blue-400 text-xs">
+                  {row.email}
+                </td>
+                <td className="px-6 py-4 text-(--text-muted) text-xs">
+                  {row.phone}
+                </td>
+                <td className="px-6 py-4 text-(--text-muted)">
+                  {row.department}
+                </td>
                 <td className="px-6 py-4 text-(--text-muted)">{row.city}</td>
               </tr>
             ))}
@@ -400,28 +610,74 @@ export default function ReportsPage() {
   const renderWFHReport = () => (
     <div className="space-y-6">
       <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-4 flex items-center gap-4 flex-wrap">
-        <SearchBox value={wfhTableState.searchTerm} onChange={wfhTableState.setSearchTerm} placeholder="Search employee..." />
-        <CustomSelect value={rowsPerPage} onChange={(v) => { setRowsPerPage(Number(v)); wfhTableState.setCurrentPage(1); }} options={[{ value: 5, label: "5 rows" }, { value: 10, label: "10 rows" }, { value: 20, label: "20 rows" }]} />
+        <SearchBox
+          value={wfhTableState.searchTerm}
+          onChange={wfhTableState.setSearchTerm}
+          placeholder="Search employee..."
+        />
+        <CustomSelect
+          value={rowsPerPage}
+          onChange={(v) => {
+            setRowsPerPage(Number(v));
+            wfhTableState.setCurrentPage(1);
+          }}
+          options={[
+            { value: 5, label: "5 rows" },
+            { value: 10, label: "10 rows" },
+            { value: 20, label: "20 rows" },
+          ]}
+        />
       </div>
       <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl overflow-x-auto">
         <table className="w-full text-sm">
-          <thead><tr className="border-b border-[#e2e8f0] dark:border-[#1f2a3d] bg-gray-50 dark:bg-[#0f172a]">
-            <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Name</th>
-            <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Department</th>
-            <th className="text-center px-6 py-4 font-semibold text-(--text-muted)">Allowed</th>
-            <th className="text-center px-6 py-4 font-semibold text-(--text-muted)">Taken</th>
-            <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Last WFH</th>
-            <th className="text-center px-6 py-4 font-semibold text-(--text-muted)">Status</th>
-          </tr></thead>
+          <thead>
+            <tr className="border-b border-[#e2e8f0] dark:border-[#1f2a3d] bg-gray-50 dark:bg-[#0f172a]">
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Name
+              </th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Department
+              </th>
+              <th className="text-center px-6 py-4 font-semibold text-(--text-muted)">
+                Allowed
+              </th>
+              <th className="text-center px-6 py-4 font-semibold text-(--text-muted)">
+                Taken
+              </th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Last WFH
+              </th>
+              <th className="text-center px-6 py-4 font-semibold text-(--text-muted)">
+                Status
+              </th>
+            </tr>
+          </thead>
           <tbody className="divide-y divide-[#e2e8f0] dark:divide-[#1f2a3d]">
             {wfhTableState.paginatedData.map((row) => (
-              <tr key={row.id} className="hover:bg-gray-50 dark:hover:bg-[#0f172a]">
-                <td className="px-6 py-4 font-medium text-(--text-primary)">{row.name}</td>
-                <td className="px-6 py-4 text-(--text-muted)">{row.department}</td>
-                <td className="px-6 py-4 text-center font-medium">{row.daysAllowed}</td>
-                <td className="px-6 py-4 text-center font-medium">{row.daysTaken}</td>
+              <tr
+                key={row.id}
+                className="hover:bg-gray-50 dark:hover:bg-[#0f172a]"
+              >
+                <td className="px-6 py-4 font-medium text-(--text-primary)">
+                  {row.name}
+                </td>
+                <td className="px-6 py-4 text-(--text-muted)">
+                  {row.department}
+                </td>
+                <td className="px-6 py-4 text-center font-medium">
+                  {row.daysAllowed}
+                </td>
+                <td className="px-6 py-4 text-center font-medium">
+                  {row.daysTaken}
+                </td>
                 <td className="px-6 py-4 text-(--text-muted)">{row.lastWFH}</td>
-                <td className="px-6 py-4 text-center"><Badge variant={row.status === "Approved" ? "green" : "amber"}>{row.status}</Badge></td>
+                <td className="px-6 py-4 text-center">
+                  <Badge
+                    variant={row.status === "Approved" ? "green" : "amber"}
+                  >
+                    {row.status}
+                  </Badge>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -434,28 +690,72 @@ export default function ReportsPage() {
   const renderEmailReport = () => (
     <div className="space-y-6">
       <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-4 flex items-center gap-4 flex-wrap">
-        <SearchBox value={emailTableState.searchTerm} onChange={emailTableState.setSearchTerm} placeholder="Search employee..." />
-        <CustomSelect value={rowsPerPage} onChange={(v) => { setRowsPerPage(Number(v)); emailTableState.setCurrentPage(1); }} options={[{ value: 5, label: "5 rows" }, { value: 10, label: "10 rows" }, { value: 20, label: "20 rows" }]} />
+        <SearchBox
+          value={emailTableState.searchTerm}
+          onChange={emailTableState.setSearchTerm}
+          placeholder="Search employee..."
+        />
+        <CustomSelect
+          value={rowsPerPage}
+          onChange={(v) => {
+            setRowsPerPage(Number(v));
+            emailTableState.setCurrentPage(1);
+          }}
+          options={[
+            { value: 5, label: "5 rows" },
+            { value: 10, label: "10 rows" },
+            { value: 20, label: "20 rows" },
+          ]}
+        />
       </div>
       <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl overflow-x-auto">
         <table className="w-full text-sm">
-          <thead><tr className="border-b border-[#e2e8f0] dark:border-[#1f2a3d] bg-gray-50 dark:bg-[#0f172a]">
-            <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Name</th>
-            <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Email</th>
-            <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Department</th>
-            <th className="text-center px-6 py-4 font-semibold text-(--text-muted)">Sent</th>
-            <th className="text-center px-6 py-4 font-semibold text-(--text-muted)">Received</th>
-            <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Last Active</th>
-          </tr></thead>
+          <thead>
+            <tr className="border-b border-[#e2e8f0] dark:border-[#1f2a3d] bg-gray-50 dark:bg-[#0f172a]">
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Name
+              </th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Email
+              </th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Department
+              </th>
+              <th className="text-center px-6 py-4 font-semibold text-(--text-muted)">
+                Sent
+              </th>
+              <th className="text-center px-6 py-4 font-semibold text-(--text-muted)">
+                Received
+              </th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Last Active
+              </th>
+            </tr>
+          </thead>
           <tbody className="divide-y divide-[#e2e8f0] dark:divide-[#1f2a3d]">
             {emailTableState.paginatedData.map((row) => (
-              <tr key={row.id} className="hover:bg-gray-50 dark:hover:bg-[#0f172a]">
-                <td className="px-6 py-4 font-medium text-(--text-primary)">{row.name}</td>
-                <td className="px-6 py-4 text-blue-600 dark:text-blue-400 text-xs">{row.email}</td>
-                <td className="px-6 py-4 text-(--text-muted)">{row.department}</td>
-                <td className="px-6 py-4 text-center font-medium">{row.emailsSent}</td>
-                <td className="px-6 py-4 text-center font-medium">{row.emailsReceived}</td>
-                <td className="px-6 py-4 text-(--text-muted) text-xs">{row.lastActive}</td>
+              <tr
+                key={row.id}
+                className="hover:bg-gray-50 dark:hover:bg-[#0f172a]"
+              >
+                <td className="px-6 py-4 font-medium text-(--text-primary)">
+                  {row.name}
+                </td>
+                <td className="px-6 py-4 text-blue-600 dark:text-blue-400 text-xs">
+                  {row.email}
+                </td>
+                <td className="px-6 py-4 text-(--text-muted)">
+                  {row.department}
+                </td>
+                <td className="px-6 py-4 text-center font-medium">
+                  {row.emailsSent}
+                </td>
+                <td className="px-6 py-4 text-center font-medium">
+                  {row.emailsReceived}
+                </td>
+                <td className="px-6 py-4 text-(--text-muted) text-xs">
+                  {row.lastActive}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -468,28 +768,74 @@ export default function ReportsPage() {
   const renderSecurityReport = () => (
     <div className="space-y-6">
       <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl p-4 flex items-center gap-4 flex-wrap">
-        <SearchBox value={securityTableState.searchTerm} onChange={securityTableState.setSearchTerm} placeholder="Search employee..." />
-        <CustomSelect value={rowsPerPage} onChange={(v) => { setRowsPerPage(Number(v)); securityTableState.setCurrentPage(1); }} options={[{ value: 5, label: "5 rows" }, { value: 10, label: "10 rows" }, { value: 20, label: "20 rows" }]} />
+        <SearchBox
+          value={securityTableState.searchTerm}
+          onChange={securityTableState.setSearchTerm}
+          placeholder="Search employee..."
+        />
+        <CustomSelect
+          value={rowsPerPage}
+          onChange={(v) => {
+            setRowsPerPage(Number(v));
+            securityTableState.setCurrentPage(1);
+          }}
+          options={[
+            { value: 5, label: "5 rows" },
+            { value: 10, label: "10 rows" },
+            { value: 20, label: "20 rows" },
+          ]}
+        />
       </div>
       <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-xl overflow-x-auto">
         <table className="w-full text-sm">
-          <thead><tr className="border-b border-[#e2e8f0] dark:border-[#1f2a3d] bg-gray-50 dark:bg-[#0f172a]">
-            <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Name</th>
-            <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Department</th>
-            <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Last Login</th>
-            <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">Access Level</th>
-            <th className="text-center px-6 py-4 font-semibold text-(--text-muted)">MFA</th>
-            <th className="text-center px-6 py-4 font-semibold text-(--text-muted)">Status</th>
-          </tr></thead>
+          <thead>
+            <tr className="border-b border-[#e2e8f0] dark:border-[#1f2a3d] bg-gray-50 dark:bg-[#0f172a]">
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Name
+              </th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Department
+              </th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Last Login
+              </th>
+              <th className="text-left px-6 py-4 font-semibold text-(--text-muted)">
+                Access Level
+              </th>
+              <th className="text-center px-6 py-4 font-semibold text-(--text-muted)">
+                MFA
+              </th>
+              <th className="text-center px-6 py-4 font-semibold text-(--text-muted)">
+                Status
+              </th>
+            </tr>
+          </thead>
           <tbody className="divide-y divide-[#e2e8f0] dark:divide-[#1f2a3d]">
             {securityTableState.paginatedData.map((row) => (
-              <tr key={row.id} className="hover:bg-gray-50 dark:hover:bg-[#0f172a]">
-                <td className="px-6 py-4 font-medium text-(--text-primary)">{row.name}</td>
-                <td className="px-6 py-4 text-(--text-muted)">{row.department}</td>
-                <td className="px-6 py-4 text-(--text-muted) text-xs">{row.lastLogin}</td>
-                <td className="px-6 py-4 text-(--text-muted) capitalize">{row.accessLevel}</td>
-                <td className="px-6 py-4 text-center"><Badge variant={row.mfaEnabled ? "green" : "amber"}>{row.mfaEnabled ? "Enabled" : "Disabled"}</Badge></td>
-                <td className="px-6 py-4 text-center"><Badge variant="green">{row.status}</Badge></td>
+              <tr
+                key={row.id}
+                className="hover:bg-gray-50 dark:hover:bg-[#0f172a]"
+              >
+                <td className="px-6 py-4 font-medium text-(--text-primary)">
+                  {row.name}
+                </td>
+                <td className="px-6 py-4 text-(--text-muted)">
+                  {row.department}
+                </td>
+                <td className="px-6 py-4 text-(--text-muted) text-xs">
+                  {row.lastLogin}
+                </td>
+                <td className="px-6 py-4 text-(--text-muted) capitalize">
+                  {row.accessLevel}
+                </td>
+                <td className="px-6 py-4 text-center">
+                  <Badge variant={row.mfaEnabled ? "green" : "amber"}>
+                    {row.mfaEnabled ? "Enabled" : "Disabled"}
+                  </Badge>
+                </td>
+                <td className="px-6 py-4 text-center">
+                  <Badge variant="green">{row.status}</Badge>
+                </td>
               </tr>
             ))}
           </tbody>

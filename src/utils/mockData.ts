@@ -6,7 +6,20 @@ function seed(id: number, i: number) {
 }
 
 const statuses = ["Present", "Absent", "Late", "Leave"] as const;
-const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const months = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
 
 export function getMockAttendance(userId: number): AttendanceRecord[] {
   return Array.from({ length: 20 }, (_, i) => {
@@ -15,20 +28,38 @@ export function getMockAttendance(userId: number): AttendanceRecord[] {
     return {
       date: d.toISOString().split("T")[0],
       status: s,
-      checkIn: s === "Absent" ? "—" : `0${8 + Math.floor(seed(userId, i + 1) * 2)}:${String(Math.floor(seed(userId, i + 2) * 59)).padStart(2, "0")}`,
-      checkOut: s === "Absent" ? "—" : `1${7 + Math.floor(seed(userId, i + 3) * 2)}:${String(Math.floor(seed(userId, i + 4) * 59)).padStart(2, "0")}`,
+      checkIn:
+        s === "Absent"
+          ? "—"
+          : `0${8 + Math.floor(seed(userId, i + 1) * 2)}:${String(Math.floor(seed(userId, i + 2) * 59)).padStart(2, "0")}`,
+      checkOut:
+        s === "Absent"
+          ? "—"
+          : `1${7 + Math.floor(seed(userId, i + 3) * 2)}:${String(Math.floor(seed(userId, i + 4) * 59)).padStart(2, "0")}`,
     };
   });
 }
 
 export function getMockDocuments(userId: number): Document[] {
   const types = ["PDF", "DOCX", "PNG", "XLSX"];
-  const names = ["Offer Letter", "NDA Agreement", "ID Proof", "Resume", "Appraisal Letter"];
+  const names = [
+    "Offer Letter",
+    "NDA Agreement",
+    "ID Proof",
+    "Resume",
+    "Appraisal Letter",
+  ];
   return Array.from({ length: 4 }, (_, i) => ({
     id: `${userId}-doc-${i}`,
     name: names[Math.floor(seed(userId, i) * names.length)],
     type: types[Math.floor(seed(userId, i + 1) * types.length)],
-    uploadedAt: new Date(2024, Math.floor(seed(userId, i + 2) * 11), Math.floor(seed(userId, i + 3) * 27) + 1).toISOString().split("T")[0],
+    uploadedAt: new Date(
+      2024,
+      Math.floor(seed(userId, i + 2) * 11),
+      Math.floor(seed(userId, i + 3) * 27) + 1,
+    )
+      .toISOString()
+      .split("T")[0],
     size: `${(seed(userId, i + 4) * 900 + 100).toFixed(0)} KB`,
   }));
 }
@@ -42,7 +73,14 @@ export function getMockPerformance(userId: number): PerformanceRecord[] {
       month,
       score,
       tasksCompleted: Math.floor(seed(userId, i + 1) * 20 + 5),
-      rating: score >= 90 ? "Excellent" : score >= 75 ? "Good" : score >= 60 ? "Average" : "Poor",
+      rating:
+        score >= 90
+          ? "Excellent"
+          : score >= 75
+            ? "Good"
+            : score >= 60
+              ? "Average"
+              : "Poor",
     };
   });
 }
@@ -53,7 +91,11 @@ export function getRecentActivity() {
     { id: 2, action: "Michael Williams updated profile", time: "4 hours ago" },
     { id: 3, action: "Sophia Brown applied for leave", time: "6 hours ago" },
     { id: 4, action: "James Davis attendance marked", time: "8 hours ago" },
-    { id: 5, action: "Emma Jones performance review updated", time: "1 day ago" },
+    {
+      id: 5,
+      action: "Emma Jones performance review updated",
+      time: "1 day ago",
+    },
     { id: 6, action: "Olivia Wilson joined Engineering", time: "2 days ago" },
   ];
 }
@@ -67,11 +109,36 @@ export interface Notice {
 }
 
 export const getNotices = (): Notice[] => [
-  { id: 1, title: "Q2 Performance Reviews - Schedule Your Session", date: "2 hours ago", priority: "high" },
-  { id: 2, title: "Updated Remote Work Policy - Flexible Hours Now Available", date: "Yesterday", priority: "high" },
-  { id: 3, title: "Professional Development Fund Open - Apply for Training", date: "2 days ago", priority: "medium" },
-  { id: 4, title: "Annual Team Offsite - June 15-17, Tahoe Resort", date: "3 days ago", priority: "medium" },
-  { id: 5, title: "New Health Insurance Plan Details", date: "4 days ago", priority: "low" },
+  {
+    id: 1,
+    title: "Q2 Performance Reviews - Schedule Your Session",
+    date: "2 hours ago",
+    priority: "high",
+  },
+  {
+    id: 2,
+    title: "Updated Remote Work Policy - Flexible Hours Now Available",
+    date: "Yesterday",
+    priority: "high",
+  },
+  {
+    id: 3,
+    title: "Professional Development Fund Open - Apply for Training",
+    date: "2 days ago",
+    priority: "medium",
+  },
+  {
+    id: 4,
+    title: "Annual Team Offsite - June 15-17, Tahoe Resort",
+    date: "3 days ago",
+    priority: "medium",
+  },
+  {
+    id: 5,
+    title: "New Health Insurance Plan Details",
+    date: "4 days ago",
+    priority: "low",
+  },
 ];
 
 export interface UpcomingEvent {
@@ -83,10 +150,34 @@ export interface UpcomingEvent {
 }
 
 export const getUpcomingEvents = (): UpcomingEvent[] => [
-  { id: 1, title: "All-Hands Meeting", date: "June 10", time: "2:00 PM", location: "Main Hall / Zoom" },
-  { id: 2, title: "Product Launch Celebration", date: "June 15", time: "4:00 PM", location: "Office Terrace" },
-  { id: 3, title: "Engineering Team Lunch", date: "June 18", time: "12:00 PM", location: "Downtown Restaurant" },
-  { id: 4, title: "Quarterly Business Review", date: "June 25", time: "10:00 AM", location: "Boardroom" },
+  {
+    id: 1,
+    title: "All-Hands Meeting",
+    date: "June 10",
+    time: "2:00 PM",
+    location: "Main Hall / Zoom",
+  },
+  {
+    id: 2,
+    title: "Product Launch Celebration",
+    date: "June 15",
+    time: "4:00 PM",
+    location: "Office Terrace",
+  },
+  {
+    id: 3,
+    title: "Engineering Team Lunch",
+    date: "June 18",
+    time: "12:00 PM",
+    location: "Downtown Restaurant",
+  },
+  {
+    id: 4,
+    title: "Quarterly Business Review",
+    date: "June 25",
+    time: "10:00 AM",
+    location: "Boardroom",
+  },
 ];
 
 export const getTopPerformers = () => [

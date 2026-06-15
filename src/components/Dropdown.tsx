@@ -7,12 +7,12 @@ interface Option {
 }
 
 interface DropdownProps {
-  options:         Option[];
-  value:           string;
-  onChange:        (value: string) => void;
-  placeholder?:    string;
-  className?:      string;
-  variant?:        "default" | "pill";
+  options: Option[];
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  className?: string;
+  variant?: "default" | "pill";
   pillColorClass?: string;
 }
 
@@ -30,7 +30,8 @@ export function Dropdown({
 
   useEffect(() => {
     function handle(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node))
+        setOpen(false);
     }
     document.addEventListener("mousedown", handle);
     return () => document.removeEventListener("mousedown", handle);
@@ -55,7 +56,10 @@ export function Dropdown({
           className={`flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full transition-colors ${pillColorClass}`}
         >
           {selected?.label ?? value}
-          <ChevronDown size={10} className={`transition-transform duration-150 ${open ? "rotate-180" : ""}`} />
+          <ChevronDown
+            size={10}
+            className={`transition-transform duration-150 ${open ? "rotate-180" : ""}`}
+          />
         </button>
         {open && (
           <div className="absolute left-0 top-full mt-1 z-50 min-w-40 bg-(--bg-card) border border-(--border) rounded-lg shadow-lg py-1 overflow-hidden">
@@ -63,11 +67,15 @@ export function Dropdown({
               <button
                 key={opt.value}
                 type="button"
-                onClick={() => { onChange(opt.value); setOpen(false); }}
+                onClick={() => {
+                  onChange(opt.value);
+                  setOpen(false);
+                }}
                 className={`w-full text-left px-3 py-1.5 text-xs transition-colors
-                  ${opt.value === value
-                    ? "text-(--text-primary) bg-(--bg-card2)"
-                    : "text-(--text-secondary) hover:bg-(--bg-card2) hover:text-(--text-primary)"
+                  ${
+                    opt.value === value
+                      ? "text-(--text-primary) bg-(--bg-card2)"
+                      : "text-(--text-secondary) hover:bg-(--bg-card2) hover:text-(--text-primary)"
                   }`}
               >
                 {opt.label}
@@ -103,11 +111,15 @@ export function Dropdown({
             <button
               key={opt.value}
               type="button"
-              onClick={() => { onChange(opt.value); setOpen(false); }}
+              onClick={() => {
+                onChange(opt.value);
+                setOpen(false);
+              }}
               className={`w-full text-left px-3 py-2 text-sm transition-colors
-                ${opt.value === value
-                  ? "text-(--text-primary) bg-(--bg-card2) font-medium"
-                  : "text-(--text-secondary) hover:bg-(--bg-card2) hover:text-(--text-primary)"
+                ${
+                  opt.value === value
+                    ? "text-(--text-primary) bg-(--bg-card2) font-medium"
+                    : "text-(--text-secondary) hover:bg-(--bg-card2) hover:text-(--text-primary)"
                 }`}
             >
               {opt.label}

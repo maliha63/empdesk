@@ -19,7 +19,7 @@ interface UseTableStateReturn<T> {
 export function useTableState<T extends Record<string, any>>(
   data: T[],
   itemsPerPage = 10,
-  searchKeys: (keyof T)[] = []
+  searchKeys: (keyof T)[] = [],
 ): UseTableStateReturn<T> {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<string>();
@@ -34,7 +34,7 @@ export function useTableState<T extends Record<string, any>>(
       searchKeys.some((key) => {
         const value = item[key];
         return String(value).toLowerCase().includes(searchTerm.toLowerCase());
-      })
+      }),
     );
   }, [data, searchTerm, searchKeys]);
 
@@ -81,7 +81,7 @@ export function useTableState<T extends Record<string, any>>(
 
   const paginatedData = sorted.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const handleSort = (key: string) => {

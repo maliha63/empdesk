@@ -21,13 +21,15 @@ import { TrendingUp, TrendingDown, Building2 } from "lucide-react";
 export default function PerformancePage() {
   const { employees } = useEmployees();
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | null>(null);
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | null>(
+    null,
+  );
 
   const performanceData = useMemo(() => {
     return employees.map((emp) => {
       const perf = getMockPerformance(emp.id);
       const avgScore = Math.round(
-        perf.reduce((sum, p) => sum + p.score, 0) / perf.length
+        perf.reduce((sum, p) => sum + p.score, 0) / perf.length,
       );
       return {
         id: emp.id,
@@ -43,42 +45,57 @@ export default function PerformancePage() {
 
   // Calculate stat cards data
   const statsData = useMemo(() => {
-    const scores = performanceData.map(e => e.avgScore);
-    const avgScore = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+    const scores = performanceData.map((e) => e.avgScore);
+    const avgScore = Math.round(
+      scores.reduce((a, b) => a + b, 0) / scores.length,
+    );
     const maxScore = Math.max(...scores);
     const minScore = Math.min(...scores);
-    const maxEmployee = performanceData.find(e => e.avgScore === maxScore);
-    const minEmployee = performanceData.find(e => e.avgScore === minScore);
-    
+    const maxEmployee = performanceData.find((e) => e.avgScore === maxScore);
+    const minEmployee = performanceData.find((e) => e.avgScore === minScore);
+
     return {
       avgScore,
       maxScore,
-      maxEmployeeName: maxEmployee ? `${maxEmployee.firstName} ${maxEmployee.lastName}` : "N/A",
+      maxEmployeeName: maxEmployee
+        ? `${maxEmployee.firstName} ${maxEmployee.lastName}`
+        : "N/A",
       minScore,
-      minEmployeeName: minEmployee ? `${minEmployee.firstName} ${minEmployee.lastName}` : "N/A",
+      minEmployeeName: minEmployee
+        ? `${minEmployee.firstName} ${minEmployee.lastName}`
+        : "N/A",
       totalEmployees: performanceData.length,
       activeInEval: performanceData.length,
     };
   }, [performanceData]);
 
-  const tableState = useTableState(performanceData, rowsPerPage, ["firstName", "lastName", "department"]);
+  const tableState = useTableState(performanceData, rowsPerPage, [
+    "firstName",
+    "lastName",
+    "department",
+  ]);
 
   useMemo(() => {
     if (tableState.paginatedData.length > 0) {
-      if (!selectedEmployeeId || !tableState.paginatedData.find(e => e.id === selectedEmployeeId)) {
+      if (
+        !selectedEmployeeId ||
+        !tableState.paginatedData.find((e) => e.id === selectedEmployeeId)
+      ) {
         setSelectedEmployeeId(tableState.paginatedData[0].id);
       }
     }
   }, [tableState.paginatedData, selectedEmployeeId]);
 
   const chartData = useMemo(() => {
-    return performanceData.map(emp => ({
+    return performanceData.map((emp) => ({
       ...emp,
-      isSelected: emp.id === selectedEmployeeId
+      isSelected: emp.id === selectedEmployeeId,
     }));
   }, [performanceData, selectedEmployeeId]);
 
-  const computedTotalPages = Math.ceil(tableState.filteredData.length / rowsPerPage);
+  const computedTotalPages = Math.ceil(
+    tableState.filteredData.length / rowsPerPage,
+  );
 
   return (
     <div className="space-y-6">
@@ -100,9 +117,13 @@ export default function PerformancePage() {
             <h4 className="text-sm text-(--text-muted)">Average Score</h4>
             <TrendingUp size={18} className="text-green-500" />
           </div>
-          <div className="text-3xl font-bold text-(--text-primary) mb-1">{statsData.avgScore}</div>
+          <div className="text-3xl font-bold text-(--text-primary) mb-1">
+            {statsData.avgScore}
+          </div>
           <div className="text-xs text-(--text-muted) mb-3">/100</div>
-          <div className="text-xs text-green-600 dark:text-green-400 font-medium">↑ 4.2% from last month</div>
+          <div className="text-xs text-green-600 dark:text-green-400 font-medium">
+            ↑ 4.2% from last month
+          </div>
         </div>
 
         {/* Highest Score Card */}
@@ -111,9 +132,13 @@ export default function PerformancePage() {
             <h4 className="text-sm text-(--text-muted)">Highest Score</h4>
             <TrendingUp size={18} className="text-green-500" />
           </div>
-          <div className="text-3xl font-bold text-(--text-primary) mb-1">{statsData.maxScore}</div>
+          <div className="text-3xl font-bold text-(--text-primary) mb-1">
+            {statsData.maxScore}
+          </div>
           <div className="text-xs text-(--text-muted) mb-3">/100</div>
-          <div className="text-xs text-(--text-primary) font-medium">{statsData.maxEmployeeName}</div>
+          <div className="text-xs text-(--text-primary) font-medium">
+            {statsData.maxEmployeeName}
+          </div>
         </div>
 
         {/* Lowest Score Card */}
@@ -122,9 +147,13 @@ export default function PerformancePage() {
             <h4 className="text-sm text-(--text-muted)">Lowest Score</h4>
             <TrendingDown size={18} className="text-red-500" />
           </div>
-          <div className="text-3xl font-bold text-(--text-primary) mb-1">{statsData.minScore}</div>
+          <div className="text-3xl font-bold text-(--text-primary) mb-1">
+            {statsData.minScore}
+          </div>
           <div className="text-xs text-(--text-muted) mb-3">/100</div>
-          <div className="text-xs text-(--text-primary) font-medium">{statsData.minEmployeeName}</div>
+          <div className="text-xs text-(--text-primary) font-medium">
+            {statsData.minEmployeeName}
+          </div>
         </div>
 
         {/* Total Employees Card */}
@@ -133,15 +162,21 @@ export default function PerformancePage() {
             <h4 className="text-sm text-(--text-muted)">Total Employees</h4>
             <Building2 size={18} className="text-blue-500" />
           </div>
-          <div className="text-3xl font-bold text-(--text-primary) mb-1">{statsData.totalEmployees}</div>
+          <div className="text-3xl font-bold text-(--text-primary) mb-1">
+            {statsData.totalEmployees}
+          </div>
           <div className="text-xs text-(--text-muted) mb-3">/total</div>
-          <div className="text-xs text-(--text-primary) font-medium">Active in evaluations</div>
+          <div className="text-xs text-(--text-primary) font-medium">
+            Active in evaluations
+          </div>
         </div>
       </div>
 
       <div className="bg-white dark:bg-[#111827] border border-[#e2e8f0] dark:border-[#1f2a3d] rounded-2xl p-6">
         <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
-          Performance Overview {selectedEmployeeId && `- ${performanceData.find(e => e.id === selectedEmployeeId)?.firstName} ${performanceData.find(e => e.id === selectedEmployeeId)?.lastName}`}
+          Performance Overview{" "}
+          {selectedEmployeeId &&
+            `- ${performanceData.find((e) => e.id === selectedEmployeeId)?.firstName} ${performanceData.find((e) => e.id === selectedEmployeeId)?.lastName}`}
         </h3>
         <ResponsiveContainer width="100%" height={320}>
           <BarChart data={chartData}>
@@ -186,50 +221,93 @@ export default function PerformancePage() {
         {tableState.paginatedData.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-4">
             <div className="text-4xl mb-4 opacity-50">🔍</div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No employees found</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              No employees found
+            </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400 text-center max-w-sm">
-              {tableState.searchTerm ? "No employees match your search criteria. Try adjusting your filters." : "No employees available."}
+              {tableState.searchTerm
+                ? "No employees match your search criteria. Try adjusting your filters."
+                : "No employees available."}
             </p>
           </div>
         ) : (
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#e2e8f0] dark:border-[#1f2a3d] bg-gray-50 dark:bg-[#0f172a]">
-                <th className="text-left pl-8 py-4 font-semibold text-(--text-muted)">Employee</th>
-                <th className="text-left py-4 font-semibold text-(--text-muted)">Department</th>
-                <th className="text-center py-4 font-semibold text-(--text-muted)">Avg Score</th>
-                <th className="text-center py-4 font-semibold text-(--text-muted)">Rating</th>
-                <th className="text-center py-4 font-semibold text-(--text-muted)">Trend</th>
+                <th className="text-left pl-8 py-4 font-semibold text-(--text-muted)">
+                  Employee
+                </th>
+                <th className="text-left py-4 font-semibold text-(--text-muted)">
+                  Department
+                </th>
+                <th className="text-center py-4 font-semibold text-(--text-muted)">
+                  Avg Score
+                </th>
+                <th className="text-center py-4 font-semibold text-(--text-muted)">
+                  Rating
+                </th>
+                <th className="text-center py-4 font-semibold text-(--text-muted)">
+                  Trend
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#e2e8f0] dark:divide-[#1f2a3d]">
               {tableState.paginatedData.map((emp) => {
-                const rating = emp.avgScore >= 90 ? "Excellent" : emp.avgScore >= 75 ? "Good" : emp.avgScore >= 60 ? "Average" : "Poor";
-                const ratingVariant = rating === "Excellent" ? "green" : rating === "Good" ? "blue" : rating === "Average" ? "amber" : "red";
+                const rating =
+                  emp.avgScore >= 90
+                    ? "Excellent"
+                    : emp.avgScore >= 75
+                      ? "Good"
+                      : emp.avgScore >= 60
+                        ? "Average"
+                        : "Poor";
+                const ratingVariant =
+                  rating === "Excellent"
+                    ? "green"
+                    : rating === "Good"
+                      ? "blue"
+                      : rating === "Average"
+                        ? "amber"
+                        : "red";
                 const isSelected = emp.id === selectedEmployeeId;
                 return (
-                  <tr 
-                    key={emp.id} 
+                  <tr
+                    key={emp.id}
                     onClick={() => setSelectedEmployeeId(emp.id)}
                     className={`cursor-pointer transition-colors ${isSelected ? "bg-blue-50 dark:bg-blue-950/20" : "hover:bg-gray-50 dark:hover:bg-[#0f172a]"}`}
                   >
                     <td className="pl-8 py-4">
                       <div className="flex items-center gap-3">
-                        <img src={emp.image} className="w-8 h-8 rounded-full" alt="" />
-                        <span className="font-medium text-(--text-primary)">{emp.firstName} {emp.lastName}</span>
+                        <img
+                          src={emp.image}
+                          className="w-8 h-8 rounded-full"
+                          alt=""
+                        />
+                        <span className="font-medium text-(--text-primary)">
+                          {emp.firstName} {emp.lastName}
+                        </span>
                       </div>
                     </td>
                     <td className="py-4">
                       <Badge variant="blue">{emp.department}</Badge>
                     </td>
-                    <td className="py-4 text-center font-mono font-semibold text-lg">{emp.avgScore}</td>
+                    <td className="py-4 text-center font-mono font-semibold text-lg">
+                      {emp.avgScore}
+                    </td>
                     <td className="py-4 text-center">
                       <Badge variant={ratingVariant as any}>{rating}</Badge>
                     </td>
                     <td className="py-4 px-4 text-center">
                       <ResponsiveContainer width={60} height={24}>
                         <LineChart data={emp.performance}>
-                          <Line type="monotone" dataKey="score" stroke={emp.avgScore >= 75 ? "#10b981" : "#ef4444"} dot={false} isAnimationActive={false} strokeWidth={2} />
+                          <Line
+                            type="monotone"
+                            dataKey="score"
+                            stroke={emp.avgScore >= 75 ? "#10b981" : "#ef4444"}
+                            dot={false}
+                            isAnimationActive={false}
+                            strokeWidth={2}
+                          />
                         </LineChart>
                       </ResponsiveContainer>
                     </td>
@@ -245,20 +323,34 @@ export default function PerformancePage() {
       {computedTotalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-xs text-gray-400 dark:text-[#4b5e7a]">
-            Showing {((tableState.currentPage - 1) * rowsPerPage) + 1} to {Math.min(tableState.currentPage * rowsPerPage, tableState.filteredData.length)} of {tableState.filteredData.length} results
+            Showing {(tableState.currentPage - 1) * rowsPerPage + 1} to{" "}
+            {Math.min(
+              tableState.currentPage * rowsPerPage,
+              tableState.filteredData.length,
+            )}{" "}
+            of {tableState.filteredData.length} results
           </p>
           <div className="flex gap-2 items-center">
             <button
-              onClick={() => tableState.setCurrentPage(Math.max(1, tableState.currentPage - 1))}
+              onClick={() =>
+                tableState.setCurrentPage(
+                  Math.max(1, tableState.currentPage - 1),
+                )
+              }
               disabled={tableState.currentPage === 1}
               className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#e2e8f0] dark:border-[#1f2a3d] text-gray-500 dark:text-[#4b5e7a] hover:text-gray-900 dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               &larr; Prev
             </button>
-            
+
             <div className="flex gap-1">
               {Array.from({ length: computedTotalPages }, (_, i) => i + 1)
-                .filter((p) => p === 1 || p === computedTotalPages || Math.abs(p - tableState.currentPage) <= 1)
+                .filter(
+                  (p) =>
+                    p === 1 ||
+                    p === computedTotalPages ||
+                    Math.abs(p - tableState.currentPage) <= 1,
+                )
                 .reduce<(number | "...")[]>((acc, p, i, arr) => {
                   if (i > 0 && p - (arr[i - 1] as number) > 1) acc.push("...");
                   acc.push(p);
@@ -266,7 +358,10 @@ export default function PerformancePage() {
                 }, [])
                 .map((p, i) =>
                   p === "..." ? (
-                    <span key={`ellipse-${i}`} className="px-2 py-1.5 text-xs text-gray-400 dark:text-[#4b5e7a]">
+                    <span
+                      key={`ellipse-${i}`}
+                      className="px-2 py-1.5 text-xs text-gray-400 dark:text-[#4b5e7a]"
+                    >
                       ...
                     </span>
                   ) : (
@@ -281,12 +376,16 @@ export default function PerformancePage() {
                     >
                       {p}
                     </button>
-                  )
+                  ),
                 )}
             </div>
 
             <button
-              onClick={() => tableState.setCurrentPage(Math.min(computedTotalPages, tableState.currentPage + 1))}
+              onClick={() =>
+                tableState.setCurrentPage(
+                  Math.min(computedTotalPages, tableState.currentPage + 1),
+                )
+              }
               disabled={tableState.currentPage === computedTotalPages}
               className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#e2e8f0] dark:border-[#1f2a3d] text-gray-500 dark:text-[#4b5e7a] hover:text-gray-900 dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >

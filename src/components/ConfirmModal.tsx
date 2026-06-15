@@ -2,14 +2,20 @@ import { motion, AnimatePresence } from "motion/react";
 import { AlertTriangle } from "lucide-react";
 
 interface ConfirmModalProps {
-  isOpen:    boolean;
-  title:     string;
-  message:   string;
+  isOpen: boolean;
+  title: string;
+  message: string;
   onConfirm: () => void;
-  onCancel:  () => void;
+  onCancel: () => void;
 }
 
-export function ConfirmModal({ isOpen, title, message, onConfirm, onCancel }: ConfirmModalProps) {
+export function ConfirmModal({
+  isOpen,
+  title,
+  message,
+  onConfirm,
+  onCancel,
+}: ConfirmModalProps) {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -22,8 +28,8 @@ export function ConfirmModal({ isOpen, title, message, onConfirm, onCancel }: Co
         >
           <motion.div
             initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1,    opacity: 1 }}
-            exit={{   scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.95, opacity: 0 }}
             transition={{ duration: 0.15 }}
             className="bg-white dark:bg-[#111827]
               border border-[#e2e8f0] dark:border-[#1f2a3d]
@@ -35,9 +41,13 @@ export function ConfirmModal({ isOpen, title, message, onConfirm, onCancel }: Co
               <span className="p-2 rounded-lg bg-red-50 dark:bg-red-500/10 text-red-500 dark:text-red-400">
                 <AlertTriangle size={18} />
               </span>
-              <h3 className="text-gray-900 dark:text-white font-semibold">{title}</h3>
+              <h3 className="text-gray-900 dark:text-white font-semibold">
+                {title}
+              </h3>
             </div>
-            <p className="text-sm text-gray-500 dark:text-[#4b5e7a] mb-6">{message}</p>
+            <p className="text-sm text-gray-500 dark:text-[#4b5e7a] mb-6">
+              {message}
+            </p>
             <div className="flex gap-3 justify-end">
               <button
                 onClick={onCancel}

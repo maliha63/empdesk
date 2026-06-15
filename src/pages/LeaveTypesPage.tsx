@@ -19,14 +19,62 @@ interface LeaveType {
 }
 
 const MOCK_LEAVE_TYPES: LeaveType[] = [
-  { id: 1, name: "Medical Leave", availableDays: 12, status: "Active", description: "For medical emergencies and health issues" },
-  { id: 2, name: "Casual Leave", availableDays: 8, status: "Active", description: "For personal reasons and casual time off" },
-  { id: 3, name: "Annual Leave", availableDays: 20, status: "Active", description: "Yearly paid vacation" },
-  { id: 4, name: "Maternity Leave", availableDays: 90, status: "Active", description: "For expectant and new mothers" },
-  { id: 5, name: "Paternity Leave", availableDays: 15, status: "Active", description: "For new fathers" },
-  { id: 6, name: "Bereavement Leave", availableDays: 5, status: "Active", description: "For family emergencies" },
-  { id: 7, name: "Study Leave", availableDays: 7, status: "Inactive", description: "For professional development" },
-  { id: 8, name: "Special Leave", availableDays: 3, status: "Active", description: "For special occasions" },
+  {
+    id: 1,
+    name: "Medical Leave",
+    availableDays: 12,
+    status: "Active",
+    description: "For medical emergencies and health issues",
+  },
+  {
+    id: 2,
+    name: "Casual Leave",
+    availableDays: 8,
+    status: "Active",
+    description: "For personal reasons and casual time off",
+  },
+  {
+    id: 3,
+    name: "Annual Leave",
+    availableDays: 20,
+    status: "Active",
+    description: "Yearly paid vacation",
+  },
+  {
+    id: 4,
+    name: "Maternity Leave",
+    availableDays: 90,
+    status: "Active",
+    description: "For expectant and new mothers",
+  },
+  {
+    id: 5,
+    name: "Paternity Leave",
+    availableDays: 15,
+    status: "Active",
+    description: "For new fathers",
+  },
+  {
+    id: 6,
+    name: "Bereavement Leave",
+    availableDays: 5,
+    status: "Active",
+    description: "For family emergencies",
+  },
+  {
+    id: 7,
+    name: "Study Leave",
+    availableDays: 7,
+    status: "Inactive",
+    description: "For professional development",
+  },
+  {
+    id: 8,
+    name: "Special Leave",
+    availableDays: 3,
+    status: "Active",
+    description: "For special occasions",
+  },
 ];
 
 export default function LeaveTypesPage() {
@@ -74,9 +122,7 @@ export default function LeaveTypesPage() {
   const handleSave = () => {
     if (editingId) {
       setLeaveTypes(
-        leaveTypes.map((t) =>
-          t.id === editingId ? { ...t, ...formData } : t
-        )
+        leaveTypes.map((t) => (t.id === editingId ? { ...t, ...formData } : t)),
       );
     } else {
       setLeaveTypes([
@@ -125,10 +171,7 @@ export default function LeaveTypesPage() {
       label: "Status",
       sortable: true,
       render: (value: string) => (
-        <Badge
-          variant={value === "Active" ? "green" : "slate"}
-          dot
-        >
+        <Badge variant={value === "Active" ? "green" : "slate"} dot>
           {value}
         </Badge>
       ),
