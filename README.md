@@ -89,9 +89,6 @@ EmpDesk is a **React + TypeScript + Vite** based web application designed to str
 
 ```
 empdesk/
-├── public/
-│   ├── 404-illustration.png
-│   └── mockups/
 ├── src/
 │   ├── assets/
 │   ├── components/
