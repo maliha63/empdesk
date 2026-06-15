@@ -39,19 +39,12 @@ EmpDesk is a frontend-driven Employee Management System focused on **clarity, pe
 
 ### 🗓️ Events Management
 
-**Three View Modes:**
-* **Month View** - Full calendar grid with event indicators (colored dots), upcoming events cards below with 3-dot menu
-* **Week View** - 7-day grid with hourly time slots and color-coded event blocks, matching reference design
-* **List View** - Chronological listing of upcoming events with full metadata and action menus
-
-**Features:**
 * Create, edit, and delete company events
-* Event categorization with icons (meeting, deadline, social, training)
-* Dynamic event filtering - shows only future events relative to current date
-* Manager access to edit/delete via 3-dot menus on event cards and list items
-* Event indicator dots on calendar days with events
-* Proper time slot positioning in week view
-* Events update dynamically when date changes
+* Event categorization (meetings, deadlines, social, training)
+* Category icons and visual hierarchy
+* Date synchronization with calendar
+* Manager permissions: edit/delete events via 3-dot menu on event cards
+* Event indicator dots on calendar days showing event categories
 
 ### 🧾 Leave Management
 
@@ -198,66 +191,16 @@ Open: **http://localhost:5173**
 * **Employee Metadata** - Top performer and lowest scorer names displayed in stat cards
 * **Color Coding** - Green trends for good performers, red for improvement areas
 
-### Events Module Complete Redesign - 3 View Modes with Full Functionality
 
-**Month View (Fully Implemented):**
-* Calendar grid with square date cells (aspect-square)
-* Event indicator dots on days with events (colored by category)
-* Selected date highlighting in blue
-* Inline view tabs (Month/Week/List) in header with left/right navigation arrows
-* Upcoming events cards below calendar with 3-dot edit/delete menus (managers only)
-* Dynamic event filtering - shows only future events relative to current date
-* Events update when date changes
 
-**Week View (Grid-Based Layout):**
-* 7-day grid with time labels column + 7 day columns
-* Time slots from 9 AM to 5 PM with hourly rows (20px height)
-* Events positioned in correct time slot cells with category colors
-* Day headers showing day name and date number
-* Color-coded event blocks by category (meeting, deadline, social, training)
-* Legend at bottom showing category color dots
-* Inline view tabs in header with week navigation arrows
-* Matches reference design exactly
-
-**List View (Future Events Focus):**
-* Chronological listing of upcoming events only
-* Each event card shows: category icon, title, date, time, location
-* 3-dot menu on each card (managers only) for edit/delete
-* Category-colored left border on event cards
-* Hover effects and smooth transitions
-* Inline view tabs in header
-
-**Manager Event Management:**
-* Edit/Delete options visible only to managers (user.role === "manager")
-* 3-dot dropdown menu on event cards and list items
-* Edit opens modal with pre-filled event data
-* Delete removes event with confirmation toast
-* Menu closes automatically after action
-
-**Create/Edit Modal:**
-* Custom modal implementation with overlay
-* Accessible via floating + Create Event button
-* Accessible via Edit option in 3-dot menus
-* Form fields: Title, Date, Time, Category, Location, Description
-* Proper form validation with error feedback
-* Cancel and Update/Create buttons
-
-### Design & Implementation
-* **View Navigation** - Inline tabs (Month/Week/List) in header with < > date arrows on same row
-* **Color System** - Reusable categoryColors object with bg, text, border, dot, icon colors
-* **Category Icons** - Briefcase (meeting), Clock (deadline), Users (social), Book (training)
-* **Responsive Layout** - Grid-based layouts with proper spacing and alignment
-* **Dark Mode** - Full dark mode support throughout all views
-* **Helper Functions** - getViewButtonClass for consistent tab styling, futureEvents filtering with useMemo
-* **Square Calendar Cells** - aspect-square ensures uniform calendar appearance
-
-### Bug Fixes
-1. **Event Module Display** - Fixed "No events on this date" bug where today's events weren't showing on page load
-2. **Modal Button Styling** - Cancel uses secondary variant (light), Create/Update uses primary variant (dark)
-3. **Dashboard Redundancy** - Removed duplicate Leave Request card from employee dashboard
-4. **Notice Board UI** - Fixed truncated description display to show full text content
-5. **Sidebar Navigation** - Smart auto-expand when clicking collapsed parent modules with children
-6. **Module Styling** - Parent modules bold with no background when child is active
+### Bug Fixes & Improvements
+1. **Event Manager Controls** - Added 3-dot menu on event cards with edit/delete for managers only
+2. **Manager Permissions** - Role-based access control (user.role === "manager") for event management
+3. **Modal Button Styling** - Cancel uses secondary variant (light), Create/Update uses primary variant (dark)
+4. **Dashboard Redundancy** - Removed duplicate Leave Request card from employee dashboard
+5. **Notice Board UI** - Fixed truncated description display to show full text content
+6. **Sidebar Navigation** - Smart auto-expand when clicking collapsed parent modules with children
+7. **Module Styling** - Parent modules bold with no background when child is active
 
 ### Code Quality
 * All imports verified as used (no unused dependencies or functions)
@@ -265,6 +208,7 @@ Open: **http://localhost:5173**
 * Reusable color and icon mapping objects
 * Clean separation of concerns
 * Full dark mode support
+* Event indicator dots on calendar days (colored by category)
 * Production-ready with 0 build warnings
 
 ---
