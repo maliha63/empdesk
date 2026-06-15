@@ -1,137 +1,115 @@
-# 🚀 EmpDesk — Employee Management System
+# 🚀 EmpDesk
 
-A modern, scalable, and fully responsive **Employee Management Dashboard** built with **React, TypeScript, and Tailwind CSS**, designed to streamline employee operations with a clean UI and modular architecture.
+A modern, feature-rich **Employee Management System** for organizations of all sizes.
+
+EmpDesk is a **React + TypeScript + Vite** based web application designed to streamline HR and employee management processes. It provides a comprehensive suite of tools for managing employees, attendance, leaves, payroll, performance, documents, and more.
 
 ![Dashboard Preview](./src/assets/empdesk.png)
 
 ---
 
-## 🧭 Overview
-
-EmpDesk is a frontend-driven Employee Management System focused on **clarity, performance, and scalability**. It models real-world HR workflows including employee management, leave tracking, and role-based access control.
-
----
-
 ## ✨ Features
 
-### 🔐 Authentication & Role-Based Access
+### 🏠 Core Modules
 
-* Manager and Employee roles
-* Protected routes and conditional UI rendering
-* Professional split-layout login with branded design
+* **Employee Management**
+  Add, edit, view, and manage employee profiles with detailed information.
 
-### 👨‍💼 Employee Management
+* **Attendance Tracking**
+  Mark, track, and manage employee attendance with filters and reports.
 
-* Add, edit, delete employees with full-page forms
-* Structured employee profiles with multiple sections
-* Department-based organization
-* Optimized table layout with proper column spacing
-* Horizontal scrollbar for large datasets
+* **Leave Management**
+  Request, approve, and track leaves with customizable leave types and policies.
+
+* **Payroll System**
+  Generate, manage, and track payroll with detailed breakdowns.
+
+* **Performance Reviews**
+  Conduct and track employee performance reviews with ratings and feedback.
+
+* **Document Management**
+  Upload, share, and manage company and employee documents securely.
+
+---
 
 ### 📊 Dashboard & Analytics
 
-* Key metrics overview
-* Department distribution charts
-* Recent activity tracking
-* Dynamic performance charts that update based on selected employee
-* Varied performance ratings (Excellent, Good, Average, Poor) with color-coded badges
-* Interactive employee selection with visual feedback
+* **Interactive Dashboard**
+  Overview of key metrics like total employees, departments, attendance, and recent activities.
 
-### 🗓️ Events Management
+* **Reports**
+  Generate and export reports for employees, attendance, leaves, payroll, and performance.
 
-* Create, edit, and delete company events
-* Event categorization (meetings, deadlines, social, training)
-* Category icons and visual hierarchy
-* Date synchronization with calendar
-
-### 🧾 Leave Management
-
-* Apply for leave
-* Approve / reject requests (Manager)
-* Track leave history
-
-### 👤 Profile System
-
-* Personal profile view
-* Attendance and performance tracking
-* Role-specific sections (skills, competencies for managers)
-* Activity status and login tracking
-
-### 🔎 Search & Filtering
-
-* Real-time search with friendly "no results" messaging
-* Department-based filtering
-* Dynamic search feedback
-
-### 🎨 UI/UX
-
-* Fully responsive (mobile → desktop)
-* Dark & Light mode with smooth transitions
-* Modern, branded UI with reusable components
-* Improved 404 page with navigation options
-* Enhanced event cards with icons and animations
-* Professional login interface with split-layout design
+* **Charts & Visualizations**
+  Data visualization using Recharts for better insights.
 
 ---
 
-## 🛠 Tech Stack
+### 🗓️ Additional Features
 
-| Category         | Technology                   |
-| ---------------- | ---------------------------- |
-| Frontend         | React 18 + Vite + TypeScript |
-| Styling          | Tailwind CSS + CSS Variables |
-| State Management | React Context + useReducer   |
-| Routing          | React Router v6              |
-| Animations       | Framer Motion                |
-| Charts           | Recharts                     |
-| Icons            | Lucide React                 |
-| Notifications    | react-hot-toast              |
+* **Events & Notices**
+  Create and manage company events and announcements.
 
----
+* **Tasks & Projects**
+  Assign, track, and manage employee tasks.
 
-## ⚙️ Architecture
+* **Departments & Designations**
+  Organize employees with structured hierarchy.
 
-### 1. State Management (Context-Based)
-
-* `AuthContext` → Handles authentication & roles
-* `EmployeeContext` → Employee data management
-* `LeaveContext` → Leave workflows
-
-✔ Lightweight alternative to Redux
-✔ Clean separation of concerns
+* **Authentication**
+  Secure login system with role-based access control.
 
 ---
 
-### 2. Component Design
+### 🎨 UI/UX Highlights
 
-* Reusable UI components (Card, Button, Modal, etc.)
-* Clear separation between UI and logic
-* Scalable folder structure
+* Modern & fully responsive design using Tailwind CSS
+* Dark / Light mode support
+* Reusable UI components (DataTable, Modal, DatePicker, etc.)
+* Smooth animations using Motion
 
 ---
 
-### 3. Theming System
+## 🛠️ Tech Stack
 
-* CSS Custom Properties (`--bg`, `--text`, etc.)
-* Persistent theme (localStorage)
-* Smooth transitions across all components
+| Category      | Technologies                                              |
+| ------------- | --------------------------------------------------------- |
+| Frontend      | React 19, TypeScript, Vite, Tailwind CSS v4, Lucide React |
+| Charts        | Recharts                                                  |
+| Animations    | Motion                                                    |
+| Forms         | React Hook Form                                           |
+| Notifications | React Hot Toast                                           |
+| Routing       | React Router DOM v7                                       |
+| Linting       | ESLint, TypeScript ESLint, Prettier                       |
+| Build Tool    | Vite                                                      |
 
 ---
 
 ## 📁 Project Structure
 
 ```
-src/
-├── components/        # Reusable UI components
-├── context/           # Global state (Auth, Employee, Leave)
-├── hooks/             # Custom hooks
-├── layouts/           # Layout wrappers (Dashboard, Auth)
-├── pages/             # Main pages
-├── services/          # Mock API layer
-├── types/             # TypeScript definitions
-├── utils/             # Helpers & mock data
-├── constants.ts
-└── index.css          # Global styles
+empdesk/
+├── public/
+│   ├── 404-illustration.png
+│   └── mockups/
+├── src/
+│   ├── assets/
+│   ├── components/
+│   ├── constants/
+│   ├── context/
+│   ├── hooks/
+│   ├── layouts/
+│   ├── pages/
+│   ├── routes/
+│   ├── services/
+│   ├── types/
+│   ├── utils/
+│   ├── App.tsx
+│   ├── index.css
+│   └── main.tsx
+├── package.json
+├── tailwind.config.js
+├── vite.config.ts
 ```
 
 ---
@@ -140,21 +118,15 @@ src/
 
 ### Prerequisites
 
-* Node.js (v18+)
+* Node.js (v18 or later)
+* npm / yarn / pnpm
 
 ### Installation
 
 ```bash
-# Clone the repository
 git clone https://github.com/maliha63/empdesk.git
-
-# Navigate to project
 cd empdesk
-
-# Install dependencies
 npm install
-
-# Run development server
 npm run dev
 ```
 
@@ -162,48 +134,91 @@ Open: **http://localhost:5173**
 
 ---
 
-## 📊 Data Handling
+## 📜 Available Scripts
 
-* Mock employee dataset
-* LocalStorage for persistence (leave requests, theme)
-* Simulated real-time updates
-
----
-
-## 📸 Key Pages
-
-* Dashboard — analytics & overview
-* Employees — full CRUD interface
-* Employee Profile — detailed view
-* My Profile — personal dashboard
-* Add/Edit Employee — validated forms
+| Script          | Description              |
+| --------------- | ------------------------ |
+| npm run dev     | Start development server |
+| npm run build   | Build for production     |
+| npm run lint    | Run ESLint               |
+| npm run preview | Preview production build |
 
 ---
 
-## 🔮 Future Improvements
+## 🎨 Customization
 
-* Backend integration (Node.js / Firebase)
-* Real authentication (JWT / OAuth)
-* Database (MongoDB / Firestore)
-* Attendance tracking system
-* Payroll module
-* Notifications system
-* API abstraction layer
-* Unit & integration testing
+### Theming
+
+* Modify `tailwind.config.js` for colors, fonts, etc.
+* Toggle themes using `ThemeContext`
+
+### Adding Features
+
+* **New Page:** `src/pages/`
+* **New Component:** `src/components/`
+* **State Management:** `src/context/`
+* **API Services:** `src/services/`
+
+---
+
+## 📂 Key Pages
+
+| Page        | Description               |
+| ----------- | ------------------------- |
+| Dashboard   | System overview & metrics |
+| Employees   | Manage employee records   |
+| Attendance  | Track attendance          |
+| Leaves      | Leave management          |
+| Payroll     | Salary management         |
+| Performance | Reviews & ratings         |
+| Documents   | File management           |
+| Events      | Company events            |
+| Notices     | Announcements             |
+| Tasks       | Task tracking             |
+| Reports     | Data export & analytics   |
+
+---
+
+## 🔧 Configuration
+
+### Environment Variables
+
+Create `.env`:
+
+```
+VITE_API_BASE_URL=http://your-api-url
+```
+
+### Tailwind Example
+
+```js
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        primary: '#3B82F6',
+      },
+    },
+  },
+};
+```
 
 ---
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Open a pull request
+1. Fork the repo
+2. Create a branch (`feature/your-feature`)
+3. Commit changes
+4. Push to GitHub
+5. Open a Pull Request
 
 ---
 
 ## 📄 License
 
-MIT License
+Private and proprietary. Do not use or distribute without permission.
 
 
+
+---
