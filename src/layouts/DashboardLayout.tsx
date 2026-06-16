@@ -47,7 +47,7 @@ const managerNav: NavItem[] = [
       { label: "Employee List", to: "/employees", icon: <Users size={15} /> },
       {
         label: "Performance",
-        to: "/employees/performance",
+        to: "/performance",
         icon: <TrendingUp size={15} />,
       },
     ],
