@@ -5,8 +5,8 @@ import { RoleGuard } from "./RoleGuard";
 import { AuthLayout } from "../layouts/AuthLayout";
 import { DashboardLayout } from "../layouts/DashboardLayout";
 import { ErrorBoundary } from "../components/ErrorBoundary";
-import MyPerformancePage from "../pages/MyPerformancePage";
 
+// Lazy-loaded pages
 const LoginPage = lazy(() => import("../pages/LoginPage"));
 const DashboardPage = lazy(() => import("../pages/DashboardPage"));
 const EmployeesPage = lazy(() => import("../pages/EmployeesPage"));
@@ -15,19 +15,15 @@ const AddEmployeePage = lazy(() => import("../pages/AddEmployeePage"));
 const EditEmployeePage = lazy(() => import("../pages/EditEmployeePage"));
 const ProfilePage = lazy(() => import("../pages/ProfilePage"));
 const NotFoundPage = lazy(() => import("../pages/NotFoundPage"));
-
-// Employee Management Pages
 const AttendancePage = lazy(() => import("../pages/AttendancePage"));
 const LeavePage = lazy(() => import("../pages/LeavePage"));
 const LeaveTypesPage = lazy(() => import("../pages/LeaveTypesPage"));
 const PerformancePage = lazy(() => import("../pages/PerformancePage"));
+const MyPerformancePage = lazy(() => import("../pages/MyPerformancePage"));
 const PositionsPage = lazy(() => import("../pages/PositionsPage"));
 const PayrollPage = lazy(() => import("../pages/PayrollPage"));
-
 const TasksPage = lazy(() => import("../pages/TasksPage"));
 const DocumentsPage = lazy(() => import("../pages/DocumentsPage"));
-
-// HRMS Pages
 const NoticeBoardPage = lazy(() => import("../pages/NoticeBoardPage"));
 const EventPage = lazy(() => import("../pages/EventPage"));
 const DesignationPage = lazy(() => import("../pages/DesignationPage"));
@@ -47,7 +43,7 @@ export function AppRouter() {
     <BrowserRouter>
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          {/* Public */}
+          {/* Public Routes */}
           <Route
             path="/login"
             element={
@@ -71,7 +67,7 @@ export function AppRouter() {
                       />
                       <Route path="dashboard" element={<DashboardPage />} />
 
-                      {/* Main Employee Routes */}
+                      {/* Employee Routes */}
                       <Route path="employees" element={<EmployeesPage />} />
                       <Route path="employees/:id" element={<EmployeePage />} />
                       <Route
@@ -90,6 +86,14 @@ export function AppRouter() {
                           </RoleGuard>
                         }
                       />
+                      <Route
+                        path="employees/positions"
+                        element={<PositionsPage />}
+                      />
+                      <Route
+                        path="employees/my-performance"
+                        element={<MyPerformancePage />}
+                      />
 
                       {/* Attendance & Leave */}
                       <Route path="attendance" element={<AttendancePage />} />
@@ -101,18 +105,8 @@ export function AppRouter() {
                       <Route path="leave/me" element={<LeavePage />} />
                       <Route path="leave/types" element={<LeaveTypesPage />} />
 
-                      {/* Employee Sub-pages */}
-                      <Route
-                        path="employees/positions"
-                        element={<PositionsPage />}
-                      />
-
-                      {/* Fixed Layout Paths matching Sidebar & Dashboard view targets directly */}
+                      {/* Performance, Tasks, Documents */}
                       <Route path="performance" element={<PerformancePage />} />
-                      <Route
-                        path="employees/my-performance"
-                        element={<MyPerformancePage />}
-                      />
                       <Route path="tasks" element={<TasksPage />} />
                       <Route path="documents" element={<DocumentsPage />} />
 
@@ -134,7 +128,7 @@ export function AppRouter() {
                         }
                       />
 
-                      {/* HRMS Pages */}
+                      {/* HRMS & Profile */}
                       <Route
                         path="notice-board"
                         element={<NoticeBoardPage />}
@@ -142,7 +136,6 @@ export function AppRouter() {
                       <Route path="event" element={<EventPage />} />
                       <Route path="designation" element={<DesignationPage />} />
                       <Route path="department" element={<DepartmentPage />} />
-
                       <Route path="profile" element={<ProfilePage />} />
 
                       {/* 404 */}
@@ -154,6 +147,7 @@ export function AppRouter() {
             }
           />
 
+          {/* Root Redirect */}
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </Suspense>
