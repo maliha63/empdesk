@@ -5,8 +5,8 @@ import { RoleGuard } from "./RoleGuard";
 import { AuthLayout } from "../layouts/AuthLayout";
 import { DashboardLayout } from "../layouts/DashboardLayout";
 import { ErrorBoundary } from "../components/ErrorBoundary";
+import MyPerformancePage from "../pages/MyPerformancePage";
 
-// // Lazy-loaded pages
 const LoginPage = lazy(() => import("../pages/LoginPage"));
 const DashboardPage = lazy(() => import("../pages/DashboardPage"));
 const EmployeesPage = lazy(() => import("../pages/EmployeesPage"));
@@ -33,7 +33,6 @@ const EventPage = lazy(() => import("../pages/EventPage"));
 const DesignationPage = lazy(() => import("../pages/DesignationPage"));
 const DepartmentPage = lazy(() => import("../pages/DepartmentPage"));
 const ReportsPage = lazy(() => import("../pages/ReportsPage"));
-const MyPerformancePage = lazy(() => import("../pages/MyPerformancePage"));   
 
 function PageLoader() {
   return (
