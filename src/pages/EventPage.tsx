@@ -395,9 +395,11 @@ export default function EventPage() {
                   </button>
                 ))}
               </div>
-              <Button onClick={openAdd}>
-                <Plus size={14} /> Create Event
-              </Button>
+              {isManager && (
+                <Button onClick={openAdd}>
+                  <Plus size={14} /> Create Event
+                </Button>
+              )}
             </div>
           }
         />
